@@ -17,10 +17,12 @@ import java.security.KeyRep;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.InvalidParameterSpecException;
-import java.util.Arrays;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
 import com.ibm.crypto.plus.provider.ock.ECKey;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
@@ -58,7 +60,8 @@ final class ECPublicKey extends X509Key
 
         algid = new AlgorithmId(AlgorithmId.EC_oid,
                 ECParameters.getAlgorithmParameters(provider, ecParams));
-        key = ECParameters.encodePoint(w, this.params.getCurve());
+        byte[] keyArray = ECParameters.encodePoint(w, this.params.getCurve());
+        setKey(new BitArray(keyArray.length * 8, keyArray));
 
         try {
             byte[] parameterBytes = ECParameters.encodeECParameters(ecParams);
@@ -169,7 +172,7 @@ final class ECPublicKey extends X509Key
             // algParams=" + algParams.toString()
             // + " this.algid="+this.algid);
             params = algParams.getParameterSpec(ECParameterSpec.class);
-            w = ECParameters.decodePoint(key, params.getCurve());
+            w = ECParameters.decodePoint(getKey().toByteArray(), params.getCurve());
 
         } catch (IOException e) {
             throw new InvalidKeyException("Invalid EC key", e);
@@ -255,9 +258,7 @@ final class ECPublicKey extends X509Key
     public void destroy() throws DestroyFailedException {
         if (!destroyed) {
             destroyed = true;
-            if (this.key != null) {
-                Arrays.fill(this.key, (byte) 0x00);
-            }
+            setKey(new BitArray(0));
             this.ecKey = null;
             this.w = null;
             this.params = null;

@@ -17,7 +17,7 @@ import java.security.KeyRep;
 import java.security.interfaces.DSAParams;
 import java.security.spec.DSAParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
-import java.util.Arrays;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 import com.ibm.crypto.plus.provider.ock.DSAKey;
@@ -244,9 +244,7 @@ final class DSAPublicKey extends X509Key
     public void destroy() throws DestroyFailedException {
         if (!destroyed) {
             destroyed = true;
-            if (this.key != null) {
-                Arrays.fill(this.key, (byte) 0x00);
-            }
+            setKey(new BitArray(0));
             this.dsaKey = null;
             this.y = null;
         }

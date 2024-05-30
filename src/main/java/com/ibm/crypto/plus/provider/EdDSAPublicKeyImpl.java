@@ -271,7 +271,7 @@ public final class EdDSAPublicKeyImpl extends X509Key implements EdECPublicKey {
 
         // Forming main sequence
         mainSeq.write(DerValue.tag_Sequence, oidSeq.toByteArray());
-        mainSeq.putBitString(this.key);
+        mainSeq.putBitString(getKey().toByteArray());
         outStream.write(DerValue.tag_Sequence, mainSeq);
         return outStream.toByteArray();
     }
@@ -304,7 +304,8 @@ public final class EdDSAPublicKeyImpl extends X509Key implements EdECPublicKey {
             processOIDSequence(seq, null);
             this.algid = CurveUtil.getAlgId(this.curve);
 
-            this.key = values[1].getBitString();
+            byte[] keyArray = values[1].getBitString();
+            setKey(new BitArray(keyArray.length * 8, keyArray));
         } catch (Exception e) {
             throw new InvalidKeyException("Key does not appear to be a EdDSA key");
         }

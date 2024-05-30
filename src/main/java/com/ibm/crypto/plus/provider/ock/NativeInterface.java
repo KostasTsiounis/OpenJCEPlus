@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.ProviderException;
-import com.ibm.misc.Debug;
+//import com.ibm.misc.Debug;
 
 @SuppressWarnings({"removal", "deprecation"})
 final class NativeInterface {
@@ -23,7 +23,7 @@ final class NativeInterface {
     private static final boolean debugLoad = false;
 
     // User enabled debugging
-    private static Debug debug = Debug.getInstance("jceplus");
+   //private static Debug debug = Debug.getInstance("jceplus");
 
     // Whether OCK is dynamically loaded. If OCK is dynamically loaded,
     // we want to pre-load OCK to help ensure we are getting the expected
@@ -154,13 +154,13 @@ final class NativeInterface {
         if (jgskitLibraryPreloaded == false) {
             String exceptionMessage = "Could not load dependent jgskit library";
 
-            if (debug != null) {
-                // Do not use loadFile or libraryName in message in an effort to hide OCK usage
-                // from users
-                //
-                exceptionMessage = "Could not load dependent jgskit library for os.name=" + osName
-                        + ", os.arch=" + osArch;
-            }
+        //     if (debug != null) {
+        //         // Do not use loadFile or libraryName in message in an effort to hide OCK usage
+        //         // from users
+        //         //
+        //         exceptionMessage = "Could not load dependent jgskit library for os.name=" + osName
+        //                 + ", os.arch=" + osArch;
+        //     }
 
             throw new ProviderException(exceptionMessage);
         }
@@ -190,13 +190,13 @@ final class NativeInterface {
         if (jgskitLibraryPreloaded == false) {
             String exceptionMessage = "Could not load dependent jgskit library";
 
-            if (debug != null) {
-                // Do not use loadFile or libraryName in message in an effort to hide OCK usage
-                // from users
-                //
-                exceptionMessage = "Could not load dependent jgskit library for os.name=" + osName
-                        + ", os.arch=" + osArch;
-            }
+        //     if (debug != null) {
+        //         // Do not use loadFile or libraryName in message in an effort to hide OCK usage
+        //         // from users
+        //         //
+        //         exceptionMessage = "Could not load dependent jgskit library for os.name=" + osName
+        //                 + ", os.arch=" + osArch;
+        //     }
 
             throw new ProviderException(exceptionMessage);
         }
@@ -303,13 +303,13 @@ final class NativeInterface {
             if ((ockLibraryPreloaded == false) && requirePreloadOCK) {
                 String exceptionMessage = "Could not load dependent ock library";
 
-                if (debug != null) {
-                    // Do not use loadFile or libraryName in message in an effort to hide OCK usage
-                    // from users
-                    //
-                    exceptionMessage = "Could not load dependent ock library for os.name=" + osName
-                            + ", os.arch=" + osArch;
-                }
+                // if (debug != null) {
+                //     // Do not use loadFile or libraryName in message in an effort to hide OCK usage
+                //     // from users
+                //     //
+                //     exceptionMessage = "Could not load dependent ock library for os.name=" + osName
+                //             + ", os.arch=" + osArch;
+                // }
 
                 throw new ProviderException(exceptionMessage);
             }
@@ -364,9 +364,9 @@ final class NativeInterface {
             if (ockInstallPath.startsWith(ockLoadPath) == false) {
                 String exceptionMessage = "Dependent library was loaded from an external location";
 
-                if (debug != null) {
-                    exceptionMessage = "Dependent library was loaded from " + ockInstallPath;
-                }
+                // if (debug != null) {
+                //     exceptionMessage = "Dependent library was loaded from " + ockInstallPath;
+                // }
 
                 throw new ProviderException(exceptionMessage);
             }
