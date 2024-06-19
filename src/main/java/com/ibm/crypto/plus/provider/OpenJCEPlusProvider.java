@@ -12,6 +12,7 @@ import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.security.ProviderException;
+import jdk.internal.ref.CleanerFactory;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
 // Implemented as an abstract class rather than an interface so that 
@@ -33,6 +34,8 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
 
     private static final Cleaner cleaner = Cleaner.create();
 
+    private static final Cleaner cleaner = CleanerFactory.cleaner();
+
     OpenJCEPlusProvider(String name, String info) {
         super(name, PROVIDER_VER, info);
     }
@@ -45,6 +48,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         return doSelfVerification(c);
     }
 
+<<<<<<< HEAD
     public static void action(WeakReference<CleanableObject> ownerRef) {
         ownerRef.get().cleanup();
     }
@@ -57,6 +61,8 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         cleaner.register(owner, cleanAction);
     }
 
+=======
+>>>>>>> e0904ac (Replace finalize with Cleaner)
     public static void registerCleanable(CleanableObject owner) {
         cleaner.register(owner, new Runnable() {
             @Override
