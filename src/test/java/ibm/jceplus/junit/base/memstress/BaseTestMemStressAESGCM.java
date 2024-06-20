@@ -34,7 +34,7 @@ public class BaseTestMemStressAESGCM extends BaseTestJunit5 {
     protected Method methodCipherUpdateAAD = null;
     protected Method methodGCMParameterSpecSetAAD = null;
     protected int specifiedKeySize = 0;
-    int numTimes = 100;
+    int numTimes = 1000;
     boolean printheapstats = false;
 
     @BeforeEach
