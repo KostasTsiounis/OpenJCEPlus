@@ -36,7 +36,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
     //    private static boolean verifiedSelfIntegrity = false;
     private static final boolean verifiedSelfIntegrity = true;
 
-    private static final Cleaner cleaner = Cleaner.cleaner();
+    private static final Cleaner cleaner = Cleaner.create();
 
     OpenJCEPlusProvider(String name, String info) {
         super(name, PROVIDER_VER, info);
