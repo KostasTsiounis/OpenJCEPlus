@@ -17,7 +17,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
-public final class SymmetricCipher {
+import com.ibm.crypto.plus.provider.CleanableObject;
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+
+public final class SymmetricCipher implements CleanableObject{
 
     private OCKContext ockContext;
     private long ockCipherId;
@@ -133,6 +136,8 @@ public final class SymmetricCipher {
         if (!use_z_fast_command) {
             this.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
         }
+
+        OpenJCEPlusProvider.registerCleanable(this);
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -588,7 +593,7 @@ public final class SymmetricCipher {
     }
 
     @Override
-    protected synchronized void finalize() throws Throwable {
+    public synchronized void cleanup() {
         //final String methodName = "finalize";
         try {
             //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
@@ -603,8 +608,6 @@ public final class SymmetricCipher {
                 Arrays.fill(reinitKey, (byte) 0x00);
                 reinitKey = null;
             }
-
-            super.finalize();
         }
     }
 

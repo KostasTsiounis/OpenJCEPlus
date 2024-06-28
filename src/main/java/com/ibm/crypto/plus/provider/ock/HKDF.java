@@ -10,7 +10,10 @@ package com.ibm.crypto.plus.provider.ock;
 
 import java.util.Arrays;
 
-public final class HKDF {
+import com.ibm.crypto.plus.provider.CleanableObject;
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+
+public final class HKDF implements CleanableObject{
 
     private OCKContext ockContext = null;
     private long hkdfId = 0;
@@ -36,6 +39,8 @@ public final class HKDF {
         this.ockContext = ockContext;
         this.hkdfId = NativeInterface.HKDF_create(ockContext.getId(), digestAlgo);
         //OCKDebug.Msg (debPrefix, methodName,  "this.hkdfId :" + this.hkdfId );
+
+        OpenJCEPlusProvider.registerCleanable(this);
     }
 
 
@@ -105,7 +110,7 @@ public final class HKDF {
     }
 
     @Override
-    protected synchronized void finalize() throws Throwable {
+    public synchronized void cleanup() {
         //final String methodName = "finalize ";
         //OCKDebug.Msg (debPrefix, methodName,  "hkdfId :" + hkdfId + " hmacId : " + hmacId );
         try {
@@ -118,8 +123,6 @@ public final class HKDF {
                 Arrays.fill(reinitKey, (byte) 0x00);
                 reinitKey = null;
             }
-
-            super.finalize();
         }
     }
 
