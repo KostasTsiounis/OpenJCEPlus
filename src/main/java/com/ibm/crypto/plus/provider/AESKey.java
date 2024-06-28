@@ -159,7 +159,6 @@ final class AESKey implements SecretKey, CleanableObject {
      */
     @Override
     public void cleanup() {
-        System.out.println("Cleanup called on AESKey instance.");
         synchronized (this) {
             if (this.key != null) {
                 Arrays.fill(this.key, (byte) 0x00);

@@ -18,7 +18,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
-public final class SymmetricCipher {
+import com.ibm.crypto.plus.provider.CleanableObject;
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+
+public final class SymmetricCipher implements CleanableObject{
 
     static private class Resources {
         private boolean use_z_fast_command = false;
@@ -615,6 +618,27 @@ public final class SymmetricCipher {
         this.needsReinit = true;
         //OCKDebug.Msg (debPrefix, methodName, "outLen=" + outLen);
         return outLen;
+    }
+
+    @Override
+    public synchronized void cleanup() {
+        //final String methodName = "finalize";
+        try {
+            //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
+            if (!resources.use_z_fast_command) {
+                if (resources.ockCipherId != 0) {
+                    NativeInterface.CIPHER_delete(resources.ockContext.getId(), resources.ockCipherId);
+                    resources.ockCipherId = 0;
+                }
+            }
+        } catch (OCKException e) {
+            e.printStackTrace();
+        } finally {
+            if (resources.reinitKey != null) {
+                Arrays.fill(resources.reinitKey, (byte) 0x00);
+                resources.reinitKey = null;
+            }
+        }
     }
 
     /* At some point we may enhance this function to do other validations */
