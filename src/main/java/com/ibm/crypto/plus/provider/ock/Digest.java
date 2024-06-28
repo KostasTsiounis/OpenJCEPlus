@@ -8,11 +8,15 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
+import com.ibm.crypto.plus.provider.CleanableObject;
+import com.ibm.crypto.plus.provider.OpenJCEPlus;
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class Digest implements Cloneable {
+@SuppressWarnings({"removal", "deprecation"})
+public final class Digest implements Cloneable, CleanableObject {
 
     /* ===========================================================================
        Digest caching mechanism
@@ -196,6 +200,8 @@ public final class Digest implements Cloneable {
         this.digestAlgo = digestAlgo;
         getContext();
         //OCKDebug.Msg(debPrefix, methodName,  "digestAlgo :" + digestAlgo);
+
+        OpenJCEPlusProvider.registerCleanable(this);
     }
 
     private Digest() {
@@ -318,14 +324,14 @@ public final class Digest implements Cloneable {
     }
 
     @Override
-    protected synchronized void finalize() throws Throwable {
+    public void cleanup() {
         //final String methodName = "finalize";
 
+        //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
         try {
-            //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
             releaseContext();
-        } finally {
-            super.finalize();
+        } catch (OCKException e) {
+            e.printStackTrace();
         }
     }
 
@@ -367,6 +373,8 @@ public final class Digest implements Cloneable {
                                       .collect(Collectors.joining("\n"));
             throw new CloneNotSupportedException(stackTrace);
         }
+
+        OpenJCEPlusProvider.registerCleanable(copy);
         return copy;
     }
 }
