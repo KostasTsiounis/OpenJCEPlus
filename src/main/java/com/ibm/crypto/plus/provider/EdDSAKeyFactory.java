@@ -30,13 +30,13 @@ public class EdDSAKeyFactory extends KeyFactorySpi {
     private NamedParameterSpec params = null;
     private OpenJCEPlusProvider provider = null;
 
-    public EdDSAKeyFactory(OpenJCEPlusProvider provider, NamedParameterSpec paramSpec) {
+    private EdDSAKeyFactory(OpenJCEPlusProvider provider, NamedParameterSpec paramSpec) {
         super();
         this.params = paramSpec;
         this.provider = provider;
     }
 
-    public EdDSAKeyFactory(OpenJCEPlusProvider provider) {
+    EdDSAKeyFactory(OpenJCEPlusProvider provider) {
         super();
         this.provider = provider;
     }
