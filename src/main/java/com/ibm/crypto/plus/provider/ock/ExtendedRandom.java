@@ -59,7 +59,11 @@ public final class ExtendedRandom implements CleanableObject {
     @Override
     public synchronized void cleanup() {
         if (ockPRNGContextId != 0) {
-            NativeInterface.EXTRAND_delete(ockContext.getId(), ockPRNGContextId);
+            try {
+                NativeInterface.EXTRAND_delete(ockContext.getId(), ockPRNGContextId);
+            } catch (OCKException e) {
+                e.printStackTrace();
+            }
             ockPRNGContextId = 0;
         }
     }

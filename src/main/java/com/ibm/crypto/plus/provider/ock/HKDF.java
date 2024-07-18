@@ -113,16 +113,17 @@ public final class HKDF implements CleanableObject{
     public synchronized void cleanup() {
         //final String methodName = "finalize ";
         //OCKDebug.Msg (debPrefix, methodName,  "hkdfId :" + hkdfId + " hmacId : " + hmacId );
-        try {
-            if (hkdfId != 0) {
+        if (hkdfId != 0) {
+            try {
                 NativeInterface.HKDF_delete(ockContext.getId(), hkdfId);
-                hkdfId = 0;
+            } catch (OCKException e) {
+                e.printStackTrace();
             }
-        } finally {
-            if (reinitKey != null) {
-                Arrays.fill(reinitKey, (byte) 0x00);
-                reinitKey = null;
-            }
+            hkdfId = 0;
+        }
+        if (reinitKey != null) {
+            Arrays.fill(reinitKey, (byte) 0x00);
+            reinitKey = null;
         }
     }
 

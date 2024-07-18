@@ -317,15 +317,18 @@ public final class ECKey implements AsymmetricKey, CleanableObject {
         if ((privateKeyBytes != null) && (privateKeyBytes != unobtainedKeyBytes)) {
             Arrays.fill(privateKeyBytes, (byte) 0x00);
         }
+        try {
+            if (ecKeyId != 0) {
+                NativeInterface.ECKEY_delete(ockContext.getId(), ecKeyId);
+                ecKeyId = 0;
+            }
 
-        if (ecKeyId != 0) {
-            NativeInterface.ECKEY_delete(ockContext.getId(), ecKeyId);
-            ecKeyId = 0;
-        }
-
-        if (pkeyId != 0) {
-            NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
-            pkeyId = 0;
+            if (pkeyId != 0) {
+                NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
+                pkeyId = 0;
+            }
+        } catch (OCKException e) {
+            e.printStackTrace();
         }
     }
 

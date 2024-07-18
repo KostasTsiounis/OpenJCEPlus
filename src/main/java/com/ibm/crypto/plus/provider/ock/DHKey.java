@@ -239,14 +239,18 @@ public final class DHKey implements AsymmetricKey, CleanableObject {
             Arrays.fill(privateKeyBytes, (byte) 0x00);
         }
 
-        if (dhKeyId != 0) {
-            NativeInterface.DHKEY_delete(ockContext.getId(), dhKeyId);
-            dhKeyId = 0;
-        }
+        try {
+            if (dhKeyId != 0) {
+                NativeInterface.DHKEY_delete(ockContext.getId(), dhKeyId);
+                dhKeyId = 0;
+            }
 
-        if (pkeyId != 0) {
-            NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
-            pkeyId = 0;
+            if (pkeyId != 0) {
+                NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
+                pkeyId = 0;
+            }
+        } catch (OCKException e) {
+            e.printStackTrace();
         }
     }
 

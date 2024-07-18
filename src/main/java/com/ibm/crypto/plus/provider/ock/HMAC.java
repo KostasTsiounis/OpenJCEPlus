@@ -153,16 +153,17 @@ public final class HMAC implements CleanableObject{
     public synchronized void cleanup() {
         //final String methodName = "finalize ";
         //OCKDebug.Msg (debPrefix, methodName,  "hamcId :" + hmacId + " reinitKey :" + reinitKey);
-        try {
-            if (hmacId != 0) {
+        if (hmacId != 0) {
+            try {
                 NativeInterface.HMAC_delete(ockContext.getId(), hmacId);
-                hmacId = 0;
+            } catch (OCKException e) {
+                e.printStackTrace();
             }
-        } finally {
-            if (reinitKey != null) {
-                Arrays.fill(reinitKey, (byte) 0x00);
-                reinitKey = null;
-            }
+            hmacId = 0;
+        }
+        if (reinitKey != null) {
+            Arrays.fill(reinitKey, (byte) 0x00);
+            reinitKey = null;
         }
     }
 
