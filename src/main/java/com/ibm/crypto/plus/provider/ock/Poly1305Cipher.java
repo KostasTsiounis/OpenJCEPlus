@@ -13,6 +13,7 @@ import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.Poly1305Constants;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
@@ -381,7 +382,6 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
 
     @Override
     public synchronized void cleanup() {
-        System.out.println("Cleanup called on Poly1305Cipher instance.");
         if (ockCipherId != 0) {
             try {
                 NativeInterface.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
