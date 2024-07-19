@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
-import com.ibm.crypto.plus.provider.CleanableObject;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
-public final class SymmetricCipher implements CleanableObject{
+public final class SymmetricCipher {
 
     static private class Resources {
         private boolean use_z_fast_command = false;
@@ -215,14 +214,10 @@ public final class SymmetricCipher implements CleanableObject{
         }
 
 
-<<<<<<< HEAD
-        if (use_z_fast_command) {
+        if (this.resources.use_z_fast_command) {
             if (parametersBuffer == null) {
                 parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
             }
-=======
-        if (this.resources.use_z_fast_command) {
->>>>>>> cbc95e9 (Add resource class for cleanup)
             // Calculating pointers/offsets
             // parameters = SymmetricCipher.parametersBuffer.get();
             inputPointer = parametersBuffer.pointer();
@@ -603,7 +598,7 @@ public final class SymmetricCipher implements CleanableObject{
                 parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
             else {
                 parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
+                parametersBuffer.put(paramOffset + reinitIV.length, this.resources.reinitKey, 0,
                     this.resources.reinitKey.length);
             }
             needsReinit = false;
