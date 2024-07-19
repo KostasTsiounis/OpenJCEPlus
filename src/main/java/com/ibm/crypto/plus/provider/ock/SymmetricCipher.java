@@ -594,7 +594,7 @@ public final class SymmetricCipher implements CleanableObject{
     @Override
     public synchronized void cleanup() {
         //final String methodName = "finalize";
-
+        System.out.println("Cleanup called on SymmetricCipher instance.");
         //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
         if (!use_z_fast_command) {
             if (ockCipherId != 0) {
