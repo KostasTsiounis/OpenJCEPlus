@@ -43,7 +43,7 @@ final class AESKey implements SecretKey, CleanableObject {
         this.key = new byte[key.length];
         System.arraycopy(key, 0, this.key, 0, key.length);
 
-        OpenJCEPlusProvider.registerCleanableC(this, new WeakReference<>(this));
+        OpenJCEPlusProvider.registerCleanable(this);
     }
 
     @Override
