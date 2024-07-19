@@ -44,7 +44,6 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         return doSelfVerification(c);
     }
 
-<<<<<<< HEAD
     public static void action(WeakReference<CleanableObject> ownerRef) {
         ownerRef.get().cleanup();
     }
@@ -57,8 +56,10 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         cleaner.register(owner, cleanAction);
     }
 
-=======
->>>>>>> e0904ac (Replace finalize with Cleaner)
+    public static void registerCleanableB(CleanableObject owner, Runnable cleanAction) {
+        cleaner.register(owner, cleanAction);
+    }
+
     public static void registerCleanable(CleanableObject owner) {
         cleaner.register(owner, new Runnable() {
             @Override

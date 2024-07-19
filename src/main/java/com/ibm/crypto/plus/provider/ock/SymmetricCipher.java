@@ -31,7 +31,7 @@ public final class SymmetricCipher implements CleanableObject{
         private byte[] reinitKey;
 
         private synchronized void cleanup() {
-            //System.out.println("Cleanup called on SymmetricCipher instance.");
+            System.out.println("Cleanup called on SymmetricCipher instance.");
             //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
             if (!use_z_fast_command) {
                 if (ockCipherId != 0) {
@@ -219,9 +219,6 @@ public final class SymmetricCipher implements CleanableObject{
 
 
         if (this.resources.use_z_fast_command) {
-            if (parametersBuffer == null) {
-                parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
-            }
             // Calculating pointers/offsets
             // parameters = SymmetricCipher.parametersBuffer.get();
             inputPointer = parametersBuffer.pointer();
@@ -619,28 +616,6 @@ public final class SymmetricCipher implements CleanableObject{
         this.needsReinit = true;
         //OCKDebug.Msg (debPrefix, methodName, "outLen=" + outLen);
         return outLen;
-    }
-
-    @Override
-    public synchronized void cleanup() {
-        //final String methodName = "finalize";
-        try {
-            //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
-            if (!resources.use_z_fast_command) {
-                if (resources.ockCipherId != 0) {
-                    NativeInterface.CIPHER_delete(resources.ockContext.getId(), resources.ockCipherId);
-                    resources.ockCipherId = 0;
-                }
-                
-            }
-        } catch (OCKException e) {
-            e.printStackTrace();
-        } finally {
-            if (resources.reinitKey != null) {
-                Arrays.fill(resources.reinitKey, (byte) 0x00);
-                resources.reinitKey = null;
-            }
-        }
     }
 
     /* At some point we may enhance this function to do other validations */
