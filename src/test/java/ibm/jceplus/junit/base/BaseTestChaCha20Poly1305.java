@@ -84,10 +84,10 @@ public class BaseTestChaCha20Poly1305 extends BaseTestCipher implements ChaCha20
     public BaseTestChaCha20Poly1305(String providerName) {
         super(providerName);
 
-        try {
-            warmup();
-        } catch (Exception e) {
-        }
+        // try {
+        //     warmup();
+        // } catch (Exception e) {
+        // }
     }
 
     //--------------------------------------------------------------------------
