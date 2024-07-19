@@ -22,7 +22,7 @@ import javax.crypto.ShortBufferException;
 import com.ibm.crypto.plus.provider.CleanableObject;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 
-public final class SymmetricCipher implements CleanableObject{
+public final class SymmetricCipher{
 
     static private class Resources {
         private boolean use_z_fast_command = false;
