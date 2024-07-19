@@ -31,7 +31,7 @@ public final class SymmetricCipher{
         private byte[] reinitKey;
 
         private synchronized void cleanup() {
-            System.out.println("Cleanup called on SymmetricCipher instance.");
+            //System.out.println("Cleanup called on SymmetricCipher instance.");
             //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
             if (!use_z_fast_command) {
                 if (ockCipherId != 0) {
