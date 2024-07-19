@@ -61,7 +61,7 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
         this.ockCipherId = NativeInterface.POLY1305CIPHER_create(ockContext.getId(), cipherName);
         this.padding = padding;
 
-        OpenJCEPlusProvider.registerCleanableC(this, cleanAction(this.ockCipherId, this.ockContext));
+        OpenJCEPlusProvider.registerCleanableC(this, cleanOCKResources(this.ockCipherId, this.ockContext));
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -101,6 +101,7 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
                 Arrays.fill(reinitKey, (byte) 0x00);
             }
             this.reinitKey = key.clone();
+            OpenJCEPlusProvider.registerCleanableC(this, cleanKeyArray(this.reinitKey));
         }
         if (iv != reinitIV) {
             this.reinitIV = (iv == null) ? null : iv.clone();
@@ -418,15 +419,24 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
         return baos.toByteArray();
     }
 
-    private static Runnable cleanAction(long ockCipherId, OCKContext ockContext) {
+    private static Runnable cleanOCKResources(long ockCipherId, OCKContext ockContext) {
         return () -> {
-            System.out.println("Cleanup called on Poly1305Cipher instance.");
+            System.out.println("Cleanup called on Poly1305Cipher instance: OCK resources.");
             if (ockCipherId != 0) {
                 try {
                     NativeInterface.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
                 } catch (OCKException e) {
                     e.printStackTrace();
                 }
+            }
+        };
+    }
+
+    private static Runnable cleanKeyArray(byte[] reinitKey) {
+        return () -> {
+            System.out.println("Cleanup called on Poly1305Cipher instance: Reinit key.");
+            if (reinitKey != null) {
+                Arrays.fill(reinitKey, (byte) 0x00);
             }
         };
     }
