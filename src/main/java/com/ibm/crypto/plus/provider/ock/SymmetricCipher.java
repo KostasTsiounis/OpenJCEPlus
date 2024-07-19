@@ -14,15 +14,42 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
 public final class SymmetricCipher implements CleanableObject{
 
-    private OCKContext ockContext;
-    private long ockCipherId;
+    static private class Resources {
+        private boolean use_z_fast_command = false;
+        private long ockCipherId;
+        private OCKContext ockContext;
+        private byte[] reinitKey;
+
+        private synchronized void cleanup() {
+            System.out.println("Cleanup called on SymmetricCipher instance.");
+            //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
+            if (!use_z_fast_command) {
+                if (ockCipherId != 0) {
+                    try {
+                        NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
+                        ockCipherId = 0;
+                    } catch (OCKException e) {
+                        e.printStackTrace();
+                    }
+                    
+                }
+            }
+            
+            if (reinitKey != null) {
+                Arrays.fill(reinitKey, (byte) 0x00);
+                reinitKey = null;
+            }
+        }
+    }
+
+    private Resources resources;
     private boolean isInitialized = false;
     private boolean encrypting = true;
     private Padding padding = null;
@@ -31,7 +58,6 @@ public final class SymmetricCipher implements CleanableObject{
     private int keyLength = 0;
     private int ivLength = 0;
     private boolean needsReinit = false;
-    private byte[] reinitKey = null;
     private byte[] reinitIV = null;
     private byte[] reinitIVAndKey = null;
     // CBC Upgrade variables
@@ -43,9 +69,8 @@ public final class SymmetricCipher implements CleanableObject{
     private long outputOffset; // Offset, in the buffer, to where the output is stored, used to retrieve output after z_kmc call
     private long paramPointer; // Pointer to memory that has the parameters/state keeping used by z_kmc
     private static long hardwareFunctionPtr = 0;
-    private boolean use_z_fast_command = false;
-    private static final ConcurrentHashMap<OCKContext, Boolean> hardwareEnabled = new ConcurrentHashMap<>(); // Caching for hardwareFunctionPtr
-    private static final String badIdMsg = "Cipher Identifier is not valid";
+    private static HashMap<OCKContext, Boolean> hardwareEnabled = new HashMap<OCKContext, Boolean>(); // Caching for hardwareFunctionPtr
+    private final static String badIdMsg = "Cipher Identifier is not valid";
     /* private final static String debPrefix = "SymCipher"; Adding Debug causes test cases to fail */
     int paramOffset;
     FastJNIBuffer parametersBuffer = null;
@@ -118,6 +143,8 @@ public final class SymmetricCipher implements CleanableObject{
 
     private SymmetricCipher(OCKContext ockContext, String cipherName, Padding padding)
             throws OCKException {
+        this.resources = new Resources();
+
         // Check whether used algorithm is CBC and whether hardware supports
         boolean isHardwareSupport = false;
         if (hardwareEnabled.containsKey(ockContext))
@@ -127,16 +154,16 @@ public final class SymmetricCipher implements CleanableObject{
             isHardwareSupport = (hardwareFunctionPtr == 1) ? true : false;
             hardwareEnabled.put(ockContext, isHardwareSupport);
         }
-        use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
+        this.resources.use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
 
-        this.ockContext = ockContext;
+        this.resources.ockContext = ockContext;
         this.padding = padding;
-        if (!use_z_fast_command) {
-            this.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
+        if (!this.resources.use_z_fast_command) {
+            this.resources.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
         }
 
-        OpenJCEPlusProvider.registerCleanable(this);
+        OpenJCEPlusProvider.registerCleanableB(this, cleanAction(this.resources));
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -155,25 +182,25 @@ public final class SymmetricCipher implements CleanableObject{
             throw new IllegalArgumentException("IV is the wrong size");
         }
 
-        if (!use_z_fast_command) {
+        if (!this.resources.use_z_fast_command) {
             if (key.length < getKeyLength()) {
                 throw new IllegalArgumentException("key is the wrong size");
             }
-            if (ockCipherId == 0L) {
+            if (this.resources.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            NativeInterface.CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt ? 1 : 0,
+            NativeInterface.CIPHER_init(this.resources.ockContext.getId(), this.resources.ockCipherId, isEncrypt ? 1 : 0,
                     padding.getId(), key, iv);
         }
 
         this.encrypting = isEncrypt ? true : false;
         this.bufferedCount = 0;
         this.needsReinit = false;
-        if (key != reinitKey) {
-            if (reinitKey != null) {
-                Arrays.fill(reinitKey, (byte) 0x00);
+        if (key != this.resources.reinitKey) {
+            if (this.resources.reinitKey != null) {
+                Arrays.fill(this.resources.reinitKey, (byte) 0x00);
             }
-            this.reinitKey = key.clone();
+            this.resources.reinitKey = key.clone();
         }
         if (iv != reinitIV) {
             this.reinitIV = (iv == null) ? null : iv.clone();
@@ -181,17 +208,21 @@ public final class SymmetricCipher implements CleanableObject{
         this.isInitialized = true;
 
         // Create cached version
-        if (reinitIV != null && reinitKey != null) {
-            reinitIVAndKey = new byte[reinitIV.length + reinitKey.length];
+        if (reinitIV != null && this.resources.reinitKey != null) {
+            reinitIVAndKey = new byte[reinitIV.length + this.resources.reinitKey.length];
             System.arraycopy(reinitIV, 0, reinitIVAndKey, 0, reinitIV.length);
-            System.arraycopy(reinitKey, 0, reinitIVAndKey, reinitIV.length, reinitKey.length);
+            System.arraycopy(this.resources.reinitKey, 0, reinitIVAndKey, reinitIV.length, this.resources.reinitKey.length);
         }
 
 
+<<<<<<< HEAD
         if (use_z_fast_command) {
             if (parametersBuffer == null) {
                 parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
             }
+=======
+        if (this.resources.use_z_fast_command) {
+>>>>>>> cbc95e9 (Add resource class for cleanup)
             // Calculating pointers/offsets
             // parameters = SymmetricCipher.parametersBuffer.get();
             inputPointer = parametersBuffer.pointer();
@@ -297,10 +328,10 @@ public final class SymmetricCipher implements CleanableObject{
 
     public synchronized int getBlockSize() throws OCKException {
         if (blockSize == 0) {
-            if (!use_z_fast_command) {
-                if (ockCipherId == 0L)
+            if (!this.resources.use_z_fast_command) {
+                if (this.resources.ockCipherId == 0L)
                     throw new OCKException(badIdMsg);
-                blockSize = NativeInterface.CIPHER_getBlockSize(ockContext.getId(), ockCipherId);
+                blockSize = NativeInterface.CIPHER_getBlockSize(this.resources.ockContext.getId(), this.resources.ockCipherId);
             } else {
                 blockSize = 16;
             }
@@ -310,11 +341,11 @@ public final class SymmetricCipher implements CleanableObject{
 
     public synchronized int getKeyLength() throws OCKException {
         if (keyLength == 0) {
-            if (!use_z_fast_command) {
-                if (ockCipherId == 0L) {
+            if (!this.resources.use_z_fast_command) {
+                if (this.resources.ockCipherId == 0L) {
                     throw new OCKException(badIdMsg);
                 }
-                keyLength = NativeInterface.CIPHER_getKeyLength(ockContext.getId(), ockCipherId);
+                keyLength = NativeInterface.CIPHER_getKeyLength(this.resources.ockContext.getId(), this.resources.ockCipherId);
             } else {
                 keyLength = 16;
             }
@@ -323,10 +354,10 @@ public final class SymmetricCipher implements CleanableObject{
     }
 
     public synchronized int getIVLength() throws OCKException {
-        if (ivLength == 0 && !use_z_fast_command) {
-            if (ockCipherId == 0L)
+        if (ivLength == 0 && !this.resources.use_z_fast_command) {
+            if (this.resources.ockCipherId == 0L)
                 throw new OCKException(badIdMsg);
-            ivLength = NativeInterface.CIPHER_getIVLength(ockContext.getId(), ockCipherId);
+            ivLength = NativeInterface.CIPHER_getIVLength(this.resources.ockContext.getId(), this.resources.ockCipherId);
         }
         return ivLength;
     }
@@ -390,14 +421,14 @@ public final class SymmetricCipher implements CleanableObject{
         byte[] tmpBuf = new byte[getOutputSizeForOCK(inputLen)];
         try {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
-            if (ockCipherId == 0L) {
+            if (this.resources.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = NativeInterface.CIPHER_encryptUpdate(this.resources.ockContext.getId(), this.resources.ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = NativeInterface.CIPHER_decryptUpdate(this.resources.ockContext.getId(), this.resources.ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -431,8 +462,8 @@ public final class SymmetricCipher implements CleanableObject{
                 parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
             else {
                 parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
-                        reinitKey.length);
+                parametersBuffer.put(paramOffset + reinitIV.length, this.resources.reinitKey, 0,
+                    this.resources.reinitKey.length);
             }
             needsReinit = false;
         }
@@ -522,14 +553,14 @@ public final class SymmetricCipher implements CleanableObject{
         try {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
             //OCKDebug.Msg(debPrefix, methodName, "input bytes :", input);
-            if (ockCipherId == 0L) {
+            if (this.resources.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = NativeInterface.CIPHER_encryptFinal(this.resources.ockContext.getId(), this.resources.ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = NativeInterface.CIPHER_decryptFinal(this.resources.ockContext.getId(), this.resources.ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -573,7 +604,7 @@ public final class SymmetricCipher implements CleanableObject{
             else {
                 parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
                 parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
-                        reinitKey.length);
+                    this.resources.reinitKey.length);
             }
             needsReinit = false;
         }
@@ -591,29 +622,6 @@ public final class SymmetricCipher implements CleanableObject{
         return outLen;
     }
 
-    @Override
-    public synchronized void cleanup() {
-        //final String methodName = "finalize";
-        System.out.println("Cleanup called on SymmetricCipher instance.");
-        //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
-        if (!use_z_fast_command) {
-            if (ockCipherId != 0) {
-                try {
-                    NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
-                    ockCipherId = 0;
-                } catch (OCKException e) {
-                    e.printStackTrace();
-                }
-                
-            }
-        }
-        
-        if (reinitKey != null) {
-            Arrays.fill(reinitKey, (byte) 0x00);
-            reinitKey = null;
-        }
-    }
-
     /* At some point we may enhance this function to do other validations */
     protected static boolean validId(long id) {
         //final String methodName = "validId";
@@ -626,7 +634,7 @@ public final class SymmetricCipher implements CleanableObject{
     }
 
     public boolean getHardwareSupportStatus() {
-        return use_z_fast_command;
+        return this.resources.use_z_fast_command;
     }
 
     public void resetParams() {
@@ -692,5 +700,11 @@ public final class SymmetricCipher implements CleanableObject{
                 return ch - 'A' + 10;
             }
         }
+    }
+
+    private static Runnable cleanAction(Resources resources) {
+        return () -> {
+            resources.cleanup();
+        };
     }
 }

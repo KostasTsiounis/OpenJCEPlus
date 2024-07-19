@@ -50,6 +50,10 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         return doSelfVerification(c);
     }
 
+    public static void registerCleanableB(CleanableObject owner, Runnable cleanAction) {
+        cleaner.register(owner, cleanAction);
+    }
+
     public static void registerCleanable(CleanableObject owner) {
         cleaner.register(owner, new Runnable() {
             @Override
