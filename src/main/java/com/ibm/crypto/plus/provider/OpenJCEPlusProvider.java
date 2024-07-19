@@ -55,13 +55,8 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         ownerRef.get().cleanup();
     }
 
-    public static void registerCleanableC(Object owner, WeakReference<CleanableObject> ownerRef) {
-        cleaner.register(owner, new Runnable() {
-            @Override
-            public void run() {
-                action(ownerRef);
-            }
-        });
+    public static void registerCleanableC(Object owner, Runnable action) {
+        cleaner.register(owner, action);
     }
 
     public static void registerCleanableB(Object owner, Runnable cleanAction) {

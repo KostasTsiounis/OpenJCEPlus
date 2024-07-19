@@ -61,7 +61,7 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
         this.ockCipherId = NativeInterface.POLY1305CIPHER_create(ockContext.getId(), cipherName);
         this.padding = padding;
 
-        OpenJCEPlusProvider.registerCleanableC(this, new WeakReference<CleanableObject>(this));
+        OpenJCEPlusProvider.registerCleanableC(this, cleanAction(new WeakReference<CleanableObject>(this)));
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -416,5 +416,11 @@ public final class Poly1305Cipher implements Poly1305Constants, CleanableObject 
             baos.write(input, inputOffset, inputLen);
         }
         return baos.toByteArray();
+    }
+
+    private static Runnable cleanAction(WeakReference<CleanableObject> thisRef) {
+        return () -> {
+            OpenJCEPlusProvider.action(thisRef);;
+        };
     }
 }
