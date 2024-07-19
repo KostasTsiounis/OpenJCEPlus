@@ -8,6 +8,7 @@
 
 package com.ibm.crypto.plus.provider;
 
+import java.lang.ref.WeakReference;
 import java.security.InvalidKeyException;
 import java.security.KeyRep;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ final class AESKey implements SecretKey, CleanableObject {
         this.key = new byte[key.length];
         System.arraycopy(key, 0, this.key, 0, key.length);
 
-        OpenJCEPlusProvider.registerCleanable(this);
+        OpenJCEPlusProvider.registerCleanableC(this, new WeakReference<>(this));
     }
 
     @Override
@@ -159,7 +160,7 @@ final class AESKey implements SecretKey, CleanableObject {
      */
     @Override
     public void cleanup() {
-        System.out.println("Cleanup called on SymmetricCipher instance.");
+        System.out.println("Cleanup called on AESKey instance.");
         synchronized (this) {
             if (this.key != null) {
                 Arrays.fill(this.key, (byte) 0x00);

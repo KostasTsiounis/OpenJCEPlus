@@ -10,6 +10,7 @@ package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.lang.ref.Cleaner;
+import java.lang.ref.WeakReference;
 import java.security.ProviderException;
 <<<<<<< HEAD
 import jdk.internal.ref.CleanerFactory;
@@ -48,6 +49,15 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         }
 
         return doSelfVerification(c);
+    }
+
+    public static void registerCleanableC(Object owner, WeakReference<CleanableObject> ownerRef) {
+        cleaner.register(owner, new Runnable() {
+            @Override
+            public void run() {
+                ownerRef.get().cleanup();
+            }
+        });
     }
 
     public static void registerCleanableB(Object owner, Runnable cleanAction) {
