@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.ibm.crypto.plus.provider.CleanableObject;
-import com.ibm.crypto.plus.provider.OpenJCEPlus;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 
 @SuppressWarnings({"removal", "deprecation"})
