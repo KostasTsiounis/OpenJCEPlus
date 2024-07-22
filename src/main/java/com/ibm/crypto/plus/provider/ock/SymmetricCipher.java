@@ -22,36 +22,10 @@ import javax.crypto.ShortBufferException;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 
 public final class SymmetricCipher{
-
-    static private class Resources {
-        private boolean use_z_fast_command = false;
-        private long ockCipherId;
-        private OCKContext ockContext;
-        private byte[] reinitKey;
-
-        private synchronized void cleanup() {
-            //System.out.println("Cleanup called on SymmetricCipher instance.");
-            //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
-            if (!use_z_fast_command) {
-                if (ockCipherId != 0) {
-                    try {
-                        NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
-                        ockCipherId = 0;
-                    } catch (OCKException e) {
-                        e.printStackTrace();
-                    }
-                    
-                }
-            }
-            
-            if (reinitKey != null) {
-                Arrays.fill(reinitKey, (byte) 0x00);
-                reinitKey = null;
-            }
-        }
-    }
-
-    private Resources resources;
+    private boolean use_z_fast_command = false;
+    private long ockCipherId;
+    private OCKContext ockContext;
+    private byte[] reinitKey;
     private boolean isInitialized = false;
     private boolean encrypting = true;
     private Padding padding = null;
@@ -145,7 +119,6 @@ public final class SymmetricCipher{
 
     private SymmetricCipher(OCKContext ockContext, String cipherName, Padding padding)
             throws OCKException {
-        this.resources = new Resources();
 
         // Check whether used algorithm is CBC and whether hardware supports
         boolean isHardwareSupport = false;
@@ -156,16 +129,16 @@ public final class SymmetricCipher{
             isHardwareSupport = (hardwareFunctionPtr == 1) ? true : false;
             hardwareEnabled.put(ockContext, isHardwareSupport);
         }
-        this.resources.use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
+        this.use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
 
-        this.resources.ockContext = ockContext;
+        this.ockContext = ockContext;
         this.padding = padding;
-        if (!this.resources.use_z_fast_command) {
-            this.resources.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
+        if (!this.use_z_fast_command) {
+            this.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
         }
 
-        OpenJCEPlusProvider.registerCleanableB(this, cleanAction(this.resources));
+        OpenJCEPlusProvider.registerCleanableC(this, cleanOCKResources(this.ockCipherId, this.ockContext));
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -184,25 +157,26 @@ public final class SymmetricCipher{
             throw new IllegalArgumentException("IV is the wrong size");
         }
 
-        if (!this.resources.use_z_fast_command) {
+        if (!this.use_z_fast_command) {
             if (key.length < getKeyLength()) {
                 throw new IllegalArgumentException("key is the wrong size");
             }
-            if (this.resources.ockCipherId == 0L) {
+            if (this.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            NativeInterface.CIPHER_init(this.resources.ockContext.getId(), this.resources.ockCipherId, isEncrypt ? 1 : 0,
+            NativeInterface.CIPHER_init(this.ockContext.getId(), this.ockCipherId, isEncrypt ? 1 : 0,
                     padding.getId(), key, iv);
         }
 
         this.encrypting = isEncrypt ? true : false;
         this.bufferedCount = 0;
         this.needsReinit = false;
-        if (key != this.resources.reinitKey) {
-            if (this.resources.reinitKey != null) {
-                Arrays.fill(this.resources.reinitKey, (byte) 0x00);
+        if (key != this.reinitKey) {
+            if (this.reinitKey != null) {
+                Arrays.fill(this.reinitKey, (byte) 0x00);
             }
-            this.resources.reinitKey = key.clone();
+            this.reinitKey = key.clone();
+            OpenJCEPlusProvider.registerCleanableC(this, cleanKeyArray(this.reinitKey));
         }
         if (iv != reinitIV) {
             this.reinitIV = (iv == null) ? null : iv.clone();
@@ -210,14 +184,14 @@ public final class SymmetricCipher{
         this.isInitialized = true;
 
         // Create cached version
-        if (reinitIV != null && this.resources.reinitKey != null) {
-            reinitIVAndKey = new byte[reinitIV.length + this.resources.reinitKey.length];
+        if (reinitIV != null && this.reinitKey != null) {
+            reinitIVAndKey = new byte[reinitIV.length + this.reinitKey.length];
             System.arraycopy(reinitIV, 0, reinitIVAndKey, 0, reinitIV.length);
-            System.arraycopy(this.resources.reinitKey, 0, reinitIVAndKey, reinitIV.length, this.resources.reinitKey.length);
+            System.arraycopy(this.reinitKey, 0, reinitIVAndKey, reinitIV.length, this.reinitKey.length);
         }
 
 
-        if (this.resources.use_z_fast_command) {
+        if (this.use_z_fast_command) {
             // Calculating pointers/offsets
             // parameters = SymmetricCipher.parametersBuffer.get();
             inputPointer = parametersBuffer.pointer();
@@ -323,10 +297,10 @@ public final class SymmetricCipher{
 
     public synchronized int getBlockSize() throws OCKException {
         if (blockSize == 0) {
-            if (!this.resources.use_z_fast_command) {
-                if (this.resources.ockCipherId == 0L)
+            if (!this.use_z_fast_command) {
+                if (this.ockCipherId == 0L)
                     throw new OCKException(badIdMsg);
-                blockSize = NativeInterface.CIPHER_getBlockSize(this.resources.ockContext.getId(), this.resources.ockCipherId);
+                blockSize = NativeInterface.CIPHER_getBlockSize(this.ockContext.getId(), this.ockCipherId);
             } else {
                 blockSize = 16;
             }
@@ -336,11 +310,11 @@ public final class SymmetricCipher{
 
     public synchronized int getKeyLength() throws OCKException {
         if (keyLength == 0) {
-            if (!this.resources.use_z_fast_command) {
-                if (this.resources.ockCipherId == 0L) {
+            if (!this.use_z_fast_command) {
+                if (this.ockCipherId == 0L) {
                     throw new OCKException(badIdMsg);
                 }
-                keyLength = NativeInterface.CIPHER_getKeyLength(this.resources.ockContext.getId(), this.resources.ockCipherId);
+                keyLength = NativeInterface.CIPHER_getKeyLength(this.ockContext.getId(), this.ockCipherId);
             } else {
                 keyLength = 16;
             }
@@ -349,10 +323,10 @@ public final class SymmetricCipher{
     }
 
     public synchronized int getIVLength() throws OCKException {
-        if (ivLength == 0 && !this.resources.use_z_fast_command) {
-            if (this.resources.ockCipherId == 0L)
+        if (ivLength == 0 && !this.use_z_fast_command) {
+            if (this.ockCipherId == 0L)
                 throw new OCKException(badIdMsg);
-            ivLength = NativeInterface.CIPHER_getIVLength(this.resources.ockContext.getId(), this.resources.ockCipherId);
+            ivLength = NativeInterface.CIPHER_getIVLength(this.ockContext.getId(), this.ockCipherId);
         }
         return ivLength;
     }
@@ -416,14 +390,14 @@ public final class SymmetricCipher{
         byte[] tmpBuf = new byte[getOutputSizeForOCK(inputLen)];
         try {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
-            if (this.resources.ockCipherId == 0L) {
+            if (this.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptUpdate(this.resources.ockContext.getId(), this.resources.ockCipherId,
+                outLen = NativeInterface.CIPHER_encryptUpdate(this.ockContext.getId(), this.ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptUpdate(this.resources.ockContext.getId(), this.resources.ockCipherId,
+                outLen = NativeInterface.CIPHER_decryptUpdate(this.ockContext.getId(), this.ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -457,8 +431,8 @@ public final class SymmetricCipher{
                 parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
             else {
                 parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-                parametersBuffer.put(paramOffset + reinitIV.length, this.resources.reinitKey, 0,
-                    this.resources.reinitKey.length);
+                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
+                    this.reinitKey.length);
             }
             needsReinit = false;
         }
@@ -548,14 +522,14 @@ public final class SymmetricCipher{
         try {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
             //OCKDebug.Msg(debPrefix, methodName, "input bytes :", input);
-            if (this.resources.ockCipherId == 0L) {
+            if (this.ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptFinal(this.resources.ockContext.getId(), this.resources.ockCipherId, input,
+                outLen = NativeInterface.CIPHER_encryptFinal(this.ockContext.getId(), this.ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptFinal(this.resources.ockContext.getId(), this.resources.ockCipherId, input,
+                outLen = NativeInterface.CIPHER_decryptFinal(this.ockContext.getId(), this.ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -598,8 +572,8 @@ public final class SymmetricCipher{
                 parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
             else {
                 parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-                parametersBuffer.put(paramOffset + reinitIV.length, this.resources.reinitKey, 0,
-                    this.resources.reinitKey.length);
+                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
+                    this.reinitKey.length);
             }
             needsReinit = false;
         }
@@ -629,7 +603,7 @@ public final class SymmetricCipher{
     }
 
     public boolean getHardwareSupportStatus() {
-        return this.resources.use_z_fast_command;
+        return this.use_z_fast_command;
     }
 
     public void resetParams() {
@@ -697,9 +671,23 @@ public final class SymmetricCipher{
         }
     }
 
-    private static Runnable cleanAction(Resources resources) {
+    private static Runnable cleanOCKResources(long ockCipherId, OCKContext ockContext) {
         return () -> {
-            resources.cleanup();
+            if (ockCipherId != 0) {
+                try {
+                    NativeInterface.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
+                } catch (OCKException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    private static Runnable cleanKeyArray(byte[] reinitKey) {
+        return () -> {
+            if (reinitKey != null) {
+                Arrays.fill(reinitKey, (byte) 0x00);
+            }
         };
     }
 }
