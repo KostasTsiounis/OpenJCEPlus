@@ -9,7 +9,6 @@
 package com.ibm.crypto.plus.provider.ock;
 
 import com.ibm.crypto.plus.provider.CleanableObject;
-import com.ibm.crypto.plus.provider.OpenJCEPlus;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
