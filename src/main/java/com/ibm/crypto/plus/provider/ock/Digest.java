@@ -38,7 +38,23 @@ public final class Digest implements Cloneable {
 
         private final String badIdMsg = "Digest Identifier is not valid";
 
-        public void cleanup() {
+        public void reset() throws OCKException {
+            // reset now to make sure all contexts in the queue are ready to use
+            //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
+
+            if (this.digestId == 0) {
+                return;
+            }
+
+            if (!validId(this.digestId)) {
+                throw new OCKException(badIdMsg);
+            }
+            if (this.needsReinit) {
+                NativeInterface.DIGEST_reset(this.ockContext.getId(), this.digestId);
+            }
+        }
+
+        private void cleanup() {
             //final String methodName = "finalize";
 
             //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
@@ -56,19 +72,8 @@ public final class Digest implements Cloneable {
                     }
                 } else {
                     if (this.contextFromQueue) {
-                        // reset now to make sure all contexts in the queue are ready to use
-                        //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
+                        reset();
 
-                        if (this.digestId == 0) {
-                            return;
-                        }
-
-                        if (!validId(this.digestId)) {
-                            throw new OCKException(badIdMsg);
-                        }
-                        if (this.needsReinit) {
-                            NativeInterface.DIGEST_reset(this.ockContext.getId(), this.digestId);
-                        }
                         this.needsReinit = false;
                         contexts[this.algIndx].add(this.digestId);
                         this.digestId = 0;
@@ -340,7 +345,6 @@ public final class Digest implements Cloneable {
         return (id != 0L);
     }
 
-<<<<<<< HEAD
     /**
      * Clones a given Digest.
      */
@@ -364,6 +368,12 @@ public final class Digest implements Cloneable {
                 this.ockContext.getId(), getId());
             if (0 == copy.digestId) {
 =======
+=======
+    public void reset() throws OCKException {
+        this.resources.reset();
+    }
+
+>>>>>>> dbd928c (Add resources class to Digest 2)
     @Override
     synchronized public Object clone() throws CloneNotSupportedException {
         Digest copy = (Digest) super.clone();
