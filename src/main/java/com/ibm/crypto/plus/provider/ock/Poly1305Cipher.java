@@ -12,7 +12,6 @@ import com.ibm.crypto.plus.provider.CleanableObject;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.Poly1305Constants;
 import java.io.ByteArrayOutputStream;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
