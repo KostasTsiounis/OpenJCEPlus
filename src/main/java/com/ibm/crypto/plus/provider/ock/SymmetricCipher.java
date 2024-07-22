@@ -675,7 +675,7 @@ public final class SymmetricCipher{
         return () -> {
             if (ockCipherId != 0) {
                 try {
-                    NativeInterface.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
+                    NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
                 } catch (OCKException e) {
                     e.printStackTrace();
                 }
