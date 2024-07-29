@@ -8,8 +8,12 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.OCKContext;
+import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
+import java.security.ProviderException;
+import java.util.concurrent.Executors;
+
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
 // Implemented as an abstract class rather than an interface so that 
@@ -31,7 +35,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
 
     private static final Cleaner cleaner = Cleaner.create();
 
-    private static final Cleaner cleaner = Cleaner.create();
+    private static final Cleaner cleaner = Cleaner.create(Executors.defaultThreadFactory());
 
     OpenJCEPlusProvider(String name, String info) {
         super(name, PROVIDER_VER, info);
