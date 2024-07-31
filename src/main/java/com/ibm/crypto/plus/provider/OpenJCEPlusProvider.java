@@ -11,6 +11,7 @@ package com.ibm.crypto.plus.provider;
 import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.security.ProviderException;
+import java.util.concurrent.ThreadFactory;
 
 import com.ibm.crypto.plus.provider.ock.OCKContext;
 
@@ -34,7 +35,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
 
     private static final Cleaner cleaner = Cleaner.create();
 
-    private static final Cleaner cleaner = Cleaner.create();
+    private static final Cleaner cleaner = Cleaner.create(new CleanerThreadFactory());
 
     OpenJCEPlusProvider(String name, String info) {
         super(name, PROVIDER_VER, info);
@@ -110,4 +111,15 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
     abstract ProviderException providerException(String message, Throwable ockException);
 
     abstract void setOCKExceptionCause(Exception exception, Throwable ockException);
+
+    private static class CleanerThreadFactory implements ThreadFactory {
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r);
+            thread.setPriority(Thread.MAX_PRIORITY);
+            return thread;
+        }
+        
+    }
 }
