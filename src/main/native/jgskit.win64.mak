@@ -78,7 +78,7 @@ $(HOSTOUT)/BuildDate.obj: FORCE
 FORCE:
 
 ${HOSTOUT}/%.obj: %.c
-	-cl -nologo -DWINDOWS $(DEBUG_FLAGS) -c -I"$(GSKIT_HOME)/inc" -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -I"$(OPENJCEPLUS_HEADER_FILES)" $< -Fo$@
+	-cl -nologo -DWINDOWS $(DEBUG_FLAGS) -c -I"$(GSKIT_HOME)/inc" -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" $< -Fo$@
 
 $(JGSKIT_RC_OBJ) : $(JGSKIT_RC_SRC)
 	-@rc $(BUILD_CFLAGS) -Fo$@ $(JGSKIT_RC_SRC)
