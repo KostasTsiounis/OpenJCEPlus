@@ -78,6 +78,10 @@ $(HOSTOUT)/BuildDate.obj: FORCE
 FORCE:
 
 ${HOSTOUT}/%.obj: %.c
+	-@echo $(JAVA_HOME)/include
+	-@ls -la $(JAVA_HOME)/include
+	-@echo $(OPENJCEPLUS_HEADER_FILES)
+	-@ls -la $(OPENJCEPLUS_HEADER_FILES)
 	-cl -nologo -DWINDOWS $(DEBUG_FLAGS) -c -I"$(GSKIT_HOME)/inc" -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" $< -Fo$@
 
 $(JGSKIT_RC_OBJ) : $(JGSKIT_RC_SRC)
