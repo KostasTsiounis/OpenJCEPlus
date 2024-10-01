@@ -53,20 +53,10 @@ JGSKIT_RC_OBJ = $(HOSTOUT)/jgskit_resource.res
 
 TARGET = $(HOSTOUT)/libjgskit_64.dll
 
-all:  dircreate javah $(TARGET)
-
-noheaders: dircreate $(TARGET)
+all:  dircreate $(TARGET)
 
 dircreate:
 	-@mkdir -p $(HOSTOUT) 2>nul
-
-javah: dircreate
-	$(JAVA_HOME)/bin/javac --add-exports java.base/jdk.internal.misc=ALL-UNNAMED -cp $(JCE_CLASSPATH) \
-	$(TOPDIR)/src/main/java/com/ibm/crypto/plus/provider/ock/NativeInterface.java \
-	$(TOPDIR)/src/main/java/com/ibm/crypto/plus/provider/ock/FastJNIBuffer.java \
-	$(TOPDIR)/src/main/java/com/ibm/crypto/plus/provider/ock/OCKContext.java \
-	$(TOPDIR)/src/main/java/com/ibm/crypto/plus/provider/ock/OCKException.java \
-	-d $(JAVACLASSDIR) -h $(TOPDIR)/src/main/native/
 
 $(TARGET): $(OBJS) $(JGSKIT_RC_OBJ)
 	-link -dll -out:$@ $(OBJS) $(JGSKIT_RC_OBJ) -LIBPATH:"$(GSKIT_HOME)/lib" jgsk8iccs_64.lib
@@ -82,7 +72,7 @@ ${HOSTOUT}/%.obj: %.c
 	-@ls -la $(JAVA_HOME)/include
 	-@echo $(OPENJCEPLUS_HEADER_FILES)
 	-@ls -la $(OPENJCEPLUS_HEADER_FILES)
-	-cl -nologo -DWINDOWS $(DEBUG_FLAGS) -c -I"$(GSKIT_HOME)/inc" -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" $< -Fo$@
+	-cl -nologo -DWINDOWS $(DEBUG_FLAGS) -c -I"$(GSKIT_HOME)/inc" -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -I"$(OPENJCEPLUS_HEADER_FILES)" $< -Fo$@
 
 $(JGSKIT_RC_OBJ) : $(JGSKIT_RC_SRC)
 	-@rc $(BUILD_CFLAGS) -Fo$@ $(JGSKIT_RC_SRC)
