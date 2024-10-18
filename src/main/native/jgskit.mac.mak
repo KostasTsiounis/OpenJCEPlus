@@ -8,9 +8,10 @@
 #
 ###############################################################################
 
-TOPDIR=./../../..
+TOPDIR=../../..
 
 PLAT=mac
+CFLAGS= -arch arm64 -pedantic -Wall -fstack-protector
 #Setting this flag will result non key material such as handle to OCK Objects etc being logged to the trace file.
 #This flag must be disabled before building production version
 #DEBUG_FLAGS += -DDEBUG
@@ -27,7 +28,8 @@ HOSTOUT = ${BUILDTOP}/aarch64
 OPENJCEPLUS_HEADER_FILES ?= ${TOPDIR}/src/main/native
 JAVACLASSDIR=${TOPDIR}/target/classes
 
-OBJS= ${HOSTOUT}/BasicRandom.o \
+OBJS= \
+	${HOSTOUT}/BasicRandom.o \
 	${HOSTOUT}/BuildDate.o \
 	${HOSTOUT}/CCM.o \
 	${HOSTOUT}/Digest.o \
@@ -53,33 +55,41 @@ OBJS= ${HOSTOUT}/BasicRandom.o \
 
 TARGET = ${HOSTOUT}/libjgskit.dylib
 
-all: headers ${TARGET}
-
-noheaders: ${TARGET}
-
-dircreate:
-	mkdir -p ${HOSTOUT} 2>/dev/null
-
-javah: dircreate
-	${JAVA_HOME}/bin/javac \
-	--add-exports java.base/sun.security.util=openjceplus \
-	-cp ${JCE_CLASSPATH} \
-headers: | dircreate
-	${JAVA_HOME}/bin/javac \
-	--add-exports java.base/sun.security.util=openjceplus \
-	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/NativeInterface.java \
-	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/FastJNIBuffer.java \
-	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/OCKContext.java \
-	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/OCKException.java \
-	-d ${JAVACLASSDIR} -h ${TOPDIR}/src/main/native/ 
+all : ${TARGET}
 
 ${TARGET}: ${OBJS}
 	gcc -shared -m64 -arch arm64 -o ${TARGET} -DMAC ${OBJS} -L ${GSKIT_HOME}/lib64 -l jgsk8iccs
 
-${HOSTOUT}/%.o: %.c | dircreate
-	gcc -fPIC ${DEBUG_FLAGS} -c -arch arm64 -pedantic -Wall -fstack-protector -I${TOPDIR}/src/main/native/ -I${GSKIT_HOME}/inc -I${JAVA_HOME}/include -I${JAVA_HOME}/include/darwin -I${OPENJCEPLUS_HEADER_FILES} $< -o $@
+${HOSTOUT}/%.o: %.c
+	test -d ${@D} || mkdir -p ${@D} 2>/dev/null
+	gcc \
+		-fPIC \
+		${DEBUG_FLAGS} \
+		${CFLAGS} \
+		-c \
+		-I${TOPDIR}/src/main/native/ \
+		-I${GSKIT_HOME}/inc \
+		-I${JAVA_HOME}/include \
+		-I${JAVA_HOME}/include/darwin \
+		-I${OPENJCEPLUS_HEADER_FILES} \
+		-o $@ \
+		$<
 
+ifneq (${EXTERNAL_HEADERS},false)
 
+${OBJS} : | headers
+
+headers: | dircreate
+	${JAVA_HOME}/bin/javac \
+	--add-exports java.base/sun.security.util=openjceplus \
+	-d ${JAVACLASSDIR} \
+	-h ${TOPDIR}/src/main/native/ \
+	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/NativeInterface.java \
+	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/FastJNIBuffer.java \
+	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/OCKContext.java \
+	${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/OCKException.java
+
+endif # ! EXTERNAL_HEADERS
 
 clean:
 	rm -f ${HOSTOUT}/*.o
