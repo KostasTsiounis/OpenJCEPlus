@@ -53,7 +53,7 @@ abstract class ECDSASignature extends SignatureSpi {
     @Override
     protected void engineInitSign(PrivateKey privateKey) throws InvalidKeyException {
         this.privateKey = (ECPrivateKey) ECKeyFactory.toECKey(provider, privateKey);
-        sun.security.util.ECUtil.checkPrivateKey(this.privateKey);
+        ECUtil.checkPrivateKey(this.privateKey);
 
         if (this.provider.isFIPS()) {
             ECNamedCurve ecNamedCurve = ECParameters
@@ -134,7 +134,7 @@ abstract class ECDSASignature extends SignatureSpi {
                     "Parameters must be of type ECParameterSpec");
         }
         java.security.interfaces.ECKey key = (this.privateKey == null? this.publicKey : this.privateKey);
-        if ((key != null) && !sun.security.util.ECUtil.equals(ecparams, key.getParams())) {
+        if ((key != null) && !ECUtil.equals(ecparams, key.getParams())) {
             throw new InvalidAlgorithmParameterException
                 ("Signature params does not match key params");
         }
