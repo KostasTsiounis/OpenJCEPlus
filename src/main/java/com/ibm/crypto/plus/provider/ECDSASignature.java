@@ -8,6 +8,7 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.ock.Signature;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -18,11 +19,7 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECParameterSpec;
-
-import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
-
-import com.ibm.crypto.plus.provider.ock.Signature;
-
+import sun.security.util.ECUtil;
 import sun.security.util.ObjectIdentifier;
 
 
@@ -119,7 +116,8 @@ abstract class ECDSASignature extends SignatureSpi {
 
     @Deprecated
     @Override
-    protected void engineSetParameter(String param, Object value) throws InvalidParameterException {
+    protected void engineSetParameter(String param, Object value)
+            throws InvalidParameterException {
         throw new UnsupportedOperationException("setParameter() not supported");
     }
 
