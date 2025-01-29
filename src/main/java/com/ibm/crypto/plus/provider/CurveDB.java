@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import sun.security.util.NamedCurve;
+
 /**
  * Repository for well-known Elliptic Curve parameters. It is used by both
  * the SunPKCS11 and SunJSSE code.
