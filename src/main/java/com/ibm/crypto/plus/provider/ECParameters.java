@@ -31,6 +31,7 @@ import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
 import sun.security.util.ECKeySizeParameterSpec;
+import sun.security.util.NamedCurve;
 import sun.security.util.ObjectIdentifier;
 
 /**
