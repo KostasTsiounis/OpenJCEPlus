@@ -17,6 +17,7 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
+import sun.security.util.ECParameters;
 import sun.security.util.ObjectIdentifier;
 
 public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {

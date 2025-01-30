@@ -22,6 +22,7 @@ import javax.security.auth.Destroyable;
 import sun.security.util.BitArray;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
+import sun.security.util.ECParameters;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.X509Key;
 

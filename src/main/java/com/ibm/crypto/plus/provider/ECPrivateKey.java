@@ -24,6 +24,7 @@ import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
+import sun.security.util.ECParameters;
 import sun.security.util.ObjectIdentifier;
 import sun.security.x509.AlgorithmId;
 

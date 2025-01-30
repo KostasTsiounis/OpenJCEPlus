@@ -16,6 +16,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
+import sun.security.util.ECParameters;
 import sun.security.util.ObjectIdentifier;
 
 

@@ -137,10 +137,6 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
         putService(new OpenJCEPlusService(jce, "AlgorithmParameters", "DSA",
                 "com.ibm.crypto.plus.provider.DSAParameters", aliases));
 
-        aliases = new String[] {"EllipticCurve", "OID.1.2.840.10045.2.1", "1.2.840.10045.2.1"};
-        putService(new OpenJCEPlusService(jce, "AlgorithmParameters", "EC",
-                "com.ibm.crypto.plus.provider.ECParameters", aliases));
-
         aliases = new String[] {"AESGCM"};
         putService(new OpenJCEPlusService(jce, "AlgorithmParameters", "GCM",
                 "com.ibm.crypto.plus.provider.GCMParameters", aliases));
