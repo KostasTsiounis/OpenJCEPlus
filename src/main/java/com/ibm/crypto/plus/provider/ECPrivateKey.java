@@ -125,7 +125,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(s, paramSpec) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECUtil.encodeECParameters(this.params);
+            byte[] paramBytes = ECUtil.encodeECParameterSpec(this.params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(s, paramSpec) This.eckey private
@@ -171,7 +171,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(byte[]encoded) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECUtil.encodeECParameters(params);
+            byte[] paramBytes = ECUtil.encodeECParameterSpec(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(bytes[] encoded) This.eckey
@@ -508,7 +508,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             bytes.putOctetString(privData);
         }
 
-        byte[] ecParamEncodedBeforeTrimming = ECUtil.encodeECParameters(params);
+        byte[] ecParamEncodedBeforeTrimming = ECUtil.encodeECParameterSpec(params);
         byte[] myEncodedECParameters = ECUtil.trimZeroes(ecParamEncodedBeforeTrimming);
         // System.out.println("ecParamEncodedbeforeTrimming= " +
         // ECUtils.bytesToHex(ecParamEncodedBeforeTrimming));

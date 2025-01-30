@@ -112,7 +112,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
                         random);
             } else if (this.ecSpec != null) {
 
-                byte[] encodedCustomCurveParameters = ECUtil.encodeECParameters(this.ecSpec);
+                byte[] encodedCustomCurveParameters = ECUtil.encodeECParameterSpec(this.ecSpec);
                 // System.out.println ("generting key pair from a custom
                 // specification encodedParameters=" +
                 // ECUtils.bytesToHex(encodedCustomCurveParameters));
