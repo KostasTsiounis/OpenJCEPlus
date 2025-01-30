@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import sun.security.util.KnownOIDs;
 import sun.security.util.NamedCurve;
 
 /**
@@ -128,7 +129,7 @@ class CurveDB {
         EllipticCurve curve = new EllipticCurve(field, bi(a), bi(b));
         ECPoint g = new ECPoint(bi(x), bi(y));
 
-        NamedCurve params = new NamedCurve(name, soid, curve, g, bi(n), h);
+        NamedCurve params = new NamedCurve(KnownOIDs.findMatch(soid), curve, g, bi(n), h);
         if (oidMap.put(soid, params) != null) {
             throw new RuntimeException("Duplication oid: " + soid);
         }
