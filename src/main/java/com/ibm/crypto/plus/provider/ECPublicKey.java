@@ -20,10 +20,10 @@ import java.security.spec.InvalidParameterSpecException;
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 import sun.security.util.BitArray;
-import sun.security.util.ECUtil;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
 import sun.security.util.ECParameters;
+import sun.security.util.ECUtil;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.X509Key;
 
@@ -62,7 +62,7 @@ final class ECPublicKey extends X509Key
         setKey(new BitArray(keyArray.length * 8, keyArray));
 
         try {
-            byte[] parameterBytes = ECUtil.encodeECParameters(ecParams);
+            byte[] parameterBytes = ECUtil.encodeECParameterSpec(ecParams);
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
             // System.out.println ("publicKeyBytes.length=" +
             // publicKeyBytes.length);
@@ -90,7 +90,7 @@ final class ECPublicKey extends X509Key
 
         try {
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
-            byte[] parameterBytes = ECUtil.encodeECParameters(this.params);
+            byte[] parameterBytes = ECUtil.encodeECParameterSpec(this.params);
             // System.out.println ("Calling ECKey createPublicKey");
             this.ecKey = ECKey.createPublicKey(provider.getOCKContext(), publicKeyBytes,
                     parameterBytes);
