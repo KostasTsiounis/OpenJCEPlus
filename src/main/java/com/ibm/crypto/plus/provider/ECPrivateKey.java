@@ -80,8 +80,8 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
 
         // Get an AlgorithmParameters object that has been initialized with the
         // ECParameters (params).
-        AlgorithmParameters myAlgorithmParameters = com.ibm.crypto.plus.provider.ECParameters
-                .getAlgorithmParameters(provider, params);
+        AlgorithmParameters myAlgorithmParameters = ECParameters
+                .getAlgorithmParameters(params);
 
         // Build an AlgorithmId object from the EC_oid and the
         // AlgorithmParameters
@@ -124,7 +124,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(s, paramSpec) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECParameters.encodeECParameters(this.params);
+            byte[] paramBytes = ECUtil.encodeECParameters(this.params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(s, paramSpec) This.eckey private
@@ -170,7 +170,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(byte[]encoded) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECParameters.encodeECParameters(params);
+            byte[] paramBytes = ECUtil.encodeECParameters(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(bytes[] encoded) This.eckey
@@ -502,13 +502,13 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
                 throw new IOException(MSG_VERSION1);
             }
 
-            byte[] privData = ECParameters.trimZeroes(data.getOctetString());
+            byte[] privData = ECUtil.trimZeroes(data.getOctetString());
 
             bytes.putOctetString(privData);
         }
 
-        byte[] ecParamEncodedBeforeTrimming = ECParameters.encodeECParameters(params);
-        byte[] myEncodedECParameters = ECParameters.trimZeroes(ecParamEncodedBeforeTrimming);
+        byte[] ecParamEncodedBeforeTrimming = ECUtil.encodeECParameters(params);
+        byte[] myEncodedECParameters = ECUtil.trimZeroes(ecParamEncodedBeforeTrimming);
         // System.out.println("ecParamEncodedbeforeTrimming= " +
         // ECUtils.bytesToHex(ecParamEncodedBeforeTrimming));
         DerValue derValue = new DerValue(myEncodedECParameters);

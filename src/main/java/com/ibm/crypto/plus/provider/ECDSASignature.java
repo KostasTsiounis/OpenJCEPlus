@@ -51,8 +51,7 @@ abstract class ECDSASignature extends SignatureSpi {
         sun.security.util.ECUtil.checkPrivateKey(ecPrivate);
 
         if (this.provider.isFIPS()) {
-            ECNamedCurve ecNamedCurve = ECParameters
-                    .getNamedCurve(ecPrivate.getParams());
+            ECNamedCurve ecNamedCurve = ECNamedCurve.getNamedCurve(ecPrivate.getParams());
             ObjectIdentifier oid = null;
 
             oid = ECNamedCurve.getOIDFromName(ecNamedCurve.getName());

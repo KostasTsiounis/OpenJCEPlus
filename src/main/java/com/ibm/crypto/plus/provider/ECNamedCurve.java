@@ -152,6 +152,112 @@ final class ECNamedCurve extends ECGenParameterSpec implements AlgorithmParamete
         return getECParameterSpec(oid.toString());
     }
 
+    // If the ECParameterSpec passed in matches a known named curve, then return
+    // an
+    // instance
+    // of ECNamedCurve for that named curve. Otherwise, return "null".
+    static ECNamedCurve getNamedCurve(ECParameterSpec params) {
+
+        try {
+
+            // Get a copy of the nameMap from ECNamedCurve.
+            // The nameMap is a LinkedHashMap where the Key is a ECNamedCurve
+            // name string,
+            // and
+            // the value is an ECParameterSpec of the associated ECNamedCurve
+            Map<String, ECParameterSpec> nameMap = ECNamedCurve.getNameMap();
+            Set<Entry<String, ECParameterSpec>> myEntrySet = nameMap.entrySet();
+
+            // Scan the entries of the nameMap for an ECParameterSpec value that
+            // matches the
+            // one passed in.
+            for (Iterator<Entry<String, ECParameterSpec>> myIter = myEntrySet.iterator(); myIter.hasNext();) {
+                Entry<String, ECParameterSpec> myMapEntry = myIter.next();
+                String curveNameFromNameMap = myMapEntry.getKey();
+                ECParameterSpec ecParameterSpecFromNameMap = myMapEntry
+                        .getValue();
+
+                // Does ecParameterSpecFromNameMap match the one passed in?
+                // The ECParameterSpec class does not define equals, so I'll
+                // need to check all
+                // the
+                // components here.
+
+                // Compare the EllipticCurve components
+                BigInteger A1 = ecParameterSpecFromNameMap.getCurve().getA();
+                BigInteger A2 = params.getCurve().getA();
+
+                BigInteger B1 = ecParameterSpecFromNameMap.getCurve().getB();
+                BigInteger B2 = params.getCurve().getB();
+
+                int fieldSize1 = ecParameterSpecFromNameMap.getCurve().getField().getFieldSize();
+                int fieldSize2 = params.getCurve().getField().getFieldSize();
+
+                byte[] seedValue1 = ecParameterSpecFromNameMap.getCurve().getSeed();
+                byte[] seedValue2 = params.getCurve().getSeed();
+
+                if ((A1.equals(A2) == false) || (B1.equals(B2) == false)
+                        || (fieldSize1 != fieldSize2)) {
+                    continue;
+                }
+
+                // Compare the seed values from the EllipticCurve object
+                // separately, since they
+                // require a
+                // bit more logic.
+                // if seedValue1 == null and seedValue2 is null this looks good, do nothing.
+                if ((seedValue1 == null) && (seedValue2 != null)) {
+                    continue; // skip this named curve
+                } else if ((seedValue1 != null) && (seedValue2 == null)) {
+                    continue; // skip this named curve
+                } else if ((seedValue1 != null) && (seedValue2 != null)) {
+                    if (seedValue1.length != seedValue2.length) {
+                        continue; // skip this named curve
+                    } else {
+                        // Compare the two seed values
+                        boolean doTheyMatch = true;
+                        for (int i = 0; i < seedValue1.length; i++) {
+                            if (seedValue1[i] != seedValue2[i]) {
+                                doTheyMatch = false;
+                                break;
+                            }
+                        }
+                        if (doTheyMatch == false) {
+                            continue; // skip this named curve
+                        }
+                    }
+                }
+
+                if (ecParameterSpecFromNameMap.getGenerator()
+                        .equals(params.getGenerator()) == false) {
+                    continue;
+                }
+
+                if (ecParameterSpecFromNameMap.getOrder().equals(params.getOrder()) == false) {
+                    continue;
+                }
+
+                if (ecParameterSpecFromNameMap.getCofactor() != params.getCofactor()) {
+                    continue;
+                }
+
+                // ecParameterSpecFromNameMap MATCHES! Therefore, I also have
+                // the associated
+                // ECNamedCurve name string.
+                // Create an instance of that ECNamedCurve and return it.
+                ECNamedCurve myECNamedCurve = new ECNamedCurve(curveNameFromNameMap);
+                return myECNamedCurve;
+
+            }
+
+            // No match was found in the nameMap. Return null.
+            return null;
+
+        } catch (Exception e) {
+            return null; // Adding this statement to satisfy the compiler
+        }
+    }
+
     public String toString() {
         return curveName + " (" + oid + ")";
     }

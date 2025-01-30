@@ -20,6 +20,7 @@ import java.security.spec.InvalidParameterSpecException;
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 import sun.security.util.BitArray;
+import sun.security.util.ECUtil;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
 import sun.security.util.ECParameters;
@@ -56,12 +57,12 @@ final class ECPublicKey extends X509Key
         this.params = ecParams;
 
         algid = new AlgorithmId(AlgorithmId.EC_oid,
-                ECParameters.getAlgorithmParameters(provider, ecParams));
-        byte[] keyArray = ECParameters.encodePoint(w, this.params.getCurve());
+                ECParameters.getAlgorithmParameters(ecParams));
+        byte[] keyArray = ECUtil.encodePoint(w, this.params.getCurve());
         setKey(new BitArray(keyArray.length * 8, keyArray));
 
         try {
-            byte[] parameterBytes = ECParameters.encodeECParameters(ecParams);
+            byte[] parameterBytes = ECUtil.encodeECParameters(ecParams);
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
             // System.out.println ("publicKeyBytes.length=" +
             // publicKeyBytes.length);
@@ -89,7 +90,7 @@ final class ECPublicKey extends X509Key
 
         try {
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
-            byte[] parameterBytes = ECParameters.encodeECParameters(this.params);
+            byte[] parameterBytes = ECUtil.encodeECParameters(this.params);
             // System.out.println ("Calling ECKey createPublicKey");
             this.ecKey = ECKey.createPublicKey(provider.getOCKContext(), publicKeyBytes,
                     parameterBytes);
@@ -142,15 +143,7 @@ final class ECPublicKey extends X509Key
         ECParameterSpec ecParams = this.params;
         ECPoint w = this.w;
 
-        ECParameters ecp = new ECParameters();
-        try {
-            ecp.engineInit(ecParams);
-        } catch (InvalidParameterSpecException e) {
-            throw new InvalidParameterException(
-                    "Invalid Parameter Specification " + e.getMessage());
-
-        }
-        byte[] encodedECPoint = ECParameters.encodePoint(w, ecParams.getCurve());
+        byte[] encodedECPoint = ECUtil.encodePoint(w, ecParams.getCurve());
         // System.out.println ("Encoded end ECPoint length " +
         // encodedECPoint.length);
 
@@ -169,7 +162,7 @@ final class ECPublicKey extends X509Key
             // algParams=" + algParams.toString()
             // + " this.algid="+this.algid);
             params = algParams.getParameterSpec(ECParameterSpec.class);
-            w = ECParameters.decodePoint(getKey().toByteArray(), params.getCurve());
+            w = ECUtil.decodePoint(getKey().toByteArray(), params.getCurve());
 
         } catch (IOException e) {
             throw new InvalidKeyException("Invalid EC key", e);

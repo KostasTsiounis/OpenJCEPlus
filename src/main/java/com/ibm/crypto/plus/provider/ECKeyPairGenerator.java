@@ -67,7 +67,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
             }
         } else {
             // If the ECParameters map to a known curve
-            ECNamedCurve ecNamedCurve = ECParameters.getNamedCurve(((ECParameterSpec) params));
+            ECNamedCurve ecNamedCurve = ECNamedCurve.getNamedCurve(((ECParameterSpec) params));
             // ecNamedCurve = null; - Enable this line to test custom curve
             // parameters for now.
             if (ecNamedCurve != null) {
@@ -111,7 +111,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
                         random);
             } else if (this.ecSpec != null) {
 
-                byte[] encodedCustomCurveParameters = ECParameters.encodeECParameters(this.ecSpec);
+                byte[] encodedCustomCurveParameters = ECUtil.encodeECParameters(this.ecSpec);
                 // System.out.println ("generting key pair from a custom
                 // specification encodedParameters=" +
                 // ECUtils.bytesToHex(encodedCustomCurveParameters));
