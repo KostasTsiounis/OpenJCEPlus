@@ -125,7 +125,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(s, paramSpec) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECUtil.encodeECParameterSpec(this.params);
+            byte[] paramBytes = ECUtil.encodeECParameterSpec(null, this.params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(s, paramSpec) This.eckey private
@@ -171,7 +171,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // System.out.println("ECPrivateKey(byte[]encoded) privateKeyBytes="
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
-            byte[] paramBytes = ECUtil.encodeECParameterSpec(params);
+            byte[] paramBytes = ECUtil.encodeECParameterSpec(null, this.params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(bytes[] encoded) This.eckey
@@ -474,8 +474,6 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
 
         // System.out.println("In buildOCKPrivateKeyBytes");
 
-        ECParameterSpec params = getParams();
-
         DerOutputStream bytes = new DerOutputStream();
         DerOutputStream asn1Key = new DerOutputStream();
 
@@ -508,7 +506,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             bytes.putOctetString(privData);
         }
 
-        byte[] ecParamEncodedBeforeTrimming = ECUtil.encodeECParameterSpec(params);
+        byte[] ecParamEncodedBeforeTrimming = ECUtil.encodeECParameterSpec(null, this.params);
         byte[] myEncodedECParameters = ECUtil.trimZeroes(ecParamEncodedBeforeTrimming);
         // System.out.println("ecParamEncodedbeforeTrimming= " +
         // ECUtils.bytesToHex(ecParamEncodedBeforeTrimming));

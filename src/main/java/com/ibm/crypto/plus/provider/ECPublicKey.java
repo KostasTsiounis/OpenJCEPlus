@@ -62,7 +62,7 @@ final class ECPublicKey extends X509Key
         setKey(new BitArray(keyArray.length * 8, keyArray));
 
         try {
-            byte[] parameterBytes = ECUtil.encodeECParameterSpec(ecParams);
+            byte[] parameterBytes = ECUtil.encodeECParameterSpec(null, ecParams);
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
             // System.out.println ("publicKeyBytes.length=" +
             // publicKeyBytes.length);
@@ -90,7 +90,7 @@ final class ECPublicKey extends X509Key
 
         try {
             byte[] publicKeyBytes = buildOCKPublicKeyBytes();
-            byte[] parameterBytes = ECUtil.encodeECParameterSpec(this.params);
+            byte[] parameterBytes = ECUtil.encodeECParameterSpec(null, this.params);
             // System.out.println ("Calling ECKey createPublicKey");
             this.ecKey = ECKey.createPublicKey(provider.getOCKContext(), publicKeyBytes,
                     parameterBytes);
