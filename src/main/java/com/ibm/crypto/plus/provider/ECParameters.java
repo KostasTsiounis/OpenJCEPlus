@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import sun.security.util.CurveDB;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
@@ -140,7 +141,10 @@ public final class ECParameters extends AlgorithmParametersSpi {
             namedCurve = CurveDB.lookup(name);
         } else if (paramSpec instanceof ECKeySizeParameterSpec) {
             int keySize = ((ECKeySizeParameterSpec) paramSpec).getKeySize();
-            namedCurve = CurveDB.lookup(keySize);
+            String name = ECUtils.getCurvefromSize(keySize);
+            if (name != null) {
+                namedCurve = CurveDB.lookup(name);
+            }
         } else {
             throw new InvalidParameterSpecException(
                     "Only ECParameterSpec and ECGenParameterSpec supported");
