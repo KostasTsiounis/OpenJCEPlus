@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.SignatureEdDSA;
 import java.io.ByteArrayOutputStream;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -20,6 +19,8 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.EdDSAParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.SignatureEdDSA;
 
 abstract class EdDSASignature extends SignatureSpi {
 
