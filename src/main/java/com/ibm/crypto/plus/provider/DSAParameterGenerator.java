@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.DSAKey;
 import java.math.BigInteger;
 import java.security.AlgorithmParameterGeneratorSpi;
 import java.security.AlgorithmParameters;
@@ -20,6 +19,8 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAGenParameterSpec;
 import java.security.spec.DSAParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.DSAKey;
 
 public final class DSAParameterGenerator extends AlgorithmParameterGeneratorSpi {
 

@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.ECKey;
 import java.security.AlgorithmParameterGeneratorSpi;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -17,6 +16,8 @@ import java.security.ProviderException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.ECKey;
 
 public final class ECParameterGenerator extends AlgorithmParameterGeneratorSpi {
     private OpenJCEPlusProvider provider = null;

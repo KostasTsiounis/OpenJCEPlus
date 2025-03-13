@@ -8,8 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.security.ProviderException;
+
+import com.ibm.crypto.plus.provider.base.OCKContext;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
 // Implemented as an abstract class rather than an interface so that 
