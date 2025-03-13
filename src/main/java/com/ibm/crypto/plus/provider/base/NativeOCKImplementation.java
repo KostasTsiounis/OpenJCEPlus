@@ -6,7 +6,7 @@
  * this code, including the "Classpath" Exception described therein.
  */
 
-package com.ibm.crypto.plus.provider.ock;
+package com.ibm.crypto.plus.provider.base;
 
 import com.ibm.crypto.plus.provider.base.OCKException;
 import java.io.File;
