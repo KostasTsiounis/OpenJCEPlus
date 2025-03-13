@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.ECKey;
 import java.io.IOException;
 import java.security.AlgorithmParameters;
 import java.security.InvalidKeyException;
@@ -19,6 +18,9 @@ import java.security.spec.ECPoint;
 import java.security.spec.InvalidParameterSpecException;
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
+import com.ibm.crypto.plus.provider.base.ECKey;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;

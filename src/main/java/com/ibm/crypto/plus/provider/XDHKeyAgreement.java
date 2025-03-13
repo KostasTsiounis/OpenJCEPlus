@@ -9,8 +9,6 @@
 package com.ibm.crypto.plus.provider;
 
 
-import com.ibm.crypto.plus.provider.ock.OCKException;
-import com.ibm.crypto.plus.provider.ock.XECKey;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -24,6 +22,9 @@ import javax.crypto.KeyAgreementSpi;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.base.XECKey;
 
 abstract class XDHKeyAgreement extends KeyAgreementSpi {
 

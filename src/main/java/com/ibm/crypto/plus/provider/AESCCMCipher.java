@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.CCMCipher;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
-import ibm.security.internal.spec.CCMParameterSpec;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.AlgorithmParameters;
@@ -23,6 +20,7 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+
 import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -30,6 +28,11 @@ import javax.crypto.CipherSpi;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
+
+import com.ibm.crypto.plus.provider.base.CCMCipher;
+import com.ibm.crypto.plus.provider.base.OCKContext;
+
+import ibm.security.internal.spec.CCMParameterSpec;
 import sun.security.util.Debug;
 
 public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMConstants {
@@ -317,7 +320,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
-        } catch (com.ibm.crypto.plus.provider.ock.OCKException ock_excp) {
+        } catch (com.ibm.crypto.plus.provider.base.OCKException ock_excp) {
             requireReinit = true;
             AEADBadTagException tagexcp = new AEADBadTagException(ock_excp.getMessage());
             provider.setOCKExceptionCause(tagexcp, ock_excp);
