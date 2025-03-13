@@ -8,9 +8,10 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.BasicRandom;
-import com.ibm.crypto.plus.provider.ock.ExtendedRandom;
 import java.security.SecureRandomSpi;
+
+import com.ibm.crypto.plus.provider.base.BasicRandom;
+import com.ibm.crypto.plus.provider.base.ExtendedRandom;
 
 abstract class HASHDRBG extends SecureRandomSpi {
 
