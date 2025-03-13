@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.ECKey;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
@@ -20,6 +19,9 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 import javax.security.auth.DestroyFailedException;
+
+import com.ibm.crypto.plus.provider.base.ECKey;
+
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;

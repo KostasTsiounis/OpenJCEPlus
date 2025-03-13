@@ -9,7 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
-import com.ibm.crypto.plus.provider.ock.Signature;
+import com.ibm.crypto.plus.provider.base.Signature;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;

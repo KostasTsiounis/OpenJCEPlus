@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.OCKException;
-import com.ibm.crypto.plus.provider.ock.Padding;
-import com.ibm.crypto.plus.provider.ock.Poly1305Cipher;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.AlgorithmParameters;
@@ -23,6 +20,7 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+
 import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -31,6 +29,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.base.Padding;
+import com.ibm.crypto.plus.provider.base.Poly1305Cipher;
+
 import sun.security.util.DerValue;
 
 public final class ChaCha20Poly1305Cipher extends CipherSpi

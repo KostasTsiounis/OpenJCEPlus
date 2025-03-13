@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.DSAKey;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -18,8 +17,12 @@ import java.security.KeyRep;
 import java.security.interfaces.DSAParams;
 import java.security.spec.DSAParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
+import com.ibm.crypto.plus.provider.base.DSAKey;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;

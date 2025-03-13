@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.DHKey;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +15,13 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyRep;
 import java.security.spec.InvalidParameterSpecException;
+
 import javax.crypto.spec.DHParameterSpec;
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
+import com.ibm.crypto.plus.provider.base.DHKey;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
