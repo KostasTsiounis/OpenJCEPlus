@@ -24,7 +24,7 @@
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_PKEY_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_PKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong pkeyId) {
     static const char *functionName = "NativeInterface.PKEY_delete";
 

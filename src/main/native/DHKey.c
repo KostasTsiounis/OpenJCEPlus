@@ -25,7 +25,7 @@
  * Signature: (JI)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generate__JI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__JI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
     static const char *functionName = "NativeInterface.DHKEY_generate(size)";
 
@@ -92,7 +92,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generate__JI(
  * Signature: (JI)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generateParameters(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generateParameters(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
     static const char *functionName =
         "NativeInterface.DHKEY_generateParameters";
@@ -215,7 +215,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generateParameters(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generate__J_3B(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__J_3B(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray parmBytes) {
     static const char *functionName = "NativeInterface.DHKEY_generate(parms)";
 
@@ -340,7 +340,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1generate__J_3B(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPrivateKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPrivateKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray privateKeyBytes) {
     static const char *functionName = "NativeInterface.DHKEY_createPrivateKey";
@@ -444,7 +444,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPrivateKey(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPublicKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPublicKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray publicKeyBytes) {
     static const char *functionName = "NativeInterface.DHKEY_createPublicKey";
@@ -551,7 +551,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPublicKey(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getParameters(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getParameters(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName = "NativeInterface.DHKEY_getParameters";
 
@@ -657,7 +657,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getParameters(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getPrivateKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPrivateKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName =
         "NativeInterface.DHKEY_getPrivateKeyBytes";
@@ -784,7 +784,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getPrivateKeyBytes(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getPublicKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPublicKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName = "NativeInterface.DHKEY_getPublicKeyBytes";
 
@@ -909,7 +909,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1getPublicKeyBytes(
  * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName = "NativeInterface.DHKEY_createPKey";
 
@@ -980,7 +980,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1createPKey(
  * Signature: (JJJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1computeDHSecret(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSecret(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong pubKeyId,
     jlong privKeyId) {
     static const char *functionName = "NativeInterface.DHKEY_computeDHSecret";
@@ -1286,7 +1286,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1computeDHSecret(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DHKEY_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName = "NativeInterface.DHKEY_delete";
 

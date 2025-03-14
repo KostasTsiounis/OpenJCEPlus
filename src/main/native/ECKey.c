@@ -41,7 +41,7 @@
  * Signature: (JI)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generate__JI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__JI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
     static const char *functionName = "NativeInterface.ECKEY_generate(size)";
 #ifdef __MVS__
@@ -212,7 +212,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generate__JI(
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generate__JLjava_lang_String_2(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__JLjava_lang_String_2(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring soid) {
     static const char  *functionName = "NativeInterface.ECKEY_generate(soid)";
     jlong               ecKeyId      = 0;
@@ -460,7 +460,7 @@ char *getFFDHOption(int option) {
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1generate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1generate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint option,
     jlong bufferPtr) {
     static const char *functionName    = "XECKEY_generate";
@@ -550,7 +550,7 @@ errorCode:
  * Signature: (JI)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generateParameters__JI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generateParameters__JI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
     static const char *functionName =
         "NativeInterface.ECKEY_1generateParameters";
@@ -741,7 +741,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generateParameters_
  * Signature: (JLjava/lang/String;)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generateParameters__JLjava_lang_String_2(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generateParameters__JLjava_lang_String_2(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring soid) {
     static const char *functionName =
         "ECKEY_1generateParameters__JLjava_lang_String_2";
@@ -933,7 +933,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generateParameters_
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generate__J_3B(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J_3B(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray parameterBytes) {
     static const char *functionName = "NativeInterface.ECKEY_generate__J_3B";
@@ -1058,7 +1058,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1generate__J_3B(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPrivateKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1createPrivateKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray privateKeyBytes) {
     static const char *functionName = "NativeInterface.ECKEY_createPrivateKey";
@@ -1155,7 +1155,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPrivateKey(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1createPrivateKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1createPrivateKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray privateKeyBytes,
     jlong bufferPtr) {
     static const char *functionName = "NativeInterface.XECKEY_createPrivateKey";
@@ -1245,7 +1245,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1createPrivateKey(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPublicKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1createPublicKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray publicKeyBytes,
     jbyteArray parameterBytes) {
     static const char *functionName = "NativeInterface.ECKEY_createPublicKey";
@@ -1379,7 +1379,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPublicKey(
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1createPublicKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1createPublicKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray publicKeyBytes) {
     static const char *functionName = "NativeInterface.XECKEY_createPublicKey";
@@ -1471,7 +1471,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1createPublicKey(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getParameters(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1getParameters(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ecKeyId) {
     static const char *functionName = "NativeInterface.ECKEY_getParameters";
 
@@ -1592,7 +1592,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getParameters(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getPrivateKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1getPrivateKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ecKeyId) {
     static const char *functionName =
         "NativeInterface.ECKEY_getPrivateKeyBytes";
@@ -1707,7 +1707,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getPrivateKeyBytes(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1getPrivateKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1getPrivateKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong xecKeyId) {
     static const char *functionName =
         "NativeInterface.XECKEY_getPrivateKeyBytes";
@@ -1755,7 +1755,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1getPrivateKeyBytes
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getPublicKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1getPublicKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ecKeyId) {
     static const char *functionName = "NativeInterface.ECKEY_getPublicKeyBytes";
 
@@ -1867,7 +1867,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1getPublicKeyBytes(
  */
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1getPublicKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1getPublicKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong xecKeyId) {
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_EVP_PKEY  *ockEVPKey      = (ICC_EVP_PKEY *)xecKeyId;
@@ -1917,7 +1917,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1getPublicKeyBytes(
  * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1createPKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ecKeyId) {
     static const char *functionName = "NativeInterface.ECKEY_createPKey";
 
@@ -1990,7 +1990,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1createPKey(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ecKeyId) {
     static const char *functionName = "NativeInterface.ECKEY_delete";
 
@@ -2023,7 +2023,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1delete(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong xecKeyId) {
     static const char *functionName = "NativeInterface.XECKEY_delete";
 
@@ -2056,7 +2056,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1delete(
  * Signature: (JJJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1computeECDHSecret(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1computeECDHSecret(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong pubEcKeyId,
     jlong privEcKeyId) {
     static const char *functionName =
@@ -2225,7 +2225,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1computeECDHSecret(
  * Signature: (JJJJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1computeECDHSecret(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECDHSecret(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong genCtx,
     jlong pubXecKeyId, jlong privXecKeyId, jint secretBufferSize) {
     static const char *functionName =
@@ -2316,7 +2316,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_XECKEY_1computeECDHSecret(
  * Signature: (J[BIJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1signDatawithECDSA(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1signDatawithECDSA(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digestBytes,
     jint digestBytesLen, jlong privEcKeyId) {
     static const char *functionName =
@@ -2496,7 +2496,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1signDatawithECDSA(
  * Signature: (J[BI[BIJ)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_ECKEY_1verifyDatawithECDSA(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1verifyDatawithECDSA(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digestBytes,
     jint digestBytesLen, jbyteArray sigBytes, jint sigBytesLen,
     jlong pubEcKeyId)
