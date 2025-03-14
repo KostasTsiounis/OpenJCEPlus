@@ -19,14 +19,14 @@
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RAND_nextBytes
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1nextBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray bytes) {
-    static const char *functionName = "NativeInterface.RAND_nextbytes";
+    static const char *functionName = "NativeOCKImplementation.RAND_nextbytes";
 
     ICC_CTX       *ockCtx      = (ICC_CTX *)((intptr_t)ockContextId);
     unsigned char *bytesNative = NULL;
@@ -64,14 +64,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1nextBytes(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RAND_setSeed
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1setSeed(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray seed) {
-    static const char *functionName = "NativeInterface.RAND_setSeed";
+    static const char *functionName = "NativeOCKImplementation.RAND_setSeed";
 
     ICC_CTX       *ockCtx     = (ICC_CTX *)((intptr_t)ockContextId);
     unsigned char *seedNative = NULL;
@@ -105,14 +105,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1setSeed(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RAND_generateSeed
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1generateSeed(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray seed) {
-    static const char *functionName = "NativeInterface.RAND_generateSeed";
+    static const char *functionName = "NativeOCKImplementation.RAND_generateSeed";
 
     ICC_CTX       *ockCtx     = (ICC_CTX *)((intptr_t)ockContextId);
     unsigned char *seedNative = NULL;

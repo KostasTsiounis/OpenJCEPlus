@@ -18,14 +18,14 @@
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    EXTRAND_create
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring algName) {
-    static const char *functionName = "NativeInterface.EXTRAND_create";
+    static const char *functionName = "NativeOCKImplementation.EXTRAND_create";
 
     ICC_CTX      *ockCtx       = (ICC_CTX *)((intptr_t)ockContextId);
     const char   *algNameChars = NULL;
@@ -95,7 +95,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1create(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    EXTRAND_nextBytes
  * Signature: (JJ[B)V
  */
@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1nextBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPRNGContextId,
     jbyteArray bytes) {
-    static const char *functionName = "NativeInterface.EXTRAND_nextBytes";
+    static const char *functionName = "NativeOCKImplementation.EXTRAND_nextBytes";
 
     ICC_CTX       *ockCtx      = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_PRNG_CTX  *ockPRNGCtx  = (ICC_PRNG_CTX *)((intptr_t)ockPRNGContextId);
@@ -151,7 +151,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1nextBytes
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    EXTRAND_setSeed
  * Signature: (JJ[B)V
  */
@@ -159,7 +159,7 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1setSeed(
     JNIEnv *env, jclass thisObj, jlong contextId, jlong ockPRNGContextId,
     jbyteArray seed) {
-    static const char *functionName = "NativeInterface.EXTRAND_setSeed";
+    static const char *functionName = "NativeOCKImplementation.EXTRAND_setSeed";
 
     ICC_CTX       *ockCtx     = (ICC_CTX *)((intptr_t)contextId);
     ICC_PRNG_CTX  *ockPRNGCtx = (ICC_PRNG_CTX *)((intptr_t)ockPRNGContextId);
@@ -206,14 +206,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1setSeed(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    EXTRAND_delete
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPRNGContextId) {
-    static const char *functionName = "NativeInterface.EXTRAND_delete";
+    static const char *functionName = "NativeOCKImplementation.EXTRAND_delete";
 
     ICC_CTX      *ockCtx     = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_PRNG_CTX *ockPRNGCtx = (ICC_PRNG_CTX *)((intptr_t)ockPRNGContextId);
