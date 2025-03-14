@@ -29,30 +29,30 @@ public final class OCKContext {
 
     private long ockContextId;
     private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private String ockVersion = unobtainedValue;
     private String ockInstallPath = unobtainedValue;
 
     private static String libraryBuildDate = unobtainedValue;
 
     public static OCKContext createContext(boolean isFIPS) throws OCKException {
-        long ockContextId = NativeInterface.initializeOCK(isFIPS);
+        return new OCKContext(isFIPS);
+    }
 
-        OCKContext context = new OCKContext(ockContextId, isFIPS);
+    private OCKContext(boolean isFIPS) throws OCKException {
+        this.ockContextId = nativeImpl.initializeOCK(isFIPS);
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
+
+        obtainLibraryBuildDate();
 
         if (validateOCKLocation) {
-            NativeInterface.validateLibraryLocation(context);
+            nativeImpl.validateLibraryLocation();
         }
 
         if (validateOCKVersion) {
-            NativeInterface.validateLibraryVersion(context);
+            nativeImpl.validateLibraryVersion();
         }
-
-        return context;
-    }
-
-    private OCKContext(long ockContextId, boolean isFIPS) {
-        this.ockContextId = ockContextId;
-        this.isFIPS = isFIPS;
     }
 
     public long getId() {
@@ -78,9 +78,6 @@ public final class OCKContext {
     }
 
     public static String getLibraryBuildDate() {
-        if (libraryBuildDate == unobtainedValue) {
-            obtainLibraryBuildDate();
-        }
         return libraryBuildDate;
     }
 
@@ -104,18 +101,18 @@ public final class OCKContext {
         }
     }
 
-    private synchronized static void obtainLibraryBuildDate() {
+    private synchronized void obtainLibraryBuildDate() {
         // Leave this duplicate check in here. If two threads are both trying
         // to get the value at the same time, we only want to call the native
         // code one time.
         //
         if (libraryBuildDate == unobtainedValue) {
-            libraryBuildDate = NativeInterface.getLibraryBuildDate();
+            libraryBuildDate = this.nativeImpl.getLibraryBuildDate();
         }
     }
 
     private String getValue(int valueId) throws OCKException {
-        return NativeInterface.CTX_getValue(ockContextId, valueId);
+        return this.nativeImpl.CTX_getValue(valueId);
     }
 
     public String toString() {
