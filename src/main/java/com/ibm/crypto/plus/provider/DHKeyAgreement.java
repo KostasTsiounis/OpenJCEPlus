@@ -151,7 +151,7 @@ public final class DHKeyAgreement extends KeyAgreementSpi {
             }
             synchronized (locker1) {
                 synchronized (locker2) {
-                    secret = DHKey.computeDHSecret(provider.getOCKContext(),
+                    secret = DHKey.computeDHSecret(provider.isFIPS(),
                             ockDHKeyPub.getDHKeyId(), ockDHKeyPriv.getDHKeyId());
                 }
             }

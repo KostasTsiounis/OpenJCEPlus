@@ -126,7 +126,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
             byte[] paramBytes = ECParameters.encodeECParameters(this.params);
-            this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
+            this.ecKey = ECKey.createPrivateKey(provider.isFIPS(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(s, paramSpec) This.eckey private
             // bytes="
@@ -172,7 +172,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // +
             // ECUtils.bytesToHex(privateKeyBytes));
             byte[] paramBytes = ECParameters.encodeECParameters(params);
-            this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
+            this.ecKey = ECKey.createPrivateKey(provider.isFIPS(), privateKeyBytes,
                     paramBytes);
             // System.out.println("ECPrivateKey(bytes[] encoded) This.eckey
             // private bytes="
