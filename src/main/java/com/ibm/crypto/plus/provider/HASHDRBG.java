@@ -36,7 +36,7 @@ abstract class HASHDRBG extends SecureRandomSpi {
         try {
             extendedRandom = ExtendedRandom.getInstance(provider.getOCKContext(), ockRandomAlgo);
         } catch (Exception e) {
-            throw provider.providerException("Failed to get HASHDRBG algorithm", e);
+            throw NativeOCKAdapter.providerException("Failed to get HASHDRBG algorithm", e);
         }
     }
 
@@ -45,7 +45,7 @@ abstract class HASHDRBG extends SecureRandomSpi {
         try {
             extendedRandom.setSeed(seed);
         } catch (Exception e) {
-            throw provider.providerException("Failed to set seed", e);
+            throw NativeOCKAdapter.providerException("Failed to set seed", e);
         }
     }
 
@@ -57,7 +57,7 @@ abstract class HASHDRBG extends SecureRandomSpi {
         try {
             extendedRandom.nextBytes(bytes);
         } catch (Exception e) {
-            throw provider.providerException("Failed to get next bytes", e);
+            throw NativeOCKAdapter.providerException("Failed to get next bytes", e);
         }
     }
 
@@ -66,7 +66,7 @@ abstract class HASHDRBG extends SecureRandomSpi {
         try {
             return basicRandom.generateSeed(numBytes);
         } catch (Exception e) {
-            throw provider.providerException("Failed to generate seed", e);
+            throw NativeOCKAdapter.providerException("Failed to generate seed", e);
         }
     }
 
@@ -92,7 +92,7 @@ abstract class HASHDRBG extends SecureRandomSpi {
             // Recreate OCK object per tag [SERIALIZATION] in DesignNotes.txt
             extendedRandom = ExtendedRandom.getInstance(provider.getOCKContext(), randomAlgo);
         } catch (Exception e) {
-            throw provider.providerException("Failed to get HASHDRBG algorithm", e);
+            throw NativeOCKAdapter.providerException("Failed to get HASHDRBG algorithm", e);
         }
     }
 

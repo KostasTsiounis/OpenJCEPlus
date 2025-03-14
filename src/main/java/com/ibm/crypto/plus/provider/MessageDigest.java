@@ -11,6 +11,7 @@ package com.ibm.crypto.plus.provider;
 import java.security.MessageDigestSpi;
 
 import com.ibm.crypto.plus.provider.base.Digest;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
 
@@ -22,7 +23,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
             this.provider = provider;
             this.digest = Digest.getInstance(provider.getOCKContext(), ockDigestAlgo);
         } catch (Exception e) {
-            throw provider.providerException("Failure in MessageDigest", e);
+            throw NativeOCKAdapter.providerException("Failure in MessageDigest", e);
         }
     }
 
@@ -44,7 +45,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
         try {
             this.digest.update(input, offset, length);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 
@@ -53,7 +54,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
         try {
             return this.digest.digest();
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDigest", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDigest", e);
         }
     }
 
@@ -62,7 +63,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
         try {
             return this.digest.getDigestLength();
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineGetDigestLength", e);
+            throw NativeOCKAdapter.providerException("Failure in engineGetDigestLength", e);
         }
     }
 
@@ -103,7 +104,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
         try {
             this.digest.reset();
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineReset", e);
+            throw NativeOCKAdapter.providerException("Failure in engineReset", e);
         }
     }
 

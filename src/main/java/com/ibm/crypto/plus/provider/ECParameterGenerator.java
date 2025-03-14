@@ -18,6 +18,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class ECParameterGenerator extends AlgorithmParameterGeneratorSpi {
     private OpenJCEPlusProvider provider = null;
@@ -76,7 +77,7 @@ public final class ECParameterGenerator extends AlgorithmParameterGeneratorSpi {
             }
 
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateGenerateParameters", e);
+            throw NativeOCKAdapter.providerException("Failure in generateGenerateParameters", e);
         }
         return algParams;
     }

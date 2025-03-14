@@ -187,7 +187,7 @@ public final class DHKeyAgreement extends KeyAgreementSpi {
                     // ignore the leading sign byte
                     System.arraycopy(secret, 1, result, 0, expectedLen);
                 } else {
-                    throw provider.providerException("Failed to generate secret",
+                    throw NativeOCKAdapter.providerException("Failed to generate secret",
                             new OCKException("secret is out-of-range"));
                 }
             }

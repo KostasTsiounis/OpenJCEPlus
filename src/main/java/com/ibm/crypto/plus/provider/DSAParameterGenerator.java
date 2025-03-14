@@ -147,7 +147,7 @@ public final class DSAParameterGenerator extends AlgorithmParameterGeneratorSpi 
             }
             return algParams;
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateGenerateParameters", e);
+            throw NativeOCKAdapter.providerException("Failure in generateGenerateParameters", e);
         }
     }
 

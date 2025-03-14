@@ -195,7 +195,7 @@ public final class ECDHKeyAgreement extends KeyAgreementSpi { // implements
         } catch (OCKException e) {
             throw new IllegalStateException(e.getMessage());
         } catch (Exception e) {
-            throw provider.providerException("Failed to generate secret", e);
+            throw NativeOCKAdapter.providerException("Failed to generate secret", e);
         }
         // );
 

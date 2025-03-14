@@ -37,7 +37,7 @@ abstract class ECDSASignature extends SignatureSpi {
             this.provider = provider;
             this.signature = Signature.getInstance(provider.getOCKContext(), ockDigestAlgo);
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize ECDSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize ECDSA signature", e);
         }
     }
 
@@ -48,7 +48,7 @@ abstract class ECDSASignature extends SignatureSpi {
         try {
             this.signature.initialize(this.publicKey.getOCKKey(), false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
     }
 
@@ -74,7 +74,7 @@ abstract class ECDSASignature extends SignatureSpi {
         try {
             this.signature.initialize(this.privateKey.getOCKKey(), false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
     }
 
