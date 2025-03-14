@@ -184,7 +184,7 @@ public final class ECDHKeyAgreement extends KeyAgreementSpi { // implements
             }
             synchronized (locker1) {
                 synchronized (locker2) {
-                    secret = ECKey.computeECDHSecret(provider.getOCKContext(),
+                    secret = ECKey.computeECDHSecret(provider.isFIPS(),
                             ockEcKeyPub.getEcKeyId(), ockEcKeyPriv.getEcKeyId());
                 }
             }

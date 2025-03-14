@@ -95,7 +95,7 @@ final class DHPrivateKey extends PKCS8Key implements javax.crypto.interfaces.DHP
         try {
             this.key = new DerValue(DerValue.tag_Integer, this.x.toByteArray()).toByteArray();
             this.encodedKey = getEncoded();
-            this.dhKey = DHKey.createPrivateKey(provider.getOCKContext(), encodedKey);
+            this.dhKey = DHKey.createPrivateKey(provider.isFIPS(), encodedKey);
         } catch (OCKException e) {
             throw new InvalidKeyException("Failure in DHPrivateKey");
         }
@@ -123,7 +123,7 @@ final class DHPrivateKey extends PKCS8Key implements javax.crypto.interfaces.DHP
             convertOCKPrivateKeyBytes(encoded);
 
             buildOCKPrivateKeyBytes();
-            this.dhKey = DHKey.createPrivateKey(provider.getOCKContext(),
+            this.dhKey = DHKey.createPrivateKey(provider.isFIPS(),
                     encoded /*privateKeyBytes*/);
         } catch (Exception e) {
             throw new InvalidKeyException("Failure in DHPrivateKey");

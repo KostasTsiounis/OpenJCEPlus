@@ -109,7 +109,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
         try {
 
             if (this.oid != null) {
-                ecKey = ECKey.generateKeyPair(provider.getOCKContext(), this.oid.toString(),
+                ecKey = ECKey.generateKeyPair(provider.isFIPS(), this.oid.toString(),
                         random);
             } else if (this.ecSpec != null) {
 
@@ -117,11 +117,11 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
                 // System.out.println ("generting key pair from a custom
                 // specification encodedParameters=" +
                 // ECUtils.bytesToHex(encodedCustomCurveParameters));
-                ecKey = ECKey.generateKeyPair(provider.getOCKContext(),
+                ecKey = ECKey.generateKeyPair(provider.isFIPS(),
                         encodedCustomCurveParameters, random);
             } else if (this.keysize > 0 && (ecSpec == null)) {
 
-                ecKey = ECKey.generateKeyPair(provider.getOCKContext(), this.keysize, random);
+                ecKey = ECKey.generateKeyPair(provider.isFIPS(), this.keysize, random);
             }
 
             java.security.interfaces.ECPrivateKey privKey = new ECPrivateKey(provider, ecKey);

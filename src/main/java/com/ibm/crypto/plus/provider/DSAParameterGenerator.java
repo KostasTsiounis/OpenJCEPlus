@@ -139,7 +139,7 @@ public final class DSAParameterGenerator extends AlgorithmParameterGeneratorSpi 
             }
 
             if (keysize > 0) {
-                byte[] encodedParams = DSAKey.generateParameters(provider.getOCKContext(),
+                byte[] encodedParams = DSAKey.generateParameters(provider.isFIPS(),
                         this.keysize);
                 algParams.init(encodedParams);
             } else {

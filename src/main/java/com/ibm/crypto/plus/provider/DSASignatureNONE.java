@@ -28,7 +28,7 @@ public final class DSASignatureNONE extends SignatureSpi {
     public DSASignatureNONE(OpenJCEPlusProvider provider) {
         try {
             this.provider = provider;
-            this.signature = SignatureDSANONE.getInstance(provider.getOCKContext());
+            this.signature = SignatureDSANONE.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failed to initialize DSA signature", e);
         }
