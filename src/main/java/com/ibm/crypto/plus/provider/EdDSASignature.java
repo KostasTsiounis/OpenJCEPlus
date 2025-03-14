@@ -19,8 +19,6 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
 
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-
 import com.ibm.crypto.plus.provider.base.SignatureEdDSA;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
