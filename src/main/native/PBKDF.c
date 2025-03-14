@@ -14,7 +14,7 @@
 #include <icc.h>
 #include <string.h>
 
-#include "com_ibm_crypto_plus_provider_ock_NativeInterface.h"
+#include "com_ibm_crypto_plus_provider_ock_NativeOCKImplementation.h"
 #include "Utils.h"
 #include <stdint.h>
 
