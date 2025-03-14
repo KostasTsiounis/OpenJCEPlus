@@ -71,11 +71,11 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -96,16 +96,16 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             return ret;
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
 
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -237,7 +237,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
 
         try {
             if (symmetricCipher == null) {
-                symmetricCipher = SymmetricCipher.getInstanceChaCha20(provider.getOCKContext(),
+                symmetricCipher = SymmetricCipher.getInstanceChaCha20(provider.isFIPS(),
                         padding);
             }
 
@@ -335,7 +335,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             return symmetricCipher.update(input, inputOffset, inputLen, output, outputOffset);
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);

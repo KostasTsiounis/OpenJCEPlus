@@ -21,6 +21,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.MGF1ParameterSpec;
 import java.util.Arrays;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherSpi;
@@ -32,6 +33,7 @@ import javax.crypto.spec.PSource;
 
 import com.ibm.crypto.plus.provider.base.RSACipher;
 import com.ibm.crypto.plus.provider.base.RSAPadding;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class RSA extends CipherSpi {
 
@@ -146,15 +148,15 @@ public final class RSA extends CipherSpi {
             return outLen;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (Exception e) {
             // Unsure of msg length behavior on failure. e.g. do we set it to 0?

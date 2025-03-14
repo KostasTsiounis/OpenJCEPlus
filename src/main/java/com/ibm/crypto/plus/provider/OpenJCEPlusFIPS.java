@@ -782,6 +782,11 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
         }
     }
 
+    @Override
+    boolean isFIPS() {
+        return true;
+    }
+
     // Get the date from the ImplementationVersion in the manifest file
     private static String getDebugDate(String className) {
         String versionDate = "Unknown";
