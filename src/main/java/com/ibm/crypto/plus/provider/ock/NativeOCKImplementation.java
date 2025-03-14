@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
+import com.ibm.crypto.plus.provider.base.NativeInterface;
 import com.ibm.crypto.plus.provider.base.OCKContext;
 import com.ibm.crypto.plus.provider.base.OCKException;
 
@@ -33,7 +34,7 @@ final class NativeOCKImplementation {
     // If OCK is dynamically loaded, whether to require that OCK be
     // pre-loaded.
     //
-    private static boolean requirePreloadOCK = true;
+    static boolean requirePreloadOCK = true;
 
     // Default ock core library name
     //
@@ -198,93 +199,6 @@ final class NativeOCKImplementation {
             }
         }
         return false;
-    }
-
-    static void validateLibraryLocation(OCKContext context) throws ProviderException, OCKException {
-        if (requirePreloadOCK == false) {
-            // If we are not requiring OCK to be pre-loaded, then it does not need to be
-            // loaded from the JRE location
-            //
-            return;
-        }
-
-        try {
-            // Check to make sure that the OCK install path is within the JRE
-            //
-            String ockLoadPath = new File(getOCKLoadPath()).getCanonicalPath();
-            String ockInstallPath = new File(context.getOCKInstallPath()).getCanonicalPath();
-
-            if (debug != null) {
-                debug.println("dependent library load path : " + ockLoadPath);
-                debug.println("dependent library install path : " + ockInstallPath);
-            }
-
-            if (ockInstallPath.startsWith(ockLoadPath) == false) {
-                String exceptionMessage = "Dependent library was loaded from an external location";
-
-                if (debug != null) {
-                    exceptionMessage = "Dependent library was loaded from " + ockInstallPath;
-                }
-
-                throw new ProviderException(exceptionMessage);
-            }
-        } catch (java.io.IOException e) {
-            throw new ProviderException("Failed to validate dependent library", e);
-        }
-    }
-
-    static void validateLibraryVersion(OCKContext context) throws ProviderException, OCKException {
-        if (requirePreloadOCK == false) {
-            // If we are not requiring OCK to be pre-loaded, then it does not need to be
-            // a specific version
-            //
-            return;
-        }
-
-        String expectedVersion = getExpectedLibraryVersion(context);
-        String actualVersion = context.getOCKVersion();
-
-        if (expectedVersion == null) {
-            throw new ProviderException(
-                    "Could not not determine expected version of dependent library");
-        } else if (expectedVersion.equals(actualVersion) == false) {
-            throw new ProviderException("Expected depdendent library version " + expectedVersion
-                    + ", got " + actualVersion);
-        }
-    }
-
-    private static String getExpectedLibraryVersion(OCKContext context) {
-        String ockLoadPath = getOCKLoadPath();
-        String ockSigFileName;
-        if (context.isFIPS()) {
-            ockSigFileName = ockLoadPath + File.separator + "C" + File.separator + "icc"
-                    + File.separator + "icclib" + File.separator + "ICCSIG.txt";
-        } else {
-            ockSigFileName = ockLoadPath + File.separator + "N" + File.separator + "icc"
-                    + File.separator + "icclib" + File.separator + "ICCSIG.txt";
-        }
-        BufferedReader br = null;
-        try {
-            String line;
-            String versionMarker = "# ICC Version ";
-            br = new BufferedReader(new FileReader(ockSigFileName));
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(versionMarker)) {
-                    String version = line.substring(versionMarker.length()).trim();
-                    return version;
-                }
-            }
-        } catch (Exception e) {
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-
-        return null;
     }
 
     // =========================================================================

@@ -1,5 +1,8 @@
 package com.ibm.crypto.plus.provider.ock;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
@@ -41,6 +44,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     private static String libraryBuildDate = unobtainedValue;
 
     NativeOCKAdapter(boolean useFIPSMode) {
+        this.useFIPSMode = useFIPSMode;
         initializeContext();
     }
     // Initialize OCK context(s)
@@ -57,8 +61,8 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         }
 
         try {
-            long ockContextId =  NativeOCKImplementation.initializeOCK(useFIPSMode);
-            ockContext = OCKContext.createContext(ockContextId, useFIPSMode);
+            long ockContextId =  NativeOCKImplementation.initializeOCK(this.useFIPSMode);
+            this.ockContext = OCKContext.createContext(ockContextId, this.useFIPSMode);
             getLibraryBuildDate();
 
             if (validateOCKLocation) {
@@ -69,7 +73,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
                 validateLibraryVersion();
             }
 
-            ockInitialized = true;
+            this.ockInitialized = true;
         } catch (OCKException e) {
             throw providerException("Failed to initialize OpenJCEPlus provider", e);
         } catch (Throwable t) {
@@ -129,14 +133,16 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         return ockContext;
     }
 
-    public String getOCKVersion() throws OCKException {
+    @Override
+    public String getLibraryVersion() throws OCKException {
         if (ockVersion == unobtainedValue) {
             obtainOCKVersion();
         }
         return ockVersion;
     }
 
-    public String getOCKInstallPath() throws OCKException {
+    @Override
+    public String getLibraryInstallPath() throws OCKException {
         if (ockInstallPath == unobtainedValue) {
             obtainOCKInstallPath();
         }
@@ -178,12 +184,91 @@ public abstract class NativeOCKAdapter implements NativeInterface {
 
     @Override
     public void validateLibraryLocation() throws ProviderException, OCKException {
-        NativeOCKImplementation.validateLibraryLocation(ockContext);
+        if (NativeOCKImplementation.requirePreloadOCK == false) {
+            // If we are not requiring OCK to be pre-loaded, then it does not need to be
+            // loaded from the JRE location
+            //
+            return;
+        }
+
+        try {
+            // Check to make sure that the OCK install path is within the JRE
+            //
+            String ockLoadPath = new File(NativeOCKImplementation.getOCKLoadPath()).getCanonicalPath();
+            String ockInstallPath = new File(getLibraryInstallPath()).getCanonicalPath();
+
+            if (debug != null) {
+                debug.println("dependent library load path : " + ockLoadPath);
+                debug.println("dependent library install path : " + ockInstallPath);
+            }
+
+            if (ockInstallPath.startsWith(ockLoadPath) == false) {
+                String exceptionMessage = "Dependent library was loaded from an external location";
+
+                if (debug != null) {
+                    exceptionMessage = "Dependent library was loaded from " + ockInstallPath;
+                }
+
+                throw new ProviderException(exceptionMessage);
+            }
+        } catch (java.io.IOException e) {
+            throw new ProviderException("Failed to validate dependent library", e);
+        }
     }
 
     @Override
     public void validateLibraryVersion() throws ProviderException, OCKException {
-        NativeOCKImplementation.validateLibraryVersion(ockContext);
+        if (NativeOCKImplementation.requirePreloadOCK == false) {
+            // If we are not requiring OCK to be pre-loaded, then it does not need to be
+            // a specific version
+            //
+            return;
+        }
+
+        String expectedVersion = getExpectedLibraryVersion();
+        String actualVersion = getLibraryVersion();
+
+        if (expectedVersion == null) {
+            throw new ProviderException(
+                    "Could not not determine expected version of dependent library");
+        } else if (expectedVersion.equals(actualVersion) == false) {
+            throw new ProviderException("Expected depdendent library version " + expectedVersion
+                    + ", got " + actualVersion);
+        }
+    }
+
+    private String getExpectedLibraryVersion() {
+        String ockLoadPath = NativeOCKImplementation.getOCKLoadPath();
+        String ockSigFileName;
+        if (this.useFIPSMode) {
+            ockSigFileName = ockLoadPath + File.separator + "C" + File.separator + "icc"
+                    + File.separator + "icclib" + File.separator + "ICCSIG.txt";
+        } else {
+            ockSigFileName = ockLoadPath + File.separator + "N" + File.separator + "icc"
+                    + File.separator + "icclib" + File.separator + "ICCSIG.txt";
+        }
+        BufferedReader br = null;
+        try {
+            String line;
+            String versionMarker = "# ICC Version ";
+            br = new BufferedReader(new FileReader(ockSigFileName));
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(versionMarker)) {
+                    String version = line.substring(versionMarker.length()).trim();
+                    return version;
+                }
+            }
+        } catch (Exception e) {
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
