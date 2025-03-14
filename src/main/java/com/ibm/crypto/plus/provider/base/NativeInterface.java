@@ -9,8 +9,13 @@
 package com.ibm.crypto.plus.provider.base;
 
 import java.nio.ByteBuffer;
+import java.security.ProviderException;
 
 public interface NativeInterface {
+
+    void validateLibraryLocation() throws ProviderException, OCKException;
+
+    void validateLibraryVersion() throws ProviderException, OCKException;
 
     // =========================================================================
     // General functions

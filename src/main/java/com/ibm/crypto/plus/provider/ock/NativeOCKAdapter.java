@@ -108,6 +108,16 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
+    public void validateLibraryLocation() throws ProviderException, OCKException {
+        NativeOCKImplementation.validateLibraryLocation(ockContext);
+    }
+
+    @Override
+    public void validateLibraryVersion() throws ProviderException, OCKException {
+        NativeOCKImplementation.validateLibraryVersion(ockContext);
+    }
+
+    @Override
     public String getLibraryBuildDate() {
         return NativeOCKImplementation.getLibraryBuildDate();
     }
