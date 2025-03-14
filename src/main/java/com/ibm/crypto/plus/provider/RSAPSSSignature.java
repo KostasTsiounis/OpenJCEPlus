@@ -28,6 +28,7 @@ import java.util.Hashtable;
 
 import com.ibm.crypto.plus.provider.base.SignatureRSAPSS;
 import com.ibm.crypto.plus.provider.base.SignatureRSAPSS.InitOp;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 /**
  * PKCS#1 RSA-PSS signatures with the various message digest algorithms. This
@@ -91,7 +92,7 @@ public final class RSAPSSSignature extends SignatureSpi {
                     || pssParameterSpec.getDigestAlgorithm().equalsIgnoreCase("SHA-1")
                     || pssParameterSpec.getDigestAlgorithm().equalsIgnoreCase("SHA"))
                     && (provider.isFIPS())) {
-                throw provider.providerException("SHA1 not supported by FIPS.", null);
+                throw NativeOCKAdapter.providerException("SHA1 not supported by FIPS.", null);
             }
             this.signature = SignatureRSAPSS.getInstance(provider.getOCKContext(),
                     pssParameterSpec.getDigestAlgorithm(), pssParameterSpec.getSaltLength(),
@@ -101,7 +102,7 @@ public final class RSAPSSSignature extends SignatureSpi {
         } catch (InvalidAlgorithmParameterException e) {
             throw new ProviderException(e);
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSAPSS signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSAPSS signature", e);
         }
     }
 
@@ -123,7 +124,7 @@ public final class RSAPSSSignature extends SignatureSpi {
                 switch (ockDigestAlgo) {
                     case "SHA-1":
                         if (provider.isFIPS()) {
-                            throw provider.providerException("SHA1 not supported by FIPS.", null);
+                            throw NativeOCKAdapter.providerException("SHA1 not supported by FIPS.", null);
                         }
                         pssParameterSpec = new PSSParameterSpec(ockDigestAlgo, "MGF1",
                                 MGF1ParameterSpec.SHA1, 20, 1);
@@ -174,7 +175,7 @@ public final class RSAPSSSignature extends SignatureSpi {
         } catch (InvalidAlgorithmParameterException e) {
             throw new ProviderException(e);
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSAPSS signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSAPSS signature", e);
         }
     }
 
@@ -232,7 +233,7 @@ public final class RSAPSSSignature extends SignatureSpi {
                         true);
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
         this.privateKey = (java.security.interfaces.RSAPrivateKey) rsaPrivate;
         this.publicKey = null;
@@ -278,7 +279,7 @@ public final class RSAPSSSignature extends SignatureSpi {
         try {
             this.signature.initialize(rsaPublic.getOCKKey(), InitOp.INITVERIFY, false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         this.publicKey = rsaPublic;

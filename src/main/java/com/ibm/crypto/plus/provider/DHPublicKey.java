@@ -104,7 +104,7 @@ final class DHPublicKey extends X509Key
             this.dhKey = dhKey;
             parseKeyBits();
         } catch (Exception exception) {
-            throw provider.providerException("Failure in DHPublicKey", exception);
+            throw NativeOCKAdapter.providerException("Failure in DHPublicKey", exception);
         }
     }
 
@@ -131,7 +131,7 @@ final class DHPublicKey extends X509Key
         } catch (IOException ioex) {
             throw new InvalidKeyException("Invalid key format");
         } catch (Exception e) {
-            throw provider.providerException("Failure in DHPublicKey", e);
+            throw NativeOCKAdapter.providerException("Failure in DHPublicKey", e);
         }
     }
 
@@ -266,7 +266,7 @@ final class DHPublicKey extends X509Key
         try {
             return this.dhParams.engineGetParameterSpec(DHParameterSpec.class);
         } catch (InvalidParameterSpecException e) {
-            throw provider.providerException("Failure in DHPublicKey", e);
+            throw NativeOCKAdapter.providerException("Failure in DHPublicKey", e);
         }
     }
 

@@ -29,6 +29,7 @@ import javax.crypto.spec.ChaCha20ParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.Padding;
 import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants {
 
@@ -77,7 +78,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             provider.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
         }
@@ -107,7 +108,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
         }
@@ -252,7 +253,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             this.ivBytes = newIvBytes;
             this.initialized = true;
         } catch (Exception e) {
-            throw provider.providerException("Failed to init cipher", e);
+            throw NativeOCKAdapter.providerException("Failed to init cipher", e);
         }
 
     }
@@ -320,7 +321,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
                 return output;
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 
@@ -337,7 +338,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 

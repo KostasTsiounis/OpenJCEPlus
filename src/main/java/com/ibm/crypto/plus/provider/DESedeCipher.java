@@ -77,7 +77,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             provider.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
@@ -102,7 +102,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
@@ -134,7 +134,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
         try {
             return symmetricCipher.getOutputSize(inputLen);
         } catch (Exception e) {
-            throw provider.providerException("Unable to get output size", e);
+            throw NativeOCKAdapter.providerException("Unable to get output size", e);
         }
     }
 
@@ -260,7 +260,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             this.encrypting = isEncrypt;
             this.initialized = true;
         } catch (Exception e) {
-            throw provider.providerException("Failed to init cipher", e);
+            throw NativeOCKAdapter.providerException("Failed to init cipher", e);
         }
     }
 
@@ -308,7 +308,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
                 return output;
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 
@@ -324,7 +324,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
