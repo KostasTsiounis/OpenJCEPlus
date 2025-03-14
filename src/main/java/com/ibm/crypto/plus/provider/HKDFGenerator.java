@@ -54,7 +54,7 @@ public class HKDFGenerator extends KeyGeneratorSpi {
         this.provider = provider;
         this.digestAlgorithm = digestAlgorithm;
         try {
-            hkdfObj = HKDF.getInstance(this.provider.getOCKContext(), this.digestAlgorithm);
+            hkdfObj = HKDF.getInstance(this.provider.isFIPS(), this.digestAlgorithm);
             hkdfLen = hkdfObj.getMacLength();
         } catch (Exception ex) {
             throw new NoSuchAlgorithmException("cannot initialize hkdf");

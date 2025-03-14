@@ -67,7 +67,7 @@ public final class RSASignatureSSL extends SignatureSpi {
     public RSASignatureSSL(OpenJCEPlusProvider provider) {
         try {
             this.provider = provider;
-            this.rsaCipher = RSACipher.getInstance(provider.getOCKContext());
+            this.rsaCipher = RSACipher.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failed to initialize RSA signature", e);
         }
