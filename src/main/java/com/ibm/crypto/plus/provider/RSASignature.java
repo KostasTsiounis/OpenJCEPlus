@@ -37,7 +37,7 @@ abstract class RSASignature extends SignatureSpi {
             this.ockDigestAlgo = ockDigestAlgo;
             this.signature = Signature.getInstance(provider.getOCKContext(), ockDigestAlgo);
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSA signature", e);
         }
     }
 
@@ -86,7 +86,7 @@ abstract class RSASignature extends SignatureSpi {
         try {
             this.signature.initialize(rsaPublic.getOCKKey(), false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
     }
 
@@ -153,7 +153,7 @@ abstract class RSASignature extends SignatureSpi {
                 this.signature.initialize(((RSAPrivateKey) rsaPrivate).getOCKKey(), true);
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
     }
 

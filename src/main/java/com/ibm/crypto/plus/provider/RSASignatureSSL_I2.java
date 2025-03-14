@@ -39,6 +39,7 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 
 import com.ibm.crypto.plus.provider.base.SignatureRSASSL;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 // ------------------------------------------------------------------------------
 // NOTE:
@@ -70,7 +71,7 @@ public final class RSASignatureSSL_I2 extends SignatureSpi {
             this.provider = provider;
             this.signature = SignatureRSASSL.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSA signature", e);
         }
     }
 
@@ -98,7 +99,7 @@ public final class RSASignatureSSL_I2 extends SignatureSpi {
         try {
             this.signature.initialize(rsaPublic.getOCKKey(), false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         if (data == null) {
@@ -141,7 +142,7 @@ public final class RSASignatureSSL_I2 extends SignatureSpi {
                 this.signature.initialize(((RSAPrivateKey) rsaPrivate).getOCKKey(), true);
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
 
         if (data == null) {

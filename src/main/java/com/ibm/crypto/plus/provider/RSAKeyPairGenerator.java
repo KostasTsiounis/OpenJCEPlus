@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
-import com.ibm.crypto.plus.provider.base.RSAKey;
-
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -20,6 +17,11 @@ import java.security.KeyPairGeneratorSpi;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
+
+import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
+import com.ibm.crypto.plus.provider.base.RSAKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+
 import sun.security.x509.AlgorithmId;
 
 abstract class RSAKeyPairGenerator extends KeyPairGeneratorSpi {
@@ -123,7 +125,7 @@ abstract class RSAKeyPairGenerator extends KeyPairGeneratorSpi {
             java.security.interfaces.RSAPublicKey pubKey = new RSAPublicKey(rsaId, provider, rsaKey);
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair", e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair", e);
         }
     }
 

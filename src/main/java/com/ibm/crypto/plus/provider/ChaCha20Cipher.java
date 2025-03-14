@@ -29,6 +29,7 @@ import javax.crypto.spec.ChaCha20ParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.Padding;
 import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants {
 
@@ -121,7 +122,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             throw ibse;
         } catch (Exception e) {
             resetVarsAfterException();
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             if (encrypting) {
                 lastEncKey = keyBytes.clone();
@@ -179,7 +180,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
         } catch (Exception e) {
 
             resetVarsAfterException();
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             // Do not reset this.initialized in final block
             // Calling applications can decrypt or encrypt after a successful completion.
@@ -342,7 +343,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
         } catch (Exception e) {
             this.initialized = false;
             this.initCalledInEncSeq = false;
-            throw provider.providerException("Failed to init cipher", e);
+            throw NativeOCKAdapter.providerException("Failed to init cipher", e);
         }
 
     }
@@ -410,7 +411,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
                 return output;
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 
@@ -427,7 +428,7 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 

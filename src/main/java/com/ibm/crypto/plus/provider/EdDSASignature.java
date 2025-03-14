@@ -18,9 +18,11 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.EdDSAParameterSpec;
+
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.SignatureEdDSA;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 abstract class EdDSASignature extends SignatureSpi {
 
@@ -36,7 +38,7 @@ abstract class EdDSASignature extends SignatureSpi {
             this.provider = provider;
             this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize EdDSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }
     }
 
@@ -45,7 +47,7 @@ abstract class EdDSASignature extends SignatureSpi {
             this.provider = provider;
             this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize EdDSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }
         this.alg = Alg; // Added to know difference between ed25519 and ed448
     }
@@ -115,7 +117,7 @@ abstract class EdDSASignature extends SignatureSpi {
         try {
             this.signature.initialize(edDSAPrivate.getOCKKey());
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
         // Set to sign mode and reset message
         this.privateKeyInit = true;
@@ -139,7 +141,7 @@ abstract class EdDSASignature extends SignatureSpi {
         try {
             this.signature.initialize(edDSAPublic.getOCKKey());
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         // Set to verify mode and reset message
