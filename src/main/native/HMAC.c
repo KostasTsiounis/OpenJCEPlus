@@ -37,7 +37,7 @@ typedef struct OCKHMAC {
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1create(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HMAC_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring digestAlgo) {
     static const char *functionName = "NativeInterface.HMAC_create";
 
@@ -327,7 +327,7 @@ JNIEXPORT int HMAC_update_internal(ICC_CTX *ockCtx, OCKHMAC *ockHMAC,
  * Signature: (JJ[BII)V
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1update(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HMAC_1update(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hmacId,
     jbyteArray key, jint keyLength, jbyteArray input, jint inputOffset,
     jint inputLen, jboolean needInit) {
@@ -447,7 +447,7 @@ JNIEXPORT int HMAC_doFinal_internal(ICC_CTX *ockCtx, OCKHMAC *ockHMAC,
  * Signature: (JJ)[B
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1doFinal(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HMAC_1doFinal(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hmacId,
     jbyteArray key, jint keyLength, jbyteArray hmac, jboolean needInit) {
     static const char *functionName = "NativeInterface.HMAC_doFinal";
@@ -523,7 +523,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1doFinal(
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1size(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HMAC_1size(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hmacId) {
     static const char *functionName = "NativeInterface.HMAC_size";
 
@@ -574,7 +574,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1size(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_HMAC_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HMAC_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hmacId) {
     static const char *functionName = "NativeInterface.HMAC_delete";
 

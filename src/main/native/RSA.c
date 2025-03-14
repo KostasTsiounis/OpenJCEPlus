@@ -25,7 +25,7 @@ static int rsaPaddingMap(int rsaPaddingId);
  * Signature: (JJI[BII[BI)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1public_1encrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_1encrypt(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray plaintext, jint plaintextOff,
     jint plaintextLen, jbyteArray ciphertext, jint ciphertextOff) {
@@ -129,7 +129,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1public_1encrypt
  * Signature: (JJI[BII[BI)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1private_1encrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1private_1encrypt(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray plaintext, jint plaintextOff,
     jint plaintextLen, jbyteArray ciphertext, jint ciphertextOff,
@@ -236,7 +236,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1private_1encryp
  * Signature: (JJI[BII[BI)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1public_1decrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_1decrypt(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray ciphertext, jint ciphertextOff,
     jint ciphertextLen, jbyteArray plaintext, jint plaintextOff) {
@@ -336,7 +336,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1public_1decrypt
  * Signature: (JJI[BII[BI)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1private_1decrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1private_1decrypt(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray ciphertext, jint ciphertextOff,
     jint ciphertextLen, jbyteArray plaintext, jint plaintextOff,
