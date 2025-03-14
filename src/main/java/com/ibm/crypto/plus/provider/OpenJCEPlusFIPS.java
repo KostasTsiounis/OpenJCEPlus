@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
 
+import com.ibm.crypto.plus.provider.base.NativeInterface;
+import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
 import com.ibm.crypto.plus.provider.base.OCKContext;
 import com.ibm.crypto.plus.provider.base.OCKException;
 
@@ -119,11 +121,12 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
         }
 
         if (debug != null) {
+            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(true);
             debug.println("OpenJCEPlusFIPS Build-Level: " + getDebugDate(this.getClass().getName()));
-            debug.println("OpenJCEPlusFIPS library build date: " + OCKContext.getLibraryBuildDate());
+            debug.println("OpenJCEPlusFIPS library build date: " + nativeImpl.getLibraryBuildDate());
             try {
-                debug.println("OpenJCEPlusFIPS dependent library version: " + ockContext.getOCKVersion());
-                debug.println("OpenJCEPlusFIPS dependent library path: " + ockContext.getOCKInstallPath());
+                debug.println("OpenJCEPlusFIPS dependent library version: " + nativeImpl.getLibraryVersion());
+                debug.println("OpenJCEPlusFIPS dependent library path: " + nativeImpl.getLibraryInstallPath());
             } catch (Throwable t) {
                 t.printStackTrace(System.out);
             }
