@@ -23,6 +23,7 @@ import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 
 import com.ibm.crypto.plus.provider.base.DSAKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;

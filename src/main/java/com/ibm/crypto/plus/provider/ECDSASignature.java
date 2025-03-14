@@ -20,6 +20,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.Signature;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.util.ECUtil;
 import sun.security.util.ObjectIdentifier;
