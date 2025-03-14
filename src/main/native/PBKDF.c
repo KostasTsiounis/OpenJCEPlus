@@ -20,14 +20,14 @@
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    PBKDF2_derive
  */
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_PBKDF2_1derive(
     JNIEnv *env, jclass thisObj, jlong contextId, jstring hashAlgorithm,
     jbyteArray password, jbyteArray salt, jint iterations, jint keyLength) {
-    static const char *functionName       = "NativeInterface.PBKDF2_derive";
+    static const char *functionName       = "NativeOCKImplementation.PBKDF2_derive";
     ICC_CTX           *ockCtx             = (ICC_CTX *)((intptr_t)contextId);
     const char        *hashAlgorithmChars = NULL;
     unsigned char     *saltNative         = NULL;

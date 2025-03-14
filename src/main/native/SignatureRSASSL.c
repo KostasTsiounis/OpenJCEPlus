@@ -32,7 +32,7 @@
 //------------------------------------------------------------------------------
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSASSL_SIGNATURE_sign
  * Signature: (J[BJ)[B
  */
@@ -40,7 +40,7 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSASSL_1SIGNATURE_1sign(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digest,
     jlong rsaKeyId) {
-    static const char *functionName = "NativeInterface.RSASSL_SIGNATURE_sign";
+    static const char *functionName = "NativeOCKImplementation.RSASSL_SIGNATURE_sign";
 
     ICC_CTX       *ockCtx            = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA            = (ICC_RSA *)((intptr_t)rsaKeyId);
@@ -201,7 +201,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSASSL_1SIGNATURE_
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSASSL_SIGNATURE_verify
  * Signature: (J[BJ[B)Z
  */
@@ -209,7 +209,7 @@ JNIEXPORT jboolean JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSASSL_1SIGNATURE_1verify(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digest,
     jlong rsaKeyId, jbyteArray sigBytes, jboolean convert) {
-    static const char *functionName = "NativeInterface.RSASSL_SIGNATURE_verify";
+    static const char *functionName = "NativeOCKImplementation.RSASSL_SIGNATURE_verify";
 
     ICC_CTX       *ockCtx            = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA            = (ICC_RSA *)((intptr_t)rsaKeyId);
