@@ -24,7 +24,7 @@
  * DigestSignature: (JJJ[B)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_SIGNATUREEdDSA_1signOneShot(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_SIGNATUREEdDSA_1signOneShot(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray bytes) {
     static const char *functionName   = "SIGNATUREEdDSA_signOneShot";
@@ -177,7 +177,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_SIGNATUREEdDSA_1signOneSho
  * Signature: (JJ[B[B)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_SIGNATUREEdDSA_1verifyOneShot(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_SIGNATUREEdDSA_1verifyOneShot(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray sigBytes, jbyteArray oneShotBytes) {
     static const char *functionName   = "SIGNATUREEdDSA_verifyOneShot";
