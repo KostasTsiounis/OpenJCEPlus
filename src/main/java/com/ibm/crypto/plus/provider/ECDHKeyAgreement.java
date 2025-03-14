@@ -28,6 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.ibm.crypto.plus.provider.base.ECKey;
 import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class ECDHKeyAgreement extends KeyAgreementSpi { // implements
                                                               // AlgorithmStatus

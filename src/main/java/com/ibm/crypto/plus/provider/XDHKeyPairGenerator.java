@@ -18,6 +18,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.NamedParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.XECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
 
