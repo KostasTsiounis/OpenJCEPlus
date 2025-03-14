@@ -948,16 +948,9 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
         }
     }
 
-    ProviderException providerException(String message, Throwable ockException) {
-        ProviderException providerException = new ProviderException(message, ockException);
-        setOCKExceptionCause(providerException, ockException);
-        return providerException;
-    }
-
-    void setOCKExceptionCause(Exception exception, Throwable ockException) {
-        if (debug != null) {
-            exception.initCause(ockException);
-        }
+    @Override
+    boolean isFIPS() {
+        return true;
     }
 
     // Get the date from the ImplementationVersion in the manifest file

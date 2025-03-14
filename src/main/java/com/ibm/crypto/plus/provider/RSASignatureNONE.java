@@ -177,7 +177,7 @@ public final class RSASignatureNONE extends SignatureSpi {
             }
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

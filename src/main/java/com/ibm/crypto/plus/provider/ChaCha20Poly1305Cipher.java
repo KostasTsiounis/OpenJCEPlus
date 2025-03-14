@@ -86,15 +86,15 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (IllegalArgumentException ock_iae) {
             IllegalArgumentException iae = new IllegalArgumentException(ock_iae.getMessage());
-            provider.setOCKExceptionCause(iae, ock_iae);
+            NativeOCKAdapter.setOCKExceptionCause(iae, ock_iae);
             throw iae;
         } catch (OCKException ockException) {
             if (!encrypting) {
@@ -126,19 +126,20 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
             return retvalue;
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            sbeInLastFinalEncrypt = encrypting;
             throw sbe;
         } catch (IllegalArgumentException ock_iae) {
             IllegalArgumentException iae = new IllegalArgumentException(ock_iae.getMessage());
-            provider.setOCKExceptionCause(iae, ock_iae);
+            NativeOCKAdapter.setOCKExceptionCause(iae, ock_iae);
             throw iae;
         } catch (OCKException ockException) {
             if (!encrypting) {

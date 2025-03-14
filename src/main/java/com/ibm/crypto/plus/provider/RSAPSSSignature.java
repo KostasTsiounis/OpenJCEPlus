@@ -299,7 +299,7 @@ public final class RSAPSSSignature extends SignatureSpi {
             this.signature.update(b, off, len);
         } catch (Exception e) {
             SignatureException se = new SignatureException("Failure in engineUpdate");
-            provider.setOCKExceptionCause(se, e);
+            NativeOCKAdapter.setOCKExceptionCause(se, e);
             throw se;
         }
     }
@@ -310,7 +310,7 @@ public final class RSAPSSSignature extends SignatureSpi {
             return this.signature.signFinal();
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

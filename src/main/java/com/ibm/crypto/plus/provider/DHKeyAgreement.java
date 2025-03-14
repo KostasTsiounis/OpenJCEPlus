@@ -159,7 +159,7 @@ public final class DHKeyAgreement extends KeyAgreementSpi {
             throw new IllegalStateException(ise.getMessage());
         } catch (OCKException e) {
             IllegalStateException ise = new IllegalStateException(e.getMessage());
-            provider.setOCKExceptionCause(ise, e);
+            NativeOCKAdapter.setOCKExceptionCause(ise, e);
             throw ise;
         }
 
