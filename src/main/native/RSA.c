@@ -20,7 +20,7 @@
 static int rsaPaddingMap(int rsaPaddingId);
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSACIPHER_public_encrypt
  * Signature: (JJI[BII[BI)I
  */
@@ -29,7 +29,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray plaintext, jint plaintextOff,
     jint plaintextLen, jbyteArray ciphertext, jint ciphertextOff) {
-    static const char *functionName = "NativeInterface.RSA_public_encrypt";
+    static const char *functionName = "NativeOCKImplementation.RSA_public_encrypt";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA           = (ICC_RSA *)((intptr_t)rsaKeyId);
@@ -124,7 +124,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSACIPHER_private_encrypt
  * Signature: (JJI[BII[BI)I
  */
@@ -134,7 +134,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1private
     jint rsaPaddingId, jbyteArray plaintext, jint plaintextOff,
     jint plaintextLen, jbyteArray ciphertext, jint ciphertextOff,
     jboolean convertKey) {
-    static const char *functionName = "NativeInterface.RSA_private_encrypt";
+    static const char *functionName = "NativeOCKImplementation.RSA_private_encrypt";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA           = (ICC_RSA *)((intptr_t)rsaKeyId);
@@ -231,7 +231,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1private
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSACIPHER_public_decrypt
  * Signature: (JJI[BII[BI)I
  */
@@ -240,7 +240,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId,
     jint rsaPaddingId, jbyteArray ciphertext, jint ciphertextOff,
     jint ciphertextLen, jbyteArray plaintext, jint plaintextOff) {
-    static const char *functionName = "NativeInterface.RSA_public_decrypt";
+    static const char *functionName = "NativeOCKImplementation.RSA_public_decrypt";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA           = (ICC_RSA *)((intptr_t)rsaKeyId);
@@ -331,7 +331,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1public_
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSACIPHER_private_decrypt
  * Signature: (JJI[BII[BI)I
  */
@@ -341,7 +341,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSACIPHER_1private
     jint rsaPaddingId, jbyteArray ciphertext, jint ciphertextOff,
     jint ciphertextLen, jbyteArray plaintext, jint plaintextOff,
     jboolean convertKey) {
-    static const char *functionName = "NativeInterface.RSA_private_decrypt";
+    static const char *functionName = "NativeOCKImplementation.RSA_private_decrypt";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA       *ockRSA           = (ICC_RSA *)((intptr_t)rsaKeyId);

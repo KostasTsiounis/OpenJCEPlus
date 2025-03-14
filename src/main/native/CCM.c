@@ -186,7 +186,7 @@ int checkTagMismatch_CCM(char* input, int inputLen, char* parm_block,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    internal functions
  * Signature:
  */
@@ -196,7 +196,7 @@ int CCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
                      unsigned char* plaintext, unsigned long plaintextLen,
                      unsigned char* aad, int aadLen, int tagLen) {
     int                rc           = ICC_OSSL_SUCCESS;
-    static const char* functionName = "NativeInterface.CCM_decrypt_core";
+    static const char* functionName = "NativeOCKImplementation.CCM_decrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -224,7 +224,7 @@ int CCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
 }
 
 /*
- *  Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  Method:    do_CCM_decryptFastJNI_WithHardwareSupport
  */
 JNIEXPORT jint JNICALL
@@ -296,7 +296,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decryptFa
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_CCM_decryptFastJNI
  */
 JNIEXPORT jint JNICALL
@@ -321,7 +321,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decryptFa
 }
 
 /*
- *  Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  Method:    do_CCM_decrypt
  */
 JNIEXPORT jint JNICALL
@@ -330,7 +330,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decrypt(
     jbyteArray key, jint keyLen, jbyteArray aad, jint aadLen,
     jbyteArray ciphertext, jint ciphertextLen, jbyteArray plaintext,
     jint plaintextLen, jint tagLen) {
-    static const char* functionName     = "NativeInterface.do_CCM_decrypt";
+    static const char* functionName     = "NativeOCKImplementation.do_CCM_decrypt";
     ICC_CTX*           ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*     keyNative        = NULL;
     unsigned char*     ivNative         = NULL;
@@ -408,7 +408,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decrypt(
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    internal functions
  * Signature:
  */
@@ -418,7 +418,7 @@ int CCM_encrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
                      unsigned char* plainText, int plaintextLen,
                      unsigned char* cipherText, unsigned long ciphertextLen) {
     int                rc           = ICC_OSSL_SUCCESS;
-    static const char* functionName = "NativeInterface.CCM_encrypt_core";
+    static const char* functionName = "NativeOCKImplementation.CCM_encrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -451,7 +451,7 @@ int CCM_encrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_CCM_checkHardwareCCMSupport
  */
 FUNC* JCC_OS_helpers(ICC_CTX* ctx);
@@ -473,7 +473,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1checkHard
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_CCM_encryptFastJNI_WithHardwareSupport
  */
 JNIEXPORT jint JNICALL
@@ -543,7 +543,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encryptFa
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_CCM_encryptFastJNI
  */
 JNIEXPORT jint JNICALL
@@ -568,7 +568,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encryptFa
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_CCM_encrypt
  * Signature: (J[BI[BI[BII[BI[BI[B)I
  */
@@ -578,7 +578,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encrypt(
     jbyteArray key, jint keyLen, jbyteArray aad, jint aadLen,
     jbyteArray plaintext, jint plaintextLen, jbyteArray ciphertext,
     jint ciphertextLen, jint tagLen) {
-    static const char* functionName     = "NativeInterface.do_CCM_encrypt";
+    static const char* functionName     = "NativeOCKImplementation.do_CCM_encrypt";
     ICC_CTX*           ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*     keyNative        = NULL;
     unsigned char*     ivNative         = NULL;

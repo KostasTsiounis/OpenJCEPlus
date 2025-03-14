@@ -25,14 +25,14 @@ typedef struct OCKHKDF {
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_create
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring digestAlgo) {
-    static const char *functionName = "NativeInterface.HKDF_create";
+    static const char *functionName = "NativeOCKImplementation.HKDF_create";
 
     ICC_CTX    *ockCtx          = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF    *ockHKDF         = NULL;
@@ -135,7 +135,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1create(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_extract
  * Signature: (JJ[BII)V
  */
@@ -143,7 +143,7 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1extract(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hkdfId,
     jbyteArray salt, jlong saltLenl, jbyteArray inKey, jlong inKeyLenl) {
-    static const char *functionName = "NativeInterface.HKDF_extract";
+    static const char *functionName = "NativeOCKImplementation.HKDF_extract";
 
     ICC_CTX       *ockCtx      = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF       *ockHKDF     = (OCKHKDF *)((intptr_t)hkdfId);
@@ -292,7 +292,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1extract(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_expand
  * Signature: (JJ[BII)V
  */
@@ -301,7 +301,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1expand(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hkdfId,
     jbyteArray prk, jlong prkLenl, jbyteArray info, jlong infoLenl,
     jlong okmLenl) {
-    static const char *functionName = "NativeInterface.HKDF_expand";
+    static const char *functionName = "NativeOCKImplementation.HKDF_expand";
 
     ICC_CTX       *ockCtx     = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF       *ockHKDF    = (OCKHKDF *)((intptr_t)hkdfId);
@@ -460,7 +460,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1expand(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_derive
  * Signature: (JJ[BII)V
  */
@@ -469,7 +469,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1derive(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hkdfId,
     jbyteArray salt, jlong saltLenl, jbyteArray inKey, jlong inKeyLenl,
     jbyteArray info, jlong infoLenl, jlong resKeyLenl) {
-    static const char *functionName = "NativeInterface.HKDF_1derive";
+    static const char *functionName = "NativeOCKImplementation.HKDF_1derive";
 
     ICC_CTX       *ockCtx       = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF       *ockHKDF      = (OCKHKDF *)((intptr_t)hkdfId);
@@ -655,14 +655,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1derive(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_size
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1size(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hkdfId) {
-    static const char *functionName = "NativeInterface.Hkdf_size";
+    static const char *functionName = "NativeOCKImplementation.Hkdf_size";
 
     ICC_CTX *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF *ockHKDF   = (OCKHKDF *)((intptr_t)hkdfId);
@@ -704,14 +704,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1size(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    HKDF_delete
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong hkdfId) {
-    static const char *functionName = "NativeInterface.HKDF_delete";
+    static const char *functionName = "NativeOCKImplementation.HKDF_delete";
 
     ICC_CTX *ockCtx  = (ICC_CTX *)((intptr_t)ockContextId);
     OCKHKDF *ockHKDF = (OCKHKDF *)((intptr_t)hkdfId);
