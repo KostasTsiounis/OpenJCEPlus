@@ -15,7 +15,8 @@ public final class XECKey implements AsymmetricKey {
     // private/public key bytes are available but not yet obtained.
     //
     static final byte[] unobtainedKeyBytes = new byte[0];
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long xecKeyId;
     private byte[] privateKeyBytes;
     private byte[] publicKeyBytes;
@@ -30,25 +31,24 @@ public final class XECKey implements AsymmetricKey {
         }
     };
 
-    private XECKey(OCKContext ockContext, long xecKeyId, byte[] privateKeyBytes,
+    private XECKey(boolean isFIPS, long xecKeyId, byte[] privateKeyBytes,
             byte[] publicKeyBytes) {
         //final String methodName = "XECKey(long, byte[], byte[]) ";
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.xecKeyId = xecKeyId;
         this.privateKeyBytes = privateKeyBytes;
         this.publicKeyBytes = publicKeyBytes;
     }
 
 
-    public static XECKey generateKeyPair(OCKContext ockContext, int curveNum, int pub_size)
+    public static XECKey generateKeyPair(boolean isFIPS, int curveNum, int pub_size)
             throws OCKException {
         //final String methodName = "generateKeyPair(NamedParameterSpec.CURVE) ";
-        if (ockContext == null)
-            throw new IllegalArgumentException("The context parameter is null");
-
         FastJNIBuffer buffer = XECKey.buffer.get();
 
-        long xecKeyId = NativeInterface.XECKEY_generate(ockContext.getId(), curveNum,
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long xecKeyId = nativeImpl.XECKEY_generate(curveNum,
                 buffer.pointer());
         if (!validId(xecKeyId))
             throw new OCKException(badIdMsg);
@@ -56,19 +56,18 @@ public final class XECKey implements AsymmetricKey {
         byte[] publicKeyBytes = new byte[pub_size];
         buffer.get(0, publicKeyBytes, 0, pub_size);
 
-        return new XECKey(ockContext, xecKeyId, unobtainedKeyBytes, publicKeyBytes);
+        return new XECKey(isFIPS, xecKeyId, unobtainedKeyBytes, publicKeyBytes);
     }
 
-    public static byte[] computeECDHSecret(OCKContext ockContext, long genCtx, long pubId,
+    public static byte[] computeECDHSecret(boolean isFIPS, long genCtx, long pubId,
             long privId, int secrectBufferSize) throws OCKException {
-        if (ockContext == null)
-            throw new IllegalArgumentException("context is null");
         if (pubId == 0)
             throw new IllegalArgumentException("The public key parameter is not valid");
         if (privId == 0)
             throw new IllegalArgumentException("The private key parameter is not valid");
 
-        byte[] sharedSecretBytes = NativeInterface.XECKEY_computeECDHSecret(ockContext.getId(),
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        byte[] sharedSecretBytes = nativeImpl.XECKEY_computeECDHSecret(
                 genCtx, pubId, privId, secrectBufferSize);
         //OCKDebug.Msg (debPrefix, methodName,  "pubId :" + pubId + " privId :" + privId + " sharedSecretBytes :", sharedSecretBytes);
         return sharedSecretBytes;
@@ -88,8 +87,7 @@ public final class XECKey implements AsymmetricKey {
         if (privateKeyBytes == unobtainedKeyBytes) {
             if (!validId(xecKeyId))
                 throw new OCKException(badIdMsg);
-            this.privateKeyBytes = NativeInterface.XECKEY_getPrivateKeyBytes(ockContext.getId(),
-                    xecKeyId); // Returns DER encoded bytes
+            this.privateKeyBytes = this.nativeImpl.XECKEY_getPrivateKeyBytes(xecKeyId); // Returns DER encoded bytes
         }
     }
 
@@ -121,7 +119,7 @@ public final class XECKey implements AsymmetricKey {
             }
 
             if (xecKeyId != 0) {
-                NativeInterface.XECKEY_delete(ockContext.getId(), xecKeyId);
+                this.nativeImpl.XECKEY_delete(xecKeyId);
                 xecKeyId = 0;
             }
         } finally {
@@ -129,17 +127,16 @@ public final class XECKey implements AsymmetricKey {
         }
     }
 
-    public synchronized static XECKey createPrivateKey(OCKContext ockContext,
+    public synchronized static XECKey createPrivateKey(boolean isFIPS,
             byte[] privateKeyBytes, int priv_size) throws OCKException {
         //final String methodName = "createPrivateKey";
-        if (ockContext == null)
-            throw new IllegalArgumentException("context is null");
         if (privateKeyBytes == null)
             throw new IllegalArgumentException("key bytes is null");
 
         FastJNIBuffer buffer = XECKey.buffer.get();
 
-        long xecKeyId = NativeInterface.XECKEY_createPrivateKey(ockContext.getId(), privateKeyBytes,
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long xecKeyId = nativeImpl.XECKEY_createPrivateKey(privateKeyBytes,
                 buffer.pointer());
         if (!validId(xecKeyId))
             throw new OCKException(badIdMsg);
@@ -148,19 +145,18 @@ public final class XECKey implements AsymmetricKey {
         byte[] publicKeyBytes = new byte[priv_size];
         buffer.get(0, publicKeyBytes, 0, priv_size);
 
-        return new XECKey(ockContext, xecKeyId, privateKeyBytes.clone(), publicKeyBytes);
+        return new XECKey(isFIPS, xecKeyId, privateKeyBytes.clone(), publicKeyBytes);
     }
 
-    public static XECKey createPublicKey(OCKContext ockContext, byte[] publicKeyBytes)
+    public static XECKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes)
             throws OCKException {
         //final String methodName = "createPublicKey";
-        if (ockContext == null)
-            throw new IllegalArgumentException("context is null");
         if (publicKeyBytes == null)
             throw new IllegalArgumentException("key bytes is null");
 
-        long xecKeyId = NativeInterface.XECKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
-        return new XECKey(ockContext, xecKeyId, null, publicKeyBytes.clone());
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long xecKeyId = nativeImpl.XECKEY_createPublicKey(publicKeyBytes);
+        return new XECKey(isFIPS, xecKeyId, null, publicKeyBytes.clone());
     }
 
     public String getAlgorithm() {
