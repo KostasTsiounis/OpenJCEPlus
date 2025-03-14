@@ -20,6 +20,10 @@ public interface NativeInterface {
 
     void validateLibraryVersion() throws ProviderException, OCKException;
 
+    void validateLibraryLocation() throws ProviderException, OCKException;
+
+    void validateLibraryVersion() throws ProviderException, OCKException;
+
     // =========================================================================
     // General functions
     // =========================================================================
