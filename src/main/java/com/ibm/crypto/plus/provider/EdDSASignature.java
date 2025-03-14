@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.EdDSAParameterSpec;
 
 abstract class EdDSASignature extends SignatureSpi {
 
