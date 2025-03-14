@@ -21,6 +21,7 @@ import java.security.SignatureSpi;
 import java.security.spec.ECParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
@@ -130,7 +131,7 @@ public final class DatawithECDSA extends SignatureSpi {
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data",
                     e);
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

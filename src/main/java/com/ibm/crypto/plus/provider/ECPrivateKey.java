@@ -136,7 +136,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // + ECUtils.bytesToHex(ecKey.getPublicKeyBytes()));
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
 
@@ -182,7 +182,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // + ECUtils.bytesToHex(ecKey.getPublicKeyBytes()));
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -206,7 +206,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             parseKeyBits();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         } finally {
             if (algidOut != null) {

@@ -162,7 +162,7 @@ abstract class EdDSASignature extends SignatureSpi {
             return this.signature.sign(dataBytes);
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }
