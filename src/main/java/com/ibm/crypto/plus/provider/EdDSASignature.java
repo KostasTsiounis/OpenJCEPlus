@@ -21,8 +21,6 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
 
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-
 abstract class EdDSASignature extends SignatureSpi {
 
     private OpenJCEPlusProvider provider = null;
