@@ -130,7 +130,7 @@ ICC_AES_GCM_CTX* getOrfreeGCMContext(ICC_CTX* ockCtx, int keyLen) {
 
 /*============================================================================
  *
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_InitForUpdateDecrypt_core
  * Signature: (JJ)V
  */
@@ -146,7 +146,7 @@ int GCM_InitForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     int rc = ICC_OSSL_SUCCESS;
 
     static const char* functionName =
-        "NativeInterface.GCM_InitForUpdateDecrypt_core";
+        "NativeOCKImplementation.GCM_InitForUpdateDecrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -247,7 +247,7 @@ int GCM_InitForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
 
 /*============================================================================
  *
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_UpdForUpdateDecrypt_core
  * Signature:
  */
@@ -263,7 +263,7 @@ int GCM_UpdForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     int rc = ICC_OSSL_SUCCESS;
 
     static const char* functionName =
-        "NativeInterface.GCM_UpdForUpdateDecrypt_core";
+        "NativeOCKImplementation.GCM_UpdForUpdateDecrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -352,7 +352,7 @@ int GCM_UpdForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_InitForUpdateEncrypt_core
  * Signature:
  */
@@ -371,7 +371,7 @@ int GCM_InitForUpdateEncrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     int rc = ICC_OSSL_SUCCESS;
     /* jboolean        isCopy           = 0; */
     static const char* functionName =
-        "NativeInterface.GCM_InitForUpdateEncrypt_core";
+        "NativeOCKImplementation.GCM_InitForUpdateEncrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -482,7 +482,7 @@ int GCM_InitForUpdateEncrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_UpdForUpdateEncrypt_core
  * Signature:
  */
@@ -498,7 +498,7 @@ int GCM_UpdForUpdateEncrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     int rc = ICC_OSSL_SUCCESS;
     /* jboolean        isCopy           = 0; */
     static const char* functionName =
-        "NativeInterface.GCM_UpdForUpdateEncrypt_core";
+        "NativeOCKImplementation.GCM_UpdForUpdateEncrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -590,7 +590,7 @@ int GCM_UpdForUpdateEncrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_FinalForUpdateDecrypt_core
  * Signature:
  */
@@ -606,7 +606,7 @@ int GCM_FinalForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     long unsigned      finalOutlen = 0;
     int                rc          = ICC_OSSL_SUCCESS;
     static const char* functionName =
-        "NativeInterface.GCM_FinalForUpdateDecrypt_core";
+        "NativeOCKImplementation.GCM_FinalForUpdateDecrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -737,7 +737,7 @@ int GCM_FinalForUpdateDecrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_FinalForUpdateEncrypt_core
  * Signature:
  */
@@ -755,7 +755,7 @@ int GCM_FinalForUpdateEncrypt_core(JNIEnv* env, ICC_CTX* ockCtx,
     long unsigned      finalOutlen = 0;
     int                rc          = ICC_OSSL_SUCCESS;
     static const char* functionName =
-        "NativeInterface.GCM_FinalForUpdateEncrypt_core";
+        "NativeOCKImplementation.GCM_FinalForUpdateEncrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -1003,7 +1003,7 @@ int checkTagMismatch(char* input, int inputLen, char* parm_block, int tagOffset,
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_decrypt_core
  * Signature:
  */
@@ -1017,7 +1017,7 @@ int GCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
     long unsigned      updateAADlen = 0;
     long unsigned      finalOutlen  = 0;
     int                rc           = ICC_OSSL_SUCCESS;
-    static const char* functionName = "NativeInterface.GCM_decrypt_core";
+    static const char* functionName = "NativeOCKImplementation.GCM_decrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -1088,7 +1088,7 @@ int GCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
 }
 
 /*
- *  Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  Method:    do_GCM_decryptFastJNI_WithHardwareSupport
  *  */
 JNIEXPORT jint JNICALL
@@ -1160,7 +1160,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1decryptFa
 }
 
 /*
- *  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  * Method:    do_GCM_decryptFastJNI
  *  */
 JNIEXPORT jint JNICALL
@@ -1187,7 +1187,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1decryptFa
 }
 
 /*
- *  Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  Method:    do_GCM_decrypt
  *  */
 JNIEXPORT jint JNICALL
@@ -1197,7 +1197,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1decrypt(
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset, jbyteArray aad, jint aadLen,
     jint tagLen) {
-    static const char* functionName     = "NativeInterface.do_GCM_decrypt";
+    static const char* functionName     = "NativeOCKImplementation.do_GCM_decrypt";
     ICC_CTX*           ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*     keyNative        = NULL;
     unsigned char*     ivNative         = NULL;
@@ -1280,7 +1280,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1decrypt(
 }
 
 /*============================================================================
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    GCM_encrypt_core
  * Signature:
  */
@@ -1300,7 +1300,7 @@ int GCM_encrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
     unsigned long      updateAADlen     = 0;
     long unsigned      finalOutlen      = 0;
     int                rc               = ICC_OSSL_SUCCESS;
-    static const char* functionName     = "NativeInterface.GCM_encrypt_core";
+    static const char* functionName     = "NativeOCKImplementation.GCM_encrypt_core";
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -1418,7 +1418,7 @@ int GCM_encrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
 }
 
 /*
- *  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  * Method:    do_GCM_checkHardwareGCMSupport
  *  */
 FUNC* JCC_OS_helpers(ICC_CTX* ctx);
@@ -1440,7 +1440,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1checkHard
 }
 
 /*
- *  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  * Method:    do_GCM_encryptFastJNI_WithHardwareSupport
  *  */
 JNIEXPORT jint JNICALL
@@ -1510,7 +1510,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1encryptFa
 }
 
 /*
- *  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ *  * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  *  * Method:    do_GCM_encryptFastJNI
  *  */
 JNIEXPORT jint JNICALL
@@ -1538,7 +1538,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1encryptFa
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_encrypt
  * Signature: (J[BI[BI[BII[BI[BI[B)I
  */
@@ -1549,7 +1549,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1encrypt(
     jbyteArray plaintext, jint plaintextOffset, jint plaintextLen,
     jbyteArray ciphertext, jint ciphertextOffset, jbyteArray aad, jint aadLen,
     jbyteArray tag, jint tagLen) {
-    static const char* functionName     = "NativeInterface.do_GCM_encrypt";
+    static const char* functionName     = "NativeOCKImplementation.do_GCM_encrypt";
     ICC_CTX*           ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*     keyNative        = NULL;
     unsigned char*     ivNative         = NULL;
@@ -1629,14 +1629,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1encrypt(
 }
 //============================================================================
 ///*
-// * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+// * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
 //  * Method:    do_GCM_delete
 //   * Signature: (JJ)V
 //    */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_GCM_1delete(
     JNIEnv* env, jclass thisObj, jlong ockContextId) {
-    static const char* functionName = "NativeInterface.do_GCM_delete";
+    static const char* functionName = "NativeOCKImplementation.do_GCM_delete";
     ICC_CTX*           ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -1662,7 +1662,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_GCM_1delete(
 // JNIEXPORT jint JNICALL
 // Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_get_1GCM_1TLSEnabled
 //	(JNIEnv *env, jclass thisObj) {
-//	static const char * functionName = "NativeInterface.get_GCM_TLSEnabled";
+//	static const char * functionName = "NativeOCKImplementation.get_GCM_TLSEnabled";
 //     int ret = 1;
 //
 //	if (debug) {
@@ -1677,7 +1677,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_GCM_1delete(
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_create_1GCM_1context(
     JNIEnv* env, jclass thisObj, jlong ockContextId) {
-    static const char* functionName = "NativeInterface.create_GCM_context";
+    static const char* functionName = "NativeOCKImplementation.create_GCM_context";
     ICC_CTX*           ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     ICC_AES_GCM_CTX*   gcmCtx       = NULL;
 
@@ -1702,14 +1702,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_create_1GCM_1conte
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    free_GCM_ctx
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_free_1GCM_1ctx(
     JNIEnv* env, jclass thisObj, jlong ockContextId, jlong gcmContextId) {
-    static const char* functionName = "NativeInterface.free_1GCM_1ctx";
+    static const char* functionName = "NativeOCKImplementation.free_1GCM_1ctx";
     ICC_CTX*           ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     ICC_AES_GCM_CTX*   gcmCtx = (ICC_AES_GCM_CTX*)((intptr_t)gcmContextId);
     if (debug) {
@@ -1726,7 +1726,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_free_1GCM_1ctx(
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_UpdForUpdateEncrypt
  * Signature:
  */
@@ -1738,7 +1738,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1UpdForUpd
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_UpdForUpdateEncrypt";
+        "NativeOCKImplementation.do_GCM_UpdForUpdateEncrypt";
     ICC_CTX*       ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char* plaintextNative  = NULL;
     unsigned char* ciphertextNative = NULL;
@@ -1827,7 +1827,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1UpdForUpd
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_FinalForUpdateEncrypt
  * Signature:
  */
@@ -1841,7 +1841,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1FinalForU
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_FinalUpdateEncrypt";
+        "NativeOCKImplementation.do_GCM_FinalUpdateEncrypt";
     ICC_CTX*       ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char* keyNative        = NULL;
     unsigned char* ivNative         = NULL;
@@ -1946,7 +1946,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1FinalForU
 #endif
 }
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_UpdForUpdateDecrypt
  * Signature:
  */
@@ -1958,7 +1958,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1UpdForUpd
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_UpdForUpdateDecrypt";
+        "NativeOCKImplementation.do_GCM_UpdForUpdateDecrypt";
     ICC_CTX*         ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*   plaintextNative  = NULL;
     unsigned char*   ciphertextNative = NULL;
@@ -2036,7 +2036,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1UpdForUpd
 #endif
 }
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_InitForUpdateDecrypt
  * Signature:
  */
@@ -2048,7 +2048,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1InitForUp
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_InitForUpdateDecrypt";
+        "NativeOCKImplementation.do_GCM_InitForUpdateDecrypt";
     ICC_CTX*         ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*   keyNative    = NULL;
     unsigned char*   ivNative     = NULL;
@@ -2140,7 +2140,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1InitForUp
 #endif
 }
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_FinalForUpdateDecrypt
  * Signature:
  */
@@ -2153,7 +2153,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1FinalForU
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_FinalForUpdateDecrypt";
+        "NativeOCKImplementation.do_GCM_FinalForUpdateDecrypt";
     ICC_CTX*       ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char* plaintextNative  = NULL;
     unsigned char* ciphertextNative = NULL;
@@ -2253,7 +2253,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1FinalForU
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    do_GCM_InitForUpdateEncrypt
  * Signature:
  */
@@ -2265,7 +2265,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1GCM_1InitForUp
 #if defined(AIX) || defined(WINDOWS) || defined(MAC) || defined(LINUX) || \
     defined(__MVS__)
     static const char* functionName =
-        "NativeInterface.do_GCM_InitForUpdateEncrypt";
+        "NativeOCKImplementation.do_GCM_InitForUpdateEncrypt";
     ICC_CTX*         ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*   keyNative    = NULL;
     unsigned char*   ivNative     = NULL;

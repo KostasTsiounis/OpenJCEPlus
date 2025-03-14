@@ -959,7 +959,7 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
 
     @Override
     boolean isFIPS() {
-        return true;
+        return false;
     }
 
     // Get the date from the ImplementationVersion in the manifest file

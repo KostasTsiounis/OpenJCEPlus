@@ -26,14 +26,14 @@ typedef struct OCKCipher {
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_create
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring cipherName) {
-    static const char *functionName = "NativeInterface.POLY1305CIPHER_create";
+    static const char *functionName = "NativeOCKImplementation.POLY1305CIPHER_create";
 
     ICC_CTX    *ockCtx          = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher  *ockCipher       = NULL;
@@ -108,7 +108,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1cr
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_init
  * Signature: (JJZ)V
  */
@@ -116,7 +116,7 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1init(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jint isEncrypt, jbyteArray key, jbyteArray iv) {
-    static const char *functionName = "NativeInterface.POLY1305CIPHER_init";
+    static const char *functionName = "NativeOCKImplementation.POLY1305CIPHER_init";
 
     ICC_CTX       *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher     *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -175,14 +175,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1in
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_clean
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1clean(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
-    static const char *functionName = "NativeInterface.POLY1305CIPHER_clean";
+    static const char *functionName = "NativeOCKImplementation.POLY1305CIPHER_clean";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -211,7 +211,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1cl
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_setPadding
  * Signature: (JJZ)V
  */
@@ -220,7 +220,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1se
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jint paddingId) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_setPadding";
+        "NativeOCKImplementation.POLY1305CIPHER_setPadding";
 
     ICC_CTX   *ockCtx     = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher  = (OCKCipher *)((intptr_t)ockCipherId);
@@ -274,7 +274,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1se
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_getBlockSize
  * Signature: (JJ)I
  */
@@ -282,7 +282,7 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1getBlockSize(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_getBlockSize";
+        "NativeOCKImplementation.POLY1305CIPHER_getBlockSize";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -304,7 +304,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1ge
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_getKeyLength
  * Signature: (JJ)I
  */
@@ -312,7 +312,7 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1getKeyLength(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_getKeyLength";
+        "NativeOCKImplementation.POLY1305CIPHER_getKeyLength";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -334,7 +334,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1ge
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_getIVLength
  * Signature: (JJ)I
  */
@@ -342,7 +342,7 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1getIVLength(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_getIVLength";
+        "NativeOCKImplementation.POLY1305CIPHER_getIVLength";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -364,14 +364,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1ge
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_getOID
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1getOID(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
-    static const char *functionName = "NativeInterface.POLY1305CIPHER_getOID";
+    static const char *functionName = "NativeOCKImplementation.POLY1305CIPHER_getOID";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
@@ -393,7 +393,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1ge
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_encryptUpdate
  * Signature: (JJI[B[B)I
  */
@@ -403,7 +403,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1en
     jbyteArray plaintext, jint plaintextOffset, jint plaintextLen,
     jbyteArray ciphertext, jint ciphertextOffset) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_encryptUpdate";
+        "NativeOCKImplementation.POLY1305CIPHER_encryptUpdate";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher     *ockCipher        = (OCKCipher *)((intptr_t)ockCipherId);
@@ -498,7 +498,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1en
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_encryptFinal
  * Signature: (JJI[B[B)I
  */
@@ -508,7 +508,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1en
     jbyteArray plaintext, jint plaintextOffset, jint plaintextLen,
     jbyteArray ciphertext, jint ciphertextOffset, jbyteArray tag) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_encryptFinal";
+        "NativeOCKImplementation.POLY1305CIPHER_encryptFinal";
 
     ICC_CTX         *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher       *ockCipher        = (OCKCipher *)((intptr_t)ockCipherId);
@@ -643,7 +643,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1en
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_decryptUpdate
  * Signature: (JJI[B[B)I
  */
@@ -653,7 +653,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_decryptUpdate";
+        "NativeOCKImplementation.POLY1305CIPHER_decryptUpdate";
 
     ICC_CTX       *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher     *ockCipher        = (OCKCipher *)((intptr_t)ockCipherId);
@@ -744,7 +744,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_decryptFinal
  * Signature: (JJI[B[B)I
  */
@@ -754,7 +754,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset, jbyteArray tag) {
     static const char *functionName =
-        "NativeInterface.POLY1305CIPHER_decryptFinal";
+        "NativeOCKImplementation.POLY1305CIPHER_decryptFinal";
 
     ICC_CTX         *ockCtx           = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher       *ockCipher        = (OCKCipher *)((intptr_t)ockCipherId);
@@ -928,14 +928,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    POLY1305CIPHER_delete
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
-    static const char *functionName = "NativeInterface.POLY1305CIPHER_delete";
+    static const char *functionName = "NativeOCKImplementation.POLY1305CIPHER_delete";
 
     ICC_CTX   *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);
     OCKCipher *ockCipher = (OCKCipher *)((intptr_t)ockCipherId);
