@@ -90,7 +90,7 @@ abstract class ECDSASignature extends SignatureSpi {
             this.signature.update(b, off, len);
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException(e.getMessage());
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }
@@ -101,7 +101,7 @@ abstract class ECDSASignature extends SignatureSpi {
             return this.signature.sign();
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }
