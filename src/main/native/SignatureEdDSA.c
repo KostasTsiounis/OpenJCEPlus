@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    SIGNATUREEdDSA_signOneShot
  * DigestSignature: (JJJ[B)[B
  */
@@ -172,7 +172,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_SIGNATUREEdDSA_1si
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    SIGNATUREEdDSA_verifyOneShot
  * Signature: (JJ[B[B)Z
  */

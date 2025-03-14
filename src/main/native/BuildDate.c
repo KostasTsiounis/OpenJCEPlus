@@ -16,14 +16,14 @@
 #include <stdint.h>
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    getLibraryBuildDate
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_getLibraryBuildDate(
     JNIEnv* env, jclass thisObj) {
-    static const char* functionName    = "NativeInterface.getLibraryBuildDate";
+    static const char* functionName    = "NativeOCKImplementation.getLibraryBuildDate";
     const char*        buildDateString = NULL;
     jstring            retValue        = NULL;
 

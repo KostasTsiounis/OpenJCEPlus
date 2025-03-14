@@ -20,14 +20,14 @@
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_generate
  * Signature: (JI)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__JI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
-    static const char *functionName = "NativeInterface.DHKEY_generate(size)";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_generate(size)";
 
     ICC_CTX *ockCtx  = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH  *ockDH   = NULL;
@@ -87,7 +87,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__J
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_generateParameters
  * Signature: (JI)[B
  */
@@ -95,7 +95,7 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generateParameters(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits) {
     static const char *functionName =
-        "NativeInterface.DHKEY_generateParameters";
+        "NativeOCKImplementation.DHKEY_generateParameters";
 
     ICC_CTX       *ockCtx          = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH           = NULL;
@@ -210,14 +210,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generatePar
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_generate
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__J_3B(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray parmBytes) {
-    static const char *functionName = "NativeInterface.DHKEY_generate(parms)";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_generate(parms)";
 
     ICC_CTX       *ockCtx          = (ICC_CTX *)((intptr_t)ockContextId);
     unsigned char *parmBytesNative = NULL;
@@ -335,7 +335,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1generate__J
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_createPrivateKey
  * Signature: (J[B)J
  */
@@ -343,7 +343,7 @@ JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPrivateKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray privateKeyBytes) {
-    static const char *functionName = "NativeInterface.DHKEY_createPrivateKey";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_createPrivateKey";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH          = NULL;
@@ -439,7 +439,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPriva
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_createPublicKey
  * Signature: (J[B)J
  */
@@ -447,7 +447,7 @@ JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPublicKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray publicKeyBytes) {
-    static const char *functionName = "NativeInterface.DHKEY_createPublicKey";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_createPublicKey";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH          = NULL;
@@ -546,14 +546,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPubli
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_getParameters
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getParameters(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
-    static const char *functionName = "NativeInterface.DHKEY_getParameters";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_getParameters";
 
     ICC_CTX       *ockCtx          = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH           = (ICC_DH *)((intptr_t)dhKeyId);
@@ -652,7 +652,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getParamete
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_getPrivateKeyBytes
  * Signature: (JJ)[B
  */
@@ -660,7 +660,7 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPrivateKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
     static const char *functionName =
-        "NativeInterface.DHKEY_getPrivateKeyBytes";
+        "NativeOCKImplementation.DHKEY_getPrivateKeyBytes";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH          = (ICC_DH *)((intptr_t)dhKeyId);
@@ -779,14 +779,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPrivateK
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_getPublicKeyBytes
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPublicKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
-    static const char *functionName = "NativeInterface.DHKEY_getPublicKeyBytes";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_getPublicKeyBytes";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockDH          = (ICC_DH *)((intptr_t)dhKeyId);
@@ -904,14 +904,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPublicKe
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_createPKey
  * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
-    static const char *functionName = "NativeInterface.DHKEY_createPKey";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_createPKey";
 
     ICC_CTX      *ockCtx  = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH       *ockDH   = (ICC_DH *)((intptr_t)dhKeyId);
@@ -975,7 +975,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1createPKey(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_computeDHSecret
  * Signature: (JJJ)[B
  */
@@ -983,7 +983,7 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSecret(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong pubKeyId,
     jlong privKeyId) {
-    static const char *functionName = "NativeInterface.DHKEY_computeDHSecret";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_computeDHSecret";
 
     ICC_CTX       *ockCtx            = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH        *ockPubDHKey       = (ICC_DH *)((intptr_t)pubKeyId);
@@ -1281,14 +1281,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSe
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DHKEY_delete
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong dhKeyId) {
-    static const char *functionName = "NativeInterface.DHKEY_delete";
+    static const char *functionName = "NativeOCKImplementation.DHKEY_delete";
 
     ICC_CTX *ockCtx = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_DH  *ockDH  = (ICC_DH *)((intptr_t)dhKeyId);
