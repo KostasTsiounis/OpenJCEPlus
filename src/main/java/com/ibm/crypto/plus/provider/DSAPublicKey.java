@@ -73,7 +73,7 @@ final class DSAPublicKey extends X509Key
             this.dsaKey = DSAKey.createPublicKey(provider.getOCKContext(), publicKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -94,7 +94,7 @@ final class DSAPublicKey extends X509Key
             this.dsaKey = DSAKey.createPublicKey(provider.getOCKContext(), publicKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -112,7 +112,7 @@ final class DSAPublicKey extends X509Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key",
                     exception);
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }

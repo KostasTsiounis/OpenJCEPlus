@@ -92,7 +92,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
             setFieldsFromXeckey();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC public key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -134,7 +134,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
             this.xecKey = XECKey.createPublicKey(provider.getOCKContext(), alteredEncoded);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC public key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -216,7 +216,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
         } catch (Exception exception) {
             InvalidParameterException ike = new InvalidParameterException(
                     "Failed to create XEC public key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }

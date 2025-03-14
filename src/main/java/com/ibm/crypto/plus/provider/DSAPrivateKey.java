@@ -72,7 +72,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -94,7 +94,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -110,7 +110,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }

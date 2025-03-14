@@ -29,6 +29,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.Padding;
 import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DESedeCipher extends CipherSpi implements DESConstants {
 
@@ -70,11 +71,11 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -91,15 +92,15 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             return symmetricCipher.doFinal(input, inputOffset, inputLen, output, outputOffset);
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -321,7 +322,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             return symmetricCipher.update(input, inputOffset, inputLen, output, outputOffset);
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);

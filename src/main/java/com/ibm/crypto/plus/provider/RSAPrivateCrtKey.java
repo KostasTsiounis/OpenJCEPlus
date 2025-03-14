@@ -15,10 +15,12 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 
 import com.ibm.crypto.plus.provider.base.RSAKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerOutputStream;
@@ -117,7 +119,7 @@ final class RSAPrivateCrtKey extends PKCS8Key
             this.rsaKey = RSAKey.createPrivateKey(provider.getOCKContext(), this.privKeyMaterial);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -132,7 +134,7 @@ final class RSAPrivateCrtKey extends PKCS8Key
         } catch (IOException e) {
             InvalidKeyException ike = new InvalidKeyException(
                     "Failed to parse key bits of encoded key");
-            provider.setOCKExceptionCause(ike, e);
+            NativeOCKAdapter.setOCKExceptionCause(ike, e);
             throw ike;
         }
 
@@ -142,7 +144,7 @@ final class RSAPrivateCrtKey extends PKCS8Key
             this.rsaKey = RSAKey.createPrivateKey(provider.getOCKContext(), this.privKeyMaterial);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -169,7 +171,7 @@ final class RSAPrivateCrtKey extends PKCS8Key
             parseKeyBits();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA private key");
-            provider.setOCKExceptionCause(ike, exception);
+            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
             throw ike;
         }
     }
