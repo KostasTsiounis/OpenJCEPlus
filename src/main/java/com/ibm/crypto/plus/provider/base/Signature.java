@@ -12,7 +12,8 @@ import java.security.InvalidKeyException;
 
 public final class Signature {
 
-    private OCKContext ockContext = null;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private Digest digest = null;
     private AsymmetricKey key = null;
     private boolean initialized = false;
@@ -20,19 +21,17 @@ public final class Signature {
     private final String badIdMsg = "Digest Identifier or PKey Identifier is not valid";
     private final static String debPrefix = "SIGNATURE";
 
-    public static Signature getInstance(OCKContext ockContext, String digestAlgo)
+    public static Signature getInstance(boolean isFIPS, String digestAlgo)
             throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-        return new Signature(ockContext, digestAlgo);
+        return new Signature(isFIPS, digestAlgo);
     }
 
 
-    private Signature(OCKContext ockContext, String digestAlgo) throws OCKException {
+    private Signature(boolean isFIPS, String digestAlgo) throws OCKException {
         //final String methodName = "Signature(String)";
-        this.ockContext = ockContext;
-        this.digest = Digest.getInstance(ockContext, digestAlgo);
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
+        this.digest = Digest.getInstance(isFIPS, digestAlgo);
         //OCKDebug.Msg (debPrefix, methodName, "digestAlgo :" + digestAlgo);
     }
 
@@ -74,7 +73,7 @@ public final class Signature {
 
         byte[] signature = null;
         try {
-            signature = NativeInterface.SIGNATURE_sign(this.ockContext.getId(), digest.getId(),
+            signature = this.nativeImpl.SIGNATURE_sign(digest.getId(),
                     this.key.getPKeyId(), this.convertKey);
         } finally {
             // Try to reset even if OCKException is thrown
@@ -103,7 +102,7 @@ public final class Signature {
 
         boolean verified = false;
         try {
-            verified = NativeInterface.SIGNATURE_verify(this.ockContext.getId(), digest.getId(),
+            verified = this.nativeImpl.SIGNATURE_verify(digest.getId(),
                     this.key.getPKeyId(), sigBytes);
         } finally {
             // Try to reset even if OCKException is thrown

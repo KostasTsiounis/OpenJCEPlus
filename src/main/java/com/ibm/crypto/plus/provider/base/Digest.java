@@ -112,15 +112,13 @@ public final class Digest implements Cloneable {
 
         // Algorithm is not SHA*
         if (this.algIndx == -2) {
-            this.digestId = NativeInterface.DIGEST_create(this.ockContext.getId(),
-                    this.digestAlgo);
+            this.digestId = nativeImpl.DIGEST_create(this.digestAlgo);
         } else {
             Long context = contexts[this.algIndx].poll();
 
             if (context == null) {
                 // Create new context
-                this.digestId = NativeInterface
-                        .DIGEST_create(this.ockContext.getId(), this.digestAlgo);
+                this.digestId = nativeImpl.DIGEST_create(this.digestAlgo);
                 this.contextFromQueue = (runtimeContextNum[this.algIndx] < numContexts);
                 if (runtimeContextNum[this.algIndx] < numContexts) {
                     runtimeContextNum[this.algIndx]++;
@@ -142,8 +140,7 @@ public final class Digest implements Cloneable {
         // not SHA* algorithm
         if (this.algIndx == -2) {
             if (validId(this.digestId)) {
-                NativeInterface.DIGEST_delete(this.ockContext.getId(),
-                        this.digestId);
+                nativeImpl.DIGEST_delete(this.digestId);
                 this.digestId = 0;
             }
         } else {
@@ -156,8 +153,7 @@ public final class Digest implements Cloneable {
             } else {
                 // delete context
                 if (validId(this.digestId)) {
-                    NativeInterface.DIGEST_delete(this.ockContext.getId(),
-                            this.digestId);
+                    nativeImpl.DIGEST_delete(this.digestId);
                     this.digestId = 0;
                 }
             }
@@ -169,7 +165,8 @@ public final class Digest implements Cloneable {
      * ===========================================================================
      */
 
-    private OCKContext ockContext = null;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private int digestLength = 0;
     private final String badIdMsg = "Digest Identifier is not valid";
     private static final String debPrefix = "DIGEST";
@@ -178,21 +175,18 @@ public final class Digest implements Cloneable {
 
     private long digestId = 0;
 
-    public static Digest getInstance(OCKContext ockContext, String digestAlgo) throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
+    public static Digest getInstance(boolean isFIPS, String digestAlgo) throws OCKException {
         if (digestAlgo == null || digestAlgo.isEmpty()) {
             throw new IllegalArgumentException("digestAlgo is null/empty");
         }
 
-        return new Digest(ockContext, digestAlgo);
+        return new Digest(isFIPS, digestAlgo);
     }
 
-    private Digest(OCKContext ockContext, String digestAlgo) throws OCKException {
+    private Digest(boolean isFIPS, String digestAlgo) throws OCKException {
         //final String methodName = "Digest(String)";
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         this.digestAlgo = digestAlgo;
         getContext();
         //OCKDebug.Msg(debPrefix, methodName,  "digestAlgo :" + digestAlgo);
@@ -233,8 +227,7 @@ public final class Digest implements Cloneable {
             throw new OCKException(badIdMsg);
         }
 
-        errorCode = NativeInterface.DIGEST_update(this.ockContext.getId(),
-                this.digestId, input, offset, length);
+        errorCode = this.nativeImpl.DIGEST_update(this.digestId, input, offset, length);
         if (errorCode < 0) {
             throwOCKException(errorCode);
         }
@@ -255,8 +248,7 @@ public final class Digest implements Cloneable {
         int digestLength = getDigestLength();
         byte[] digestBytes = new byte[digestLength];
 
-        errorCode = NativeInterface.DIGEST_digest_and_reset(this.ockContext.getId(),
-                this.digestId, digestBytes);
+        errorCode = this.nativeImpl.DIGEST_digest_and_reset(this.digestId, digestBytes);
         if (errorCode < 0) {
             throwOCKException(errorCode);
         }
@@ -293,7 +285,7 @@ public final class Digest implements Cloneable {
             throw new OCKException(badIdMsg);
         }
         if (this.needsReinit) {
-            NativeInterface.DIGEST_reset(this.ockContext.getId(), this.digestId);
+            this.nativeImpl.DIGEST_reset(this.digestId);
         }
         this.needsReinit = false;
     }
@@ -311,8 +303,7 @@ public final class Digest implements Cloneable {
                 if (!validId(this.digestId)) {
                     throw new OCKException(badIdMsg);
                 }
-                this.digestLength = NativeInterface.DIGEST_size(this.ockContext.getId(),
-                        this.digestId);
+                this.digestLength = this.nativeImpl.DIGEST_size(this.digestId);
             }
         }
     }
@@ -349,14 +340,14 @@ public final class Digest implements Cloneable {
         copy.algIndx = this.algIndx;
         copy.digestAlgo = new String(this.digestAlgo);
         copy.needsReinit = this.needsReinit;
-        copy.ockContext = this.ockContext;
+        copy.isFIPS = this.isFIPS;
+        copy.nativeImpl = NativeInterfaceFactory.getImpl(copy.isFIPS);
         copy.contextFromQueue = false;
 
         // Allocate a new context for the digestId and copy all state information from our
         // original context into the copy. 
         try {
-            copy.digestId = NativeInterface.DIGEST_copy(
-                this.ockContext.getId(), getId());
+            copy.digestId = copy.nativeImpl.DIGEST_copy(getId());
             if (0 == copy.digestId) {
                 throw new CloneNotSupportedException("Copy of native digest context failed.");
             }

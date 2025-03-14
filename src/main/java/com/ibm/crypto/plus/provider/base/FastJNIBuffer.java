@@ -27,7 +27,7 @@ class FastJNIBuffer {
 
     public static FastJNIBuffer create(int capacity) {
         FastJNIBuffer b = new FastJNIBuffer(capacity);
-        b.pointer = NativeInterface.getByteBufferPointer(b.byteBuffer);
+        b.pointer = NativeInterfaceFactory.getImpl(false).getByteBufferPointer(b.byteBuffer);
         b.capacity = capacity;
         return b;
     }

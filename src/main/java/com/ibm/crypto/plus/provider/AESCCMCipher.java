@@ -40,7 +40,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
     String debPrefix = "AESCCMCipher ";
 
     private OpenJCEPlusProvider provider = null;
-    private OCKContext ockContext = null;
+    private boolean isFIPS = false;
     private boolean encrypting = true;
     private boolean initialized = false;
     private int tagLenInBytes = DEFAULT_AES_CCM_TAG_LENGTH / 8;
@@ -108,11 +108,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
         }
 
         this.provider = provider;
-        try {
-            ockContext = provider.getOCKContext();
-        } catch (Exception e) {
-            throw provider.providerException("Failed to initialize cipher context", e);
-        }
+        this.isFIPS = provider.isFIPS();
         buffer = new byte[AES_BLOCK_SIZE * 2];
     }
 
@@ -268,7 +264,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
                     newIV = null;
                 }
 
-                int ret = CCMCipher.doCCMFinal_Encrypt(ockContext, Key, IV, tagLenInBytes, input,
+                int ret = CCMCipher.doCCMFinal_Encrypt(isFIPS, Key, IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
 
@@ -296,7 +292,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
                     throw new ShortBufferException("Output buffer too small");
                 }
 
-                int ret = CCMCipher.doCCMFinal_Decrypt(ockContext, Key, IV, tagLenInBytes, input,
+                int ret = CCMCipher.doCCMFinal_Decrypt(isFIPS, Key, IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
                 return ret;
@@ -744,9 +740,7 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
         //final String methodName = "finalize";
         // OCKDebug.Msg (debPrefix, methodName, "finalize called");
         try {
-            if (ockContext != null) {
-                CCMCipher.doCCM_cleanup(ockContext);
-            }
+            CCMCipher.doCCM_cleanup(isFIPS);
             if (Key != null) {
                 Arrays.fill(Key, (byte) 0x00);
                 Key = null;
