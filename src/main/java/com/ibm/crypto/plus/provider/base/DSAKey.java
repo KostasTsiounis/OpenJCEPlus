@@ -17,7 +17,8 @@ public final class DSAKey implements AsymmetricKey {
     //
     static final byte[] unobtainedKeyBytes = new byte[0];
 
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long dsaKeyId;
     private long pkeyId;
     private byte[] parameters;
@@ -26,105 +27,94 @@ public final class DSAKey implements AsymmetricKey {
     private static final String badIdMsg = "DSA Key Identifier is not valid";
     private final static String debPrefix = "DSAKey";
 
-    public static DSAKey generateKeyPair(OCKContext ockContext, int numBits) throws OCKException {
+    public static DSAKey generateKeyPair(boolean isFIPS, int numBits) throws OCKException {
         //final String methodName = "generateKeyPair(numBits) ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
         if (numBits < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
 
-        long dsaKeyId = NativeInterface.DSAKEY_generate(ockContext.getId(), numBits);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long dsaKeyId = nativeImpl.DSAKEY_generate(numBits);
         if (!validId(dsaKeyId)) {
             throw new OCKException(badIdMsg);
         }
         //OCKDebug.Msg (debPrefix, methodName, "dsaKeyId=" + dsaKeyId);
-        return new DSAKey(ockContext, dsaKeyId, null, unobtainedKeyBytes, unobtainedKeyBytes);
+        return new DSAKey(isFIPS, dsaKeyId, null, unobtainedKeyBytes, unobtainedKeyBytes);
     }
 
-    public static byte[] generateParameters(OCKContext ockContext, int numBits)
+    public static byte[] generateParameters(boolean isFIPS, int numBits)
             throws OCKException {
         //final String methodName = "generateParameters(numBits) ";
         byte[] paramBytes = null;
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (numBits < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
         //OCKDebug.Msg (debPrefix, methodName, "numBits=" + numBits);
-        paramBytes = NativeInterface.DSAKEY_generateParameters(ockContext.getId(), numBits);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        paramBytes = nativeImpl.DSAKEY_generateParameters(numBits);
         if (paramBytes == null) {
             throw new OCKException("The generated DSA parameter bytes are incorrect.");
         }
         return paramBytes;
     }
 
-    public static DSAKey generateKeyPair(OCKContext ockContext, byte[] parameters)
+    public static DSAKey generateKeyPair(boolean isFIPS, byte[] parameters)
             throws OCKException {
         //final String methodName = "generateKeyPair";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (parameters == null || parameters.length == 0) {
             throw new IllegalArgumentException("DSA parameters are null/empty");
         }
 
-        long dsaKeyId = NativeInterface.DSAKEY_generate(ockContext.getId(), parameters);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long dsaKeyId = nativeImpl.DSAKEY_generate(parameters);
         //OCKDebug.Msg (debPrefix, methodName, "dsaKeyId=" + dsaKeyId);
         if (!validId(dsaKeyId)) {
             throw new OCKException(badIdMsg);
         }
-        return new DSAKey(ockContext, dsaKeyId, parameters.clone(), unobtainedKeyBytes,
+        return new DSAKey(isFIPS, dsaKeyId, parameters.clone(), unobtainedKeyBytes,
                 unobtainedKeyBytes);
     }
 
-    public static DSAKey createPrivateKey(OCKContext ockContext, byte[] privateKeyBytes)
+    public static DSAKey createPrivateKey(boolean isFIPS, byte[] privateKeyBytes)
             throws OCKException {
         //final String methodName = "createPrivateKey ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
 
-        long dsaKeyId = NativeInterface.DSAKEY_createPrivateKey(ockContext.getId(),
-                privateKeyBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long dsaKeyId = nativeImpl.DSAKEY_createPrivateKey(privateKeyBytes);
         //OCKDebug.Msg (debPrefix, methodName,  "dsakKeyId=" + dsaKeyId);
         if (!validId(dsaKeyId)) {
             throw new OCKException(badIdMsg);
         }
-        return new DSAKey(ockContext, dsaKeyId, null, privateKeyBytes.clone(), null);
+        return new DSAKey(isFIPS, dsaKeyId, null, privateKeyBytes.clone(), null);
     }
 
-    public static DSAKey createPublicKey(OCKContext ockContext, byte[] publicKeyBytes)
+    public static DSAKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes)
             throws OCKException {
         //final String methodName = "createPublicKey";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
 
-        long dsaKeyId = NativeInterface.DSAKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long dsaKeyId = nativeImpl.DSAKEY_createPublicKey(publicKeyBytes);
         if (!validId(dsaKeyId)) {
             throw new OCKException(badIdMsg);
         }
         //OCKDebug.Msg (debPrefix, methodName, "dsakKeyId=" + dsaKeyId);
-        return new DSAKey(ockContext, dsaKeyId, null, null, publicKeyBytes.clone());
+        return new DSAKey(isFIPS, dsaKeyId, null, null, publicKeyBytes.clone());
     }
 
-    private DSAKey(OCKContext ockContext, long dsaKeyId, byte[] parameters, byte[] privateKeyBytes,
+    private DSAKey(boolean isFIPS, long dsaKeyId, byte[] parameters, byte[] privateKeyBytes,
             byte[] publicKeyBytes) {
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         this.dsaKeyId = dsaKeyId;
         this.pkeyId = 0;
         this.parameters = parameters;
@@ -192,7 +182,7 @@ public final class DSAKey implements AsymmetricKey {
             if (!validId(dsaKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.pkeyId = NativeInterface.DSAKEY_createPKey(ockContext.getId(), dsaKeyId);
+            this.pkeyId = this.nativeImpl.DSAKEY_createPKey(dsaKeyId);
             if (!validId(pkeyId)) {
                 throw new OCKException(badIdMsg);
             }
@@ -210,7 +200,7 @@ public final class DSAKey implements AsymmetricKey {
             if (!validId(dsaKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.parameters = NativeInterface.DSAKEY_getParameters(ockContext.getId(), dsaKeyId);
+            this.parameters = this.nativeImpl.DSAKEY_getParameters(dsaKeyId);
         }
     }
 
@@ -224,8 +214,7 @@ public final class DSAKey implements AsymmetricKey {
             if (!validId(dsaKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.privateKeyBytes = NativeInterface.DSAKEY_getPrivateKeyBytes(ockContext.getId(),
-                    dsaKeyId);
+            this.privateKeyBytes = this.nativeImpl.DSAKEY_getPrivateKeyBytes(dsaKeyId);
         }
     }
 
@@ -239,8 +228,7 @@ public final class DSAKey implements AsymmetricKey {
             if (!validId(dsaKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.publicKeyBytes = NativeInterface.DSAKEY_getPublicKeyBytes(ockContext.getId(),
-                    dsaKeyId);
+            this.publicKeyBytes = this.nativeImpl.DSAKEY_getPublicKeyBytes(dsaKeyId);
         }
     }
 
@@ -254,12 +242,12 @@ public final class DSAKey implements AsymmetricKey {
             }
 
             if (dsaKeyId != 0) {
-                NativeInterface.DSAKEY_delete(ockContext.getId(), dsaKeyId);
+                this.nativeImpl.DSAKEY_delete(dsaKeyId);
                 dsaKeyId = 0;
             }
 
             if (pkeyId != 0) {
-                NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
+                this.nativeImpl.PKEY_delete(pkeyId);
                 pkeyId = 0;
             }
         } finally {

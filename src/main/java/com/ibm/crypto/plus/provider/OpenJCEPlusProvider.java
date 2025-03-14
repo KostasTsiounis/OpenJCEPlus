@@ -46,13 +46,6 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         return true;
     }
 
-    // Get OCK context for crypto operations
-    //
-    abstract OCKContext getOCKContext();
-
-    // Get the context associated with the provider. The context is used in
-    // serialization to be able to keep track of the associated provider.
-    //
     abstract ProviderContext getProviderContext();
 
     // Get SecureRandom to use for crypto operations. If in FIPS mode, returns a
@@ -74,8 +67,4 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
     String getJavaVersionStr() {
         return JAVA_VER;
     }
-
-    abstract ProviderException providerException(String message, Throwable ockException);
-
-    abstract void setOCKExceptionCause(Exception exception, Throwable ockException);
 }

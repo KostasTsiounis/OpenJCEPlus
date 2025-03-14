@@ -19,7 +19,8 @@ import javax.crypto.ShortBufferException;
 
 public final class SymmetricCipher {
 
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long ockCipherId;
     private boolean isInitialized = false;
     private boolean encrypting = true;
@@ -42,7 +43,6 @@ public final class SymmetricCipher {
     private long paramPointer; // Pointer to memory that has the parameters/state keeping used by z_kmc
     private static long hardwareFunctionPtr = 0;
     private boolean use_z_fast_command = false;
-    private static HashMap<OCKContext, Boolean> hardwareEnabled = new HashMap<OCKContext, Boolean>(); // Caching for hardwareFunctionPtr
     private final static String badIdMsg = "Cipher Identifier is not valid";
     /* private final static String debPrefix = "SymCipher"; Adding Debug causes test cases to fail */
     int paramOffset;
@@ -53,38 +53,34 @@ public final class SymmetricCipher {
     //final String debPrefix = "SymmetricCipher";
 
 
-    public static SymmetricCipher getInstanceChaCha20(OCKContext ockContext, Padding padding)
+    public static SymmetricCipher getInstanceChaCha20(boolean isFIPS, Padding padding)
             throws OCKException {
         String algName = "chacha20";
-        return getInstance(ockContext, algName, padding);
+        return getInstance(isFIPS, algName, padding);
     }
 
-    public static SymmetricCipher getInstanceChaCha20Poly1305(OCKContext ockContext,
+    public static SymmetricCipher getInstanceChaCha20Poly1305(boolean isFIPS,
             Padding padding) throws OCKException {
         String algName = "chacha20-poly1305";
-        return getInstance(ockContext, algName, padding);
+        return getInstance(isFIPS, algName, padding);
     }
 
-    public static SymmetricCipher getInstanceAES(OCKContext ockContext, String mode,
+    public static SymmetricCipher getInstanceAES(boolean isFIPS, String mode,
             Padding padding, int numKeyBytes) throws OCKException {
         String algName = "AES-" + Integer.toString(numKeyBytes * 8) + "-" + mode.toUpperCase();
-        return getInstance(ockContext, algName, padding);
+        return getInstance(isFIPS, algName, padding);
     }
 
-    public static SymmetricCipher getInstanceDESede(OCKContext ockContext, String mode,
+    public static SymmetricCipher getInstanceDESede(boolean isFIPS, String mode,
             Padding padding) throws OCKException {
         String modeUpperCase = mode.toUpperCase();
         String algName = modeUpperCase.equals("ECB") ? "DES-EDE3" : "DES-EDE3-" + modeUpperCase;
-        return getInstance(ockContext, algName, padding);
+        return getInstance(isFIPS, algName, padding);
     }
 
-    private static SymmetricCipher getInstance(OCKContext ockContext, String cipherName,
+    private static SymmetricCipher getInstance(boolean isFIPS, String cipherName,
             Padding padding) throws OCKException {
         //final String methodName = "getInstance";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
         if (cipherName == null || cipherName.isEmpty()) {
             throw new IllegalArgumentException("cipherName is null/empty");
         }
@@ -94,7 +90,7 @@ public final class SymmetricCipher {
         }
         //OCKDebug.Msg(debPrefix, methodName, "cipherName :" + cipherName);
 
-        return new SymmetricCipher(ockContext, cipherName, padding);
+        return new SymmetricCipher(isFIPS, cipherName, padding);
     }
 
     static void throwOCKException(int errorCode) throws BadPaddingException, OCKException {
@@ -114,24 +110,19 @@ public final class SymmetricCipher {
         }
     }
 
-    private SymmetricCipher(OCKContext ockContext, String cipherName, Padding padding)
+    private SymmetricCipher(boolean isFIPS, String cipherName, Padding padding)
             throws OCKException {
         // Check whether used algorithm is CBC and whether hardware supports
-        boolean isHardwareSupport = false;
-        if (hardwareEnabled.containsKey(ockContext))
-            isHardwareSupport = hardwareEnabled.get(ockContext);
-        else {
-            hardwareFunctionPtr = checkHardwareSupport(ockContext.getId());
-            isHardwareSupport = (hardwareFunctionPtr == 1) ? true : false;
-            hardwareEnabled.put(ockContext, isHardwareSupport);
-        }
+        boolean isHardwareSupport = !isFIPS && (checkHardwareSupport() == 1);
+            
         use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
 
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.padding = padding;
         if (!use_z_fast_command) {
-            this.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
+            this.ockCipherId = this.nativeImpl.CIPHER_create(cipherName);
         }
     }
 
@@ -158,7 +149,7 @@ public final class SymmetricCipher {
             if (ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            NativeInterface.CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt ? 1 : 0,
+            this.nativeImpl.CIPHER_init(ockCipherId, isEncrypt ? 1 : 0,
                     padding.getId(), key, iv);
         }
 
@@ -227,7 +218,7 @@ public final class SymmetricCipher {
     }
 
     // public synchronized void clean() throws OCKException {
-    // NativeInterface.CIPHER_clean(ockContext.getId(), ockCipherId);
+    // this.nativeImpl.CIPHER_clean(ockContext.getId(), ockCipherId);
     // this.bufferedCount = 0;
     // }
     public int getOutputSize(int inputLen) throws OCKException {
@@ -296,7 +287,7 @@ public final class SymmetricCipher {
             if (!use_z_fast_command) {
                 if (ockCipherId == 0L)
                     throw new OCKException(badIdMsg);
-                blockSize = NativeInterface.CIPHER_getBlockSize(ockContext.getId(), ockCipherId);
+                blockSize = this.nativeImpl.CIPHER_getBlockSize(ockCipherId);
             } else {
                 blockSize = 16;
             }
@@ -310,7 +301,7 @@ public final class SymmetricCipher {
                 if (ockCipherId == 0L) {
                     throw new OCKException(badIdMsg);
                 }
-                keyLength = NativeInterface.CIPHER_getKeyLength(ockContext.getId(), ockCipherId);
+                keyLength = this.nativeImpl.CIPHER_getKeyLength(ockCipherId);
             } else {
                 keyLength = 16;
             }
@@ -322,13 +313,13 @@ public final class SymmetricCipher {
         if (ivLength == 0 && !use_z_fast_command) {
             if (ockCipherId == 0L)
                 throw new OCKException(badIdMsg);
-            ivLength = NativeInterface.CIPHER_getIVLength(ockContext.getId(), ockCipherId);
+            ivLength = this.nativeImpl.CIPHER_getIVLength(ockCipherId);
         }
         return ivLength;
     }
 
     // public synchronized int getOID() {
-    // return NativeInterface.CIPHER_getOID(ockContext.getId(), ockCipherId);
+    // return this.nativeImpl.CIPHER_getOID(ockContext.getId(), ockCipherId);
     // }
 
     public synchronized int update(byte[] input, int inputOffset, int inputLen, byte[] output,
@@ -390,10 +381,10 @@ public final class SymmetricCipher {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = this.nativeImpl.CIPHER_encryptUpdate(ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = this.nativeImpl.CIPHER_decryptUpdate(ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -433,7 +424,7 @@ public final class SymmetricCipher {
             needsReinit = false;
         }
 
-        outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
+        outLen = this.nativeImpl.z_kmc_native(input, inputOffset, output, outputOffset,
                 paramPointer, inputLen, mode);
         return outLen;
     }
@@ -522,10 +513,10 @@ public final class SymmetricCipher {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = this.nativeImpl.CIPHER_encryptFinal(ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = this.nativeImpl.CIPHER_decryptFinal(ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -578,7 +569,7 @@ public final class SymmetricCipher {
                 || (inputOffset + inputLen) > input.length))
             throw new IllegalArgumentException("Input range is invalid");
 
-        outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
+        outLen = this.nativeImpl.z_kmc_native(input, inputOffset, output, outputOffset,
                 paramPointer, inputLen, mode);
 
         // Need to reset the object such that it can be re-used.
@@ -594,7 +585,7 @@ public final class SymmetricCipher {
             //OCKDebug.Msg(debPrefix, methodName, "ockCipherId :" + ockCipherId);
             if (!use_z_fast_command) {
                 if (ockCipherId != 0) {
-                    NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
+                    this.nativeImpl.CIPHER_delete(ockCipherId);
                     ockCipherId = 0;
                 }
             }
@@ -615,8 +606,8 @@ public final class SymmetricCipher {
         return (id != 0L);
     }
 
-    private static long checkHardwareSupport(long ockId) {
-        return NativeInterface.checkHardwareSupport(ockId);
+    private static long checkHardwareSupport() {
+        return NativeInterfaceFactory.getImpl(false).checkHardwareSupport();
     }
 
     public boolean getHardwareSupportStatus() {
