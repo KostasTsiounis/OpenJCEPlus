@@ -20,7 +20,8 @@ public final class ECKey implements AsymmetricKey {
     //
     static final byte[] unobtainedKeyBytes = new byte[0];
 
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long ecKeyId = 0;
     private long pkeyId = 0;
     private static final String badIdMsg = "EC Key Identifier is not valid";
@@ -62,10 +63,11 @@ public final class ECKey implements AsymmetricKey {
 
     private static final String debPrefix = "ECKey";
 
-    private ECKey(OCKContext ockContext, long ecKeyId, byte[] parameterBytes,
+    private ECKey(boolean isFIPS, long ecKeyId, byte[] parameterBytes,
             byte[] privateKeyBytes, byte[] publicKeyBytes) {
         //final String methodName = "ECKey(long, byte[], byte[], byte[]) ";
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         this.ecKeyId = ecKeyId;
         this.pkeyId = 0;
         this.parameterBytes = parameterBytes;
@@ -77,9 +79,9 @@ public final class ECKey implements AsymmetricKey {
     }
 
     /* Custom Curve */
-    private ECKey(OCKContext ockContext, long ecKeyId, ECParameterSpec ecSpec, BigInteger s,
+    private ECKey(boolean isFIPS, long ecKeyId, ECParameterSpec ecSpec, BigInteger s,
             BigInteger pubKeyAffineX, BigInteger pubKeyAffineY) {
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
         this.ecKeyId = ecKeyId;
         this.pkeyId = 0;
 
@@ -96,95 +98,85 @@ public final class ECKey implements AsymmetricKey {
 
     // Note that the caller of this method must ensure the pointer ecKeyId is not used
     // concurrently by suitable locking.
-    protected static byte[] getParametersBytes(OCKContext ockContext, long ecKeyId)
+    protected static byte[] getParametersBytes(boolean isFIPS, long ecKeyId)
             throws OCKException {
-        return (NativeInterface.ECKEY_getParameters(ockContext.getId(), ecKeyId));
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        return nativeImpl.ECKEY_getParameters(ecKeyId);
     }
 
 
-    public static ECKey generateKeyPair(OCKContext ockContext, int size, SecureRandom random)
+    public static ECKey generateKeyPair(boolean isFIPS, int size, SecureRandom random)
             throws OCKException {
         //final String methodName = "generateKeyPair ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (size < 0) {
             throw new IllegalArgumentException("The key length parameter is invalid");
         }
 
-        long ecKeyId = NativeInterface.ECKEY_generate(ockContext.getId(), size);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long ecKeyId = nativeImpl.ECKEY_generate(size);
         if (!validId(ecKeyId)) {
             throw new OCKException(badIdMsg);
         }
 
-        byte[] parameterBytes = getParametersBytes(ockContext, ecKeyId);
+        byte[] parameterBytes = getParametersBytes(isFIPS, ecKeyId);
         //OCKDebug.Msg (debPrefix, methodName,  "size=" + size + " ecKeyId=" + ecKeyId + " parameterBytes :",  parameterBytes);
-        return new ECKey(ockContext, ecKeyId, parameterBytes, unobtainedKeyBytes,
+        return new ECKey(isFIPS, ecKeyId, parameterBytes, unobtainedKeyBytes,
                 unobtainedKeyBytes);
     }
 
 
-    public static ECKey generateKeyPair(OCKContext ockContext, String soid, SecureRandom random)
+    public static ECKey generateKeyPair(boolean isFIPS, String soid, SecureRandom random)
             throws OCKException {
         //final String methodName = "generateKeyPair(String, SecureRandom) ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("The context parameter is null");
-        }
 
         if ((soid == null) || (soid.equals("") == true)) {
             throw new IllegalArgumentException("The String Object Identifier parameter is invalid");
         }
 
-        long ecKeyId = NativeInterface.ECKEY_generate(ockContext.getId(), soid);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long ecKeyId = nativeImpl.ECKEY_generate(soid);
         if (!validId(ecKeyId)) {
             throw new OCKException(badIdMsg);
         }
-        byte[] parameterBytes = getParametersBytes(ockContext, ecKeyId);
+        byte[] parameterBytes = getParametersBytes(isFIPS, ecKeyId);
         //OCKDebug.Msg (debPrefix, methodName, "soid :" + soid + " ecKeyId :" + ecKeyId + "parameterBytes :",  parameterBytes);
-        return new ECKey(ockContext, ecKeyId, parameterBytes, unobtainedKeyBytes,
+        return new ECKey(isFIPS, ecKeyId, parameterBytes, unobtainedKeyBytes,
                 unobtainedKeyBytes);
 
     }
 
-    public static ECKey generateKeyPair(OCKContext ockContext, byte[] parameterBytes,
+    public static ECKey generateKeyPair(boolean isFIPS, byte[] parameterBytes,
             SecureRandom random) throws OCKException {
         //final String methodName = "generateKeyPair(byte[], SecureRandom) ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("The context parameter is null");
-        }
 
         if (parameterBytes == null) {
             throw new IllegalArgumentException("The parameter bytes is null");
         }
 
         //OCKDebug.Msg (debPrefix, methodName, "paramBytes.length :" + parameterBytes.length,  parameterBytes);
-        long ecKeyId = NativeInterface.ECKEY_generate(ockContext.getId(), parameterBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long ecKeyId = nativeImpl.ECKEY_generate(parameterBytes);
         //OCKDebug.Msg (debPrefix, methodName, "ecKeyId :" + ecKeyId);
-        return new ECKey(ockContext, ecKeyId, parameterBytes, unobtainedKeyBytes,
+        return new ECKey(isFIPS, ecKeyId, parameterBytes, unobtainedKeyBytes,
                 unobtainedKeyBytes);
     }
 
-    public static byte[] generateParameters(OCKContext ockContext, int size) throws OCKException {
+    public static byte[] generateParameters(boolean isFIPS, int size) throws OCKException {
         //final String methodName = "generateParameters (int) ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (size < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
 
         //OCKDebug.Msg (debPrefix, methodName, "size :" + size);
-        return NativeInterface.ECKEY_generateParameters(ockContext.getId(), size);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        return nativeImpl.ECKEY_generateParameters(size);
     }
 
-    public static byte[] generateParameters(OCKContext ockContext, String soid)
+    public static byte[] generateParameters(boolean isFIPS, String soid)
             throws OCKException {
         //final String methodName = "generateParameters(soid) ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (soid == null || soid.equals("")) {
             throw new IllegalArgumentException(
@@ -192,7 +184,8 @@ public final class ECKey implements AsymmetricKey {
         }
 
         //OCKDebug.Msg (debPrefix, methodName, "soid :" + soid);
-        byte[] generatedParams = NativeInterface.ECKEY_generateParameters(ockContext.getId(), soid);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        byte[] generatedParams = nativeImpl.ECKEY_generateParameters(soid);
         //OCKDebug.Msg (debPrefix, methodName,  "generatedParams :", generatedParams);
         return generatedParams;
     }
@@ -258,7 +251,7 @@ public final class ECKey implements AsymmetricKey {
             if (!validId(ecKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.pkeyId = NativeInterface.ECKEY_createPKey(ockContext.getId(), ecKeyId);
+            this.pkeyId = this.nativeImpl.ECKEY_createPKey(ecKeyId);
         }
     }
 
@@ -271,7 +264,7 @@ public final class ECKey implements AsymmetricKey {
             if (!validId(ecKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.parameterBytes = NativeInterface.ECKEY_getParameters(ockContext.getId(), ecKeyId);
+            this.parameterBytes = this.nativeImpl.ECKEY_getParameters(ecKeyId);
         }
     }
 
@@ -284,8 +277,7 @@ public final class ECKey implements AsymmetricKey {
             if (!validId(ecKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.privateKeyBytes = NativeInterface.ECKEY_getPrivateKeyBytes(ockContext.getId(),
-                    ecKeyId);
+            this.privateKeyBytes = this.nativeImpl.ECKEY_getPrivateKeyBytes(ecKeyId);
 
         }
     }
@@ -299,8 +291,7 @@ public final class ECKey implements AsymmetricKey {
             if (!validId(ecKeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.publicKeyBytes = NativeInterface.ECKEY_getPublicKeyBytes(ockContext.getId(),
-                    ecKeyId);
+            this.publicKeyBytes = this.nativeImpl.ECKEY_getPublicKeyBytes(ecKeyId);
         }
     }
 
@@ -314,12 +305,12 @@ public final class ECKey implements AsymmetricKey {
             }
 
             if (ecKeyId != 0) {
-                NativeInterface.ECKEY_delete(ockContext.getId(), ecKeyId);
+                this.nativeImpl.ECKEY_delete(ecKeyId);
                 ecKeyId = 0;
             }
 
             if (pkeyId != 0) {
-                NativeInterface.PKEY_delete(ockContext.getId(), pkeyId);
+                this.nativeImpl.PKEY_delete(pkeyId);
                 pkeyId = 0;
             }
         } finally {
@@ -329,40 +320,34 @@ public final class ECKey implements AsymmetricKey {
 
     // The underlying native function used in this method does not use any native pointer
     // that is shared across threads. Hence, it does not require any locks
-    public static ECKey createPrivateKey(OCKContext ockContext, byte[] privateKeyBytes,
+    public static ECKey createPrivateKey(boolean isFIPS, byte[] privateKeyBytes,
             byte[] paramBytes) throws OCKException {
         //final String methodName = "createPrivateKey";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
 
         //OCKDebug.Msg (debPrefix, methodName,  "privateKeyBytes :", privateKeyBytes );
-        long ecKeyId = NativeInterface.ECKEY_createPrivateKey(ockContext.getId(), privateKeyBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long ecKeyId = nativeImpl.ECKEY_createPrivateKey(privateKeyBytes);
         //OCKDebug.Msg (debPrefix, methodName, "ecPrivateKeyId :" + ecKeyId);
         if (!validId(ecKeyId)) {
             throw new OCKException(badIdMsg);
         }
-        byte[] publicKeyBytes = NativeInterface.ECKEY_getPublicKeyBytes(ockContext.getId(),
-                ecKeyId);
+        byte[] publicKeyBytes = nativeImpl.ECKEY_getPublicKeyBytes(ecKeyId);
 
         //OCKDebug.Msg (debPrefix, methodName, "publicKeyBytes :", publicKeyBytes);
-        return new ECKey(ockContext, ecKeyId, paramBytes, privateKeyBytes.clone(), publicKeyBytes);
+        return new ECKey(isFIPS, ecKeyId, paramBytes, privateKeyBytes.clone(), publicKeyBytes);
     }
 
     // There is a lock on ecPrivateKey to ensure that the underlying native pointer is not concurrently
     // used by another ECDSA operation. This is needed as the method
     // ECKEY.signDatawithECDSA is not synchronized and not thread safe.
     // The method ECKey.signDatawithECDSA should NOT be synchronized for performance as that would create a global lock.
-    public static byte[] signDatawithECDSA(OCKContext ockContext, byte[] digestBytes,
+    public static byte[] signDatawithECDSA(boolean isFIPS, byte[] digestBytes,
             int digestBytesLen, ECKey ecPrivateKey) throws OCKException {
         //final String methodName = "signDatawithECDSA";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (digestBytes == null || digestBytesLen < 1) {
             throw new IllegalArgumentException("digest bytes is null");
@@ -381,8 +366,9 @@ public final class ECKey implements AsymmetricKey {
         byte[] signedBytes;
         synchronized (ecPrivateKey) {
             //OCKDebug.Msg (debPrefix, methodName,  "digestBytesLen :" + digestBytesLen +  " digestActualBytes :", digestActualBytes);
-            signedBytes = NativeInterface.ECKEY_signDatawithECDSA(ockContext.getId(),
-                    digestActualBytes, digestBytesLen, ecPrivateKey.getEcKeyId());
+            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            signedBytes = nativeImpl.ECKEY_signDatawithECDSA(digestActualBytes,
+                    digestBytesLen, ecPrivateKey.getEcKeyId());
         }
         //OCKDebug.Msg (debPrefix, methodName,  " signedBytes :" + signedBytes);
         return signedBytes;
@@ -392,14 +378,11 @@ public final class ECKey implements AsymmetricKey {
     // pointers are not concurrently used by another ECDSA operation. This is needed as the method
     // ECKey.verifyDatawithECDSA is not synchronized and not thread safe.
     // The method ECKey.verifyDatawithECDSA should NOT be synchronized for performance as that would create a global lock.
-    public static boolean verifyDatawithECDSA(OCKContext ockContext, byte[] digestBytes,
+    public static boolean verifyDatawithECDSA(boolean isFIPS, byte[] digestBytes,
             int digestBytesLen, byte[] sigBytes, int sigBytesLen, ECKey ecPublicKey)
             throws OCKException {
         //final String methodName = "verifyDatawithECDSA";
         boolean verified = false;
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (digestBytes == null || digestBytesLen < 1) {
             throw new IllegalArgumentException("digest bytes are null");
@@ -430,7 +413,8 @@ public final class ECKey implements AsymmetricKey {
         //OCKDebug.Msg (debPrefix, methodName, "diestBytesLen : " + digestBytesLen + " digestAcutalBytes : ", digestActualBytes);
         //OCKDebug.Msg (debPrefix, methodName, " sigActualBytes : ", sigActualBytes);
         synchronized (ecPublicKey) {
-            verified = NativeInterface.ECKEY_verifyDatawithECDSA(ockContext.getId(),
+            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            verified = nativeImpl.ECKEY_verifyDatawithECDSA(
                     digestActualBytes, digestBytesLen, sigActualBytes, sigBytesLen,
                     ecPublicKey.getEcKeyId());
         }
@@ -438,34 +422,29 @@ public final class ECKey implements AsymmetricKey {
         return verified;
     }
 
-    public static ECKey createPublicKey(OCKContext ockContext, byte[] publicKeyBytes,
+    public static ECKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes,
             byte[] parameterBytes) throws OCKException {
         //final String methodName = "createPublicKey";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
         //OCKDebug.Msg (debPrefix, methodName,  "publicKeyBytes :",  publicKeyBytes);
         //OCKDebug.Msg (debPrefix, methodName,  "parameterBytes :", parameterBytes);
-        long ecKeyId = NativeInterface.ECKEY_createPublicKey(ockContext.getId(), publicKeyBytes,
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        long ecKeyId = nativeImpl.ECKEY_createPublicKey(publicKeyBytes,
                 parameterBytes);
         //OCKDebug.Msg (debPrefix, methodName,  "ecKeyId :" + ecKeyId);
-        return new ECKey(ockContext, ecKeyId, null, null, publicKeyBytes.clone());
+        return new ECKey(isFIPS, ecKeyId, null, null, publicKeyBytes.clone());
     }
 
     // There is a double lock on pubEcKeyId and privEcKeyId to ensure that the underlying native
     // pointers are not concurrently used by another ECDH operation. This is needed as the method
     // ECKey.computeDHSecret is not synchronized and not thread safe.
     // The method ECKey.computeDHSecret should NOT be synchronized for performance as that would create a global lock.
-    public static byte[] computeECDHSecret(OCKContext ockContext, long pubEcKeyId, long privEcKeyId)
+    public static byte[] computeECDHSecret(boolean isFIPS, long pubEcKeyId, long privEcKeyId)
             throws OCKException {
         //final String methodName = "computeECDHSecret ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (pubEcKeyId == 0) {
             throw new IllegalArgumentException("The public key parameter is not valid");
@@ -475,8 +454,8 @@ public final class ECKey implements AsymmetricKey {
             throw new IllegalArgumentException("The private key parameter is not valid");
         }
 
-        byte[] sharedSecretBytes = NativeInterface.ECKEY_computeECDHSecret(ockContext.getId(),
-                pubEcKeyId, privEcKeyId);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        byte[] sharedSecretBytes = nativeImpl.ECKEY_computeECDHSecret(pubEcKeyId, privEcKeyId);
         //OCKDebug.Msg (debPrefix, methodName,  "pubEcKeyId :" + pubEcKeyId + " privEcKeyId :" + privEcKeyId + " sharedSecretBytes :", sharedSecretBytes);
         return sharedSecretBytes;
     }

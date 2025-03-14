@@ -99,7 +99,7 @@ public final class CCMCipher {
     // it is not synchronized since there are no shared OCK data structures used in the OCK call
     // except ICC_CTX which is thread safe
 
-    public static int doCCMFinal_Decrypt(OCKContext ockContext, byte[] key, byte[] iv, int tagLen,
+    public static int doCCMFinal_Decrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
@@ -189,9 +189,11 @@ public final class CCMCipher {
 
         int aadLen = authenticationData.length;
 
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+
         if (CCMHardwareFunctionPtr == 0) {
-            CCMHardwareFunctionPtr = NativeInterface
-                    .do_CCM_checkHardwareCCMSupport(ockContext.getId());
+            CCMHardwareFunctionPtr = nativeImpl
+                    .do_CCM_checkHardwareCCMSupport();
         }
 
         if (iv.length + key.length + aadLen <= FastJNIParameterBufferSize && !disableCCMAcceleration
@@ -211,7 +213,7 @@ public final class CCMCipher {
                 FastJNIBuffer inputBuffer = CCMCipher.inputBuffer.get();
                 inputBuffer.put(0, input, inputOffset, inputLen);
                 parameters.put(iv.length + aadLen, key, 0, key.length);
-                rc = NativeInterface.do_CCM_decryptFastJNI(ockContext.getId(), key.length,
+                rc = nativeImpl.do_CCM_decryptFastJNI(key.length,
                         iv.length, inputLen, output.length, aadLen, tagLen, parameters.pointer(),
                         inputBuffer.pointer(), outputBuffer.pointer());
 
@@ -234,7 +236,7 @@ public final class CCMCipher {
             // Create tempOutput
             byte[] tempOutput = new byte[len + outputOffset]; // len from call to getOutputSizeLegacy() above
 
-            rc = NativeInterface.do_CCM_decrypt(ockContext.getId(), iv, iv.length, key, key.length,
+            rc = nativeImpl.do_CCM_decrypt(iv, iv.length, key, key.length,
                     authenticationData, aadLen, tempInput, inputLen, tempOutput, tempOutput.length,
                     tagLen);
 
@@ -253,7 +255,7 @@ public final class CCMCipher {
     // it is not synchronized since there are no shared OCK data structures used in the OCK call
     // except ICC_CTX which is thread safe
 
-    public static int doCCMFinal_Encrypt(OCKContext ockContext, byte[] key, byte[] iv, int tagLen,
+    public static int doCCMFinal_Encrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException {
@@ -331,9 +333,10 @@ public final class CCMCipher {
 
         int aadLen = authenticationData.length;
 
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         if (CCMHardwareFunctionPtr == 0)
-            CCMHardwareFunctionPtr = NativeInterface
-                    .do_CCM_checkHardwareCCMSupport(ockContext.getId());
+            CCMHardwareFunctionPtr = nativeImpl
+                    .do_CCM_checkHardwareCCMSupport();
 
         if (iv.length + key.length + aadLen + tagLen <= FastJNIParameterBufferSize
                 && (inputLen <= FastJNIInputBufferSize || CCMHardwareFunctionPtr != -1)) {
@@ -353,7 +356,7 @@ public final class CCMCipher {
                 FastJNIBuffer inputBuffer = CCMCipher.inputBuffer.get();
                 inputBuffer.put(0, input, inputOffset, inputLen);
                 parameters.put(ivLen + aadLen, key, 0, keyLen);
-                rc = NativeInterface.do_CCM_encryptFastJNI(ockContext.getId(), keyLen, ivLen,
+                rc = nativeImpl.do_CCM_encryptFastJNI(keyLen, ivLen,
                         inputLen, output.length, aadLen, tagLen, parameters.pointer(),
                         inputBuffer.pointer(), outputBuffer.pointer());
 
@@ -374,7 +377,7 @@ public final class CCMCipher {
             // Create tempOutput
             byte[] tempOutput = new byte[len + outputOffset]; // len from call to getOutputSizeLegacy() above
 
-            rc = NativeInterface.do_CCM_encrypt(ockContext.getId(), iv, iv.length, key, key.length,
+            rc = nativeImpl.do_CCM_encrypt(iv, iv.length, key, key.length,
                     authenticationData, aadLen, tempInput, tempInput.length, tempOutput,
                     tempOutput.length, tagLen);
 
@@ -438,10 +441,8 @@ public final class CCMCipher {
     }
 
 
-    public static void doCCM_cleanup(OCKContext ockContext) throws OCKException {
-        if (ockContext != null) {
-            NativeInterface.do_CCM_delete(ockContext.getId());
-        }
+    public static void doCCM_cleanup(boolean isFIPS) throws OCKException {
+        NativeInterfaceFactory.getImpl(isFIPS).do_CCM_delete();
     }
 
 
@@ -489,12 +490,13 @@ public final class CCMCipher {
         putLongtoByteArray(inputLen * 8, addedParams, TPCLOffset); // Add TPCL
         parameters.put(paramBlockOffset, addedParams, 0, addedParams.length);
 
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(false);
         if (isEncrypt) { // encrypt
-            rc = NativeInterface.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
+            rc = nativeImpl.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
                     inputLen, 0, aadLen, tagLen, parameters.pointer(), input, inputOffset, output,
                     outputOffset);
         } else { // decrypt
-            rc = NativeInterface.do_CCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
+            rc = nativeImpl.do_CCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
                     inputLen, 0, aadLen, tagLen, parameters.pointer(), input, inputOffset, output,
                     outputOffset);
             if (rc == -1)

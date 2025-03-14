@@ -12,7 +12,8 @@ import java.util.Arrays;
 
 public final class HMAC {
 
-    private OCKContext ockContext = null;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long hmacId = 0;
     private boolean needsReinit = false;
     private byte[] reinitKey = null;
@@ -20,12 +21,8 @@ public final class HMAC {
     private final String badIdMsg = "HMAC Identifier is not valid";
     private static final String debPrefix = "HAMC";
 
-    public static HMAC getInstance(OCKContext ockContext, String digestAlgo) throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
-        return new HMAC(ockContext, digestAlgo);
+    public static HMAC getInstance(boolean isFIPS, String digestAlgo) throws OCKException {
+        return new HMAC(isFIPS, digestAlgo);
     }
 
     static void throwOCKException(int errorCode) throws OCKException {
@@ -41,10 +38,11 @@ public final class HMAC {
         }
     }
 
-    private HMAC(OCKContext ockContext, String digestAlgo) throws OCKException {
+    private HMAC(boolean isFIPS, String digestAlgo) throws OCKException {
         //final String methodName = "HMAC (String)";
-        this.ockContext = ockContext;
-        this.hmacId = NativeInterface.HMAC_create(ockContext.getId(), digestAlgo);
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        this.hmacId = this.nativeImpl.HMAC_create(digestAlgo);
         //OCKDebug.Msg (debPrefix, methodName,  "this.hmacId :" + this.hmacId + " digestAlgo :" + digestAlgo);
     }
 
@@ -95,7 +93,7 @@ public final class HMAC {
         if (!validId(hmacId)) {
             throw new OCKException(badIdMsg);
         }
-        int result = NativeInterface.HMAC_update(ockContext.getId(), hmacId, reinitKey,
+        int result = this.nativeImpl.HMAC_update(hmacId, reinitKey,
                 reinitKey.length, input, inputOffset, inputLen, needsReinit);
         if (result < 0) {
             throwOCKException(result);
@@ -115,7 +113,7 @@ public final class HMAC {
         }
         obtainMacLength();
         byte[] hmac = new byte[macLength];
-        int result = NativeInterface.HMAC_doFinal(ockContext.getId(), hmacId, reinitKey,
+        int result = this.nativeImpl.HMAC_doFinal(hmacId, reinitKey,
                 reinitKey.length, hmac, needsReinit);
         if (result < 0) {
             throwOCKException(result);
@@ -140,7 +138,7 @@ public final class HMAC {
             if (!validId(hmacId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.macLength = NativeInterface.HMAC_size(ockContext.getId(), hmacId);
+            this.macLength = this.nativeImpl.HMAC_size(hmacId);
         }
     }
 
@@ -150,7 +148,7 @@ public final class HMAC {
         //OCKDebug.Msg (debPrefix, methodName,  "hamcId :" + hmacId + " reinitKey :" + reinitKey);
         try {
             if (hmacId != 0) {
-                NativeInterface.HMAC_delete(ockContext.getId(), hmacId);
+                this.nativeImpl.HMAC_delete(hmacId);
                 hmacId = 0;
             }
         } finally {

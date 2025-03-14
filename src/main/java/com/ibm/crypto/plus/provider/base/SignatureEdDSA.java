@@ -13,22 +13,21 @@ import java.security.SignatureException;
 
 public final class SignatureEdDSA {
 
-    private OCKContext ockContext = null;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private AsymmetricKey key = null;
     private boolean initialized = false;
     private final String badIdMsg = "Digest Identifier or PKey Identifier is not valid";
     private final static String debPrefix = "SIGNATURE";
 
-    public static SignatureEdDSA getInstance(OCKContext ockContext) throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-        return new SignatureEdDSA(ockContext);
+    public static SignatureEdDSA getInstance(boolean isFIPS) throws OCKException {
+        return new SignatureEdDSA(isFIPS);
     }
 
-    private SignatureEdDSA(OCKContext ockContext) throws OCKException {
+    private SignatureEdDSA(boolean isFIPS) throws OCKException {
         //final String methodName = "SignatureEdDSA(String)";
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
     }
 
     public void initialize(AsymmetricKey key) throws InvalidKeyException, OCKException {
@@ -49,7 +48,7 @@ public final class SignatureEdDSA {
         if (!validId(this.key.getPKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        byte[] signature = NativeInterface.SIGNATUREEdDSA_signOneShot(this.ockContext.getId(),
+        byte[] signature = this.nativeImpl.SIGNATUREEdDSA_signOneShot(
                 this.key.getPKeyId(), oneShotData);
         return signature;
     }
@@ -67,7 +66,7 @@ public final class SignatureEdDSA {
         if (this.key.getPKeyId() == 0L) {
             throw new OCKException(badIdMsg);
         }
-        boolean verified = NativeInterface.SIGNATUREEdDSA_verifyOneShot(this.ockContext.getId(),
+        boolean verified = this.nativeImpl.SIGNATUREEdDSA_verifyOneShot(
                 this.key.getPKeyId(), sigBytes, dataBytes);
         return verified;
     }

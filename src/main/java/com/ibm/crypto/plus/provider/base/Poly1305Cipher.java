@@ -17,7 +17,8 @@ import javax.crypto.ShortBufferException;
 
 public final class Poly1305Cipher implements Poly1305Constants {
 
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long ockCipherId;
     private boolean isInitialized = false;
     private boolean encrypting = true;
@@ -33,13 +34,8 @@ public final class Poly1305Cipher implements Poly1305Constants {
 
     private final static String badIdMsg = "Cipher Identifier is not valid";
 
-    public static Poly1305Cipher getInstance(OCKContext ockContext, String cipherName,
+    public static Poly1305Cipher getInstance(boolean isFIPS, String cipherName,
             Padding padding) throws OCKException {
-
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
         if (cipherName == null || cipherName.isEmpty()) {
             throw new IllegalArgumentException("cipherName is null/empty");
         }
@@ -48,13 +44,14 @@ public final class Poly1305Cipher implements Poly1305Constants {
             throw new IllegalArgumentException("padding is null");
         }
 
-        return new Poly1305Cipher(ockContext, cipherName, padding);
+        return new Poly1305Cipher(isFIPS, cipherName, padding);
     }
 
-    private Poly1305Cipher(OCKContext ockContext, String cipherName, Padding padding)
+    private Poly1305Cipher(boolean isFIPS, String cipherName, Padding padding)
             throws OCKException {
-        this.ockContext = ockContext;
-        this.ockCipherId = NativeInterface.POLY1305CIPHER_create(ockContext.getId(), cipherName);
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
+        this.ockCipherId = this.nativeImpl.POLY1305CIPHER_create(cipherName);
         this.padding = padding;
     }
 
@@ -83,9 +80,8 @@ public final class Poly1305Cipher implements Poly1305Constants {
         if (ockCipherId == 0L) {
             throw new OCKException(badIdMsg);
         }
-        NativeInterface.POLY1305CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt ? 1 : 0, key,
-                iv);
-        NativeInterface.POLY1305CIPHER_setPadding(ockContext.getId(), ockCipherId, padding.getId());
+        this.nativeImpl.POLY1305CIPHER_init(ockCipherId, isEncrypt ? 1 : 0, key, iv);
+        this.nativeImpl.POLY1305CIPHER_setPadding(ockCipherId, padding.getId());
 
         this.encrypting = isEncrypt ? true : false;
         this.bufferedCount = 0;
@@ -124,8 +120,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
             if (ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            blockSize = NativeInterface.POLY1305CIPHER_getBlockSize(ockContext.getId(),
-                    ockCipherId);
+            blockSize = this.nativeImpl.POLY1305CIPHER_getBlockSize(ockCipherId);
         }
 
         return blockSize;
@@ -136,8 +131,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
             if (ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            keyLength = NativeInterface.POLY1305CIPHER_getKeyLength(ockContext.getId(),
-                    ockCipherId);
+            keyLength = this.nativeImpl.POLY1305CIPHER_getKeyLength(ockCipherId);
         }
 
         return keyLength;
@@ -148,7 +142,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
             if (ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            ivLength = NativeInterface.POLY1305CIPHER_getIVLength(ockContext.getId(), ockCipherId);
+            ivLength = this.nativeImpl.POLY1305CIPHER_getIVLength(ockCipherId);
         }
 
         return ivLength;
@@ -218,16 +212,16 @@ public final class Poly1305Cipher implements Poly1305Constants {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.POLY1305CIPHER_encryptUpdate(ockContext.getId(),
+                outLen = this.nativeImpl.POLY1305CIPHER_encryptUpdate(
                         ockCipherId, input, inputOffset, inputLen, output, outputOffset);
             } else {
                 if (null != output) { //NOT updateAAD call
                     byte[] delayedInput = getDelayedInput(input, inputOffset, inputLen);
-                    outLen = NativeInterface.POLY1305CIPHER_decryptUpdate(ockContext.getId(),
+                    outLen = this.nativeImpl.POLY1305CIPHER_decryptUpdate(
                             ockCipherId, delayedInput, 0, delayedInput.length, output,
                             outputOffset);
                 } else {
-                    outLen = NativeInterface.POLY1305CIPHER_decryptUpdate(ockContext.getId(),
+                    outLen = this.nativeImpl.POLY1305CIPHER_decryptUpdate(
                             ockCipherId, input, inputOffset, inputLen, output, outputOffset);
                 }
             }
@@ -336,7 +330,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
             }
             if (encrypting) {
                 // Cipher text length is same as plain text length...
-                outLen = NativeInterface.POLY1305CIPHER_encryptFinal(ockContext.getId(),
+                outLen = this.nativeImpl.POLY1305CIPHER_encryptFinal(
                         ockCipherId, input, inputOffset, inputLen, output, outputOffset, tag);
                 // Append tag to output...
                 System.arraycopy(tag, 0, output, outLen + outputOffset, Poly1305_TAG_SIZE);
@@ -350,7 +344,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
                     System.arraycopy(input, 0, cipherText, 0, cipherTextLen);
                 }
                 // Output length is equal to total cipher text length including buffered text...
-                outLen = NativeInterface.POLY1305CIPHER_decryptFinal(ockContext.getId(),
+                outLen = this.nativeImpl.POLY1305CIPHER_decryptFinal(
                         ockCipherId, cipherText, inputOffset, cipherTextLen, output, outputOffset,
                         tag);
             }
@@ -378,7 +372,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
     protected synchronized void finalize() throws Throwable {
         try {
             if (ockCipherId != 0) {
-                NativeInterface.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
+                this.nativeImpl.POLY1305CIPHER_delete(ockCipherId);
                 ockCipherId = 0;
             }
         } finally {
