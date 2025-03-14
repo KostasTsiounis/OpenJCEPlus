@@ -40,9 +40,9 @@ public final class OCKContext {
     }
 
     private OCKContext(boolean isFIPS) throws OCKException {
-        this.ockContextId = nativeImpl.initializeOCK(isFIPS);
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
+        this.ockContextId = this.nativeImpl.initializeOCK(isFIPS);
 
         obtainLibraryBuildDate();
 
