@@ -100,7 +100,11 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
                 throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
             }
         } catch (Exception e) {
+<<<<<<< HEAD
             resetVars();
+=======
+            resetVarsAfterException();
+>>>>>>> fed843a (Use different version of method to create exception)
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
@@ -144,6 +148,10 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
                 throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
             }
         } catch (Exception e) {
+<<<<<<< HEAD
+=======
+            resetVarsAfterException();
+>>>>>>> fed843a (Use different version of method to create exception)
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
