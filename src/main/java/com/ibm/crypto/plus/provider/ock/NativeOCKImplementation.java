@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
+import com.ibm.crypto.plus.provider.base.OCKContext;
 import com.ibm.crypto.plus.provider.base.OCKException;
 
 import sun.security.util.Debug;
