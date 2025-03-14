@@ -24,7 +24,7 @@
  * Signature: (J[BJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DSANONE_1SIGNATURE_1sign(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DSANONE_1SIGNATURE_1sign(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digest,
     jlong dsaKeyId) {
     static const char *functionName = "NativeInterface.DSANONE_SIGNATURE_sign";
@@ -183,7 +183,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DSANONE_1SIGNATURE_1sign(
  * Signature: (J[BJ[B)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DSANONE_1SIGNATURE_1verify(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DSANONE_1SIGNATURE_1verify(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray digest,
     jlong dsaKeyId, jbyteArray sigBytes) {
     static const char *functionName =

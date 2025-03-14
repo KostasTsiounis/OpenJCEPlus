@@ -43,7 +43,7 @@ KMC_FuncPtr KMC;  // z_kmc_native function pointer
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1create(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring cipherName) {
     static const char *functionName = "NativeInterface.CIPHER_create";
 
@@ -156,7 +156,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1create(
  * Signature: (JJZ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1init(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1init(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jint isEncrypt, jint paddingId, jbyteArray key, jbyteArray iv) {
     static const char *functionName = "NativeInterface.CIPHER_init";
@@ -266,7 +266,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1init(
  * Signature: (JJZ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1setPadding(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1setPadding(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jint paddingId) {
     static const char *functionName = "NativeInterface.CIPHER_setPadding";
@@ -321,7 +321,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1setPadding(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1clean(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1clean(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_clean";
 
@@ -356,7 +356,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1clean(
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getBlockSize(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1getBlockSize(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_getBlockSize";
 
@@ -384,7 +384,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getBlockSize(
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getKeyLength(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1getKeyLength(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_getKeyLength";
 
@@ -412,7 +412,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getKeyLength(
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getIVLength(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1getIVLength(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_getIVLength";
 
@@ -440,7 +440,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getIVLength(
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1getOID(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1getOID(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_getOID";
 
@@ -476,7 +476,7 @@ JNIEXPORT int CIPHER_zKMC_internal(unsigned char *input, unsigned char *output,
 }
 
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_z_1kmc_1native(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_z_1kmc_1native(
     JNIEnv *env, jclass clazz, jbyteArray input, jint inputOffset,
     jbyteArray output, jint outputOffset, jlong paramPointer, jint inputLength,
     jint mode) {
@@ -553,7 +553,7 @@ JNIEXPORT int CIPHER_encryptUpdate_internal(
  * Signature: (JJI[B[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1encryptUpdate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1encryptUpdate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jbyteArray plaintext, jint plaintextOffset, jint plaintextLen,
     jbyteArray ciphertext, jint ciphertextOffset, jboolean needsReinit) {
@@ -692,7 +692,7 @@ JNIEXPORT int CIPHER_encryptFinal_internal(
  * Signature: (JJI[B[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1encryptFinal(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1encryptFinal(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jbyteArray plaintext, jint plaintextOffset, jint plaintextLen,
     jbyteArray ciphertext, jint ciphertextOffset, jboolean needsReinit) {
@@ -799,7 +799,7 @@ JNIEXPORT int CIPHER_decryptUpdate_internal(
  * Signature: (JJI[B[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1decryptUpdate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1decryptUpdate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset, jboolean needsReinit) {
@@ -938,7 +938,7 @@ JNIEXPORT int CIPHER_decryptFinal_internal(
  * Signature: (JJI[B[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1decryptFinal(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1decryptFinal(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId,
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset, jboolean needsReinit) {
@@ -1008,7 +1008,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1decryptFinal(
  */
 FUNC *JCC_OS_helpers(ICC_CTX *ctx);
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_checkHardwareSupport(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_checkHardwareSupport(
     JNIEnv *env, jclass thisObj, jlong ockContextId) {
     int      rv  = 0;
     ICC_CTX *ctx = (ICC_CTX *)((intptr_t)ockContextId);
@@ -1106,7 +1106,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_checkHardwareSupport(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_CIPHER_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockCipherId) {
     static const char *functionName = "NativeInterface.CIPHER_delete";
 

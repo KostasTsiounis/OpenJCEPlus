@@ -228,7 +228,7 @@ int CCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
  *  Method:    do_CCM_decryptFastJNI_WithHardwareSupport
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1decryptFastJNI_1WithHardwareSupport(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decryptFastJNI_1WithHardwareSupport(
     JNIEnv* env, jclass unusedClass, jint keyLen, jint ivLen,
     jint ciphertextOffset, jint ciphertextLen, jint plaintextOffset,
     jint aadLen, jint tagLen, jlong parameterBuffer, jbyteArray inputJ,
@@ -300,7 +300,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1decryptFastJNI_1W
  * Method:    do_CCM_decryptFastJNI
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1decryptFastJNI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decryptFastJNI(
     JNIEnv* env, jclass unusedClass, jlong ockContextId, jint keyLen,
     jint ivLen, jint ciphertextLen, jint plaintextLen, jint aadLen, jint tagLen,
     jlong parameterBuffer, jlong inputBuffer, jlong outputBuffer) {
@@ -325,7 +325,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1decryptFastJNI(
  *  Method:    do_CCM_decrypt
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1decrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1decrypt(
     JNIEnv* env, jclass thisObj, jlong ockContextId, jbyteArray iv, jint ivLen,
     jbyteArray key, jint keyLen, jbyteArray aad, jint aadLen,
     jbyteArray ciphertext, jint ciphertextLen, jbyteArray plaintext,
@@ -456,7 +456,7 @@ int CCM_encrypt_core(JNIEnv* env, ICC_CTX* ockCtx, unsigned char* key,
  */
 FUNC* JCC_OS_helpers(ICC_CTX* ctx);
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1checkHardwareCCMSupport(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1checkHardwareCCMSupport(
     JNIEnv* env, jclass unusedClass, jlong ockContextId) {
     ICC_CTX* ctx     = (ICC_CTX*)((intptr_t)ockContextId);
     FUNC*    funcPtr = ICC_OS_helpers(ctx);
@@ -477,7 +477,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1checkHardwareCCMS
  * Method:    do_CCM_encryptFastJNI_WithHardwareSupport
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1encryptFastJNI_1WithHardwareSupport(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encryptFastJNI_1WithHardwareSupport(
     JNIEnv* env, jclass unusedClass, jint keyLen, jint ivLen,
     jint plaintextOffset, jint plaintextLen, jint ciphertextOffset, jint aadLen,
     jint tagLen, jlong parameterBuffer, jbyteArray inputJ, jint inputOffset,
@@ -547,7 +547,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1encryptFastJNI_1W
  * Method:    do_CCM_encryptFastJNI
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1encryptFastJNI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encryptFastJNI(
     JNIEnv* env, jclass unusedClass, jlong ockContextId, jint keyLen,
     jint ivLen, jint plaintextLen, jint ciphertextLen, jint aadLen, jint tagLen,
     jlong parameterBuffer, jlong inputBuffer, jlong outputBuffer) {
@@ -573,7 +573,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1encryptFastJNI(
  * Signature: (J[BI[BI[BII[BI[BI[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1CCM_1encrypt(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_do_1CCM_1encrypt(
     JNIEnv* env, jclass thisObj, jlong ockContextId, jbyteArray iv, jint ivLen,
     jbyteArray key, jint keyLen, jbyteArray aad, jint aadLen,
     jbyteArray plaintext, jint plaintextLen, jbyteArray ciphertext,
