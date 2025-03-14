@@ -15,7 +15,7 @@
 #include <icc.h>
 #include <iccglobals.h>
 
-#include "com_ibm_crypto_plus_provider_ock_NativeInterface.h"
+#include "com_ibm_crypto_plus_provider_ock_NativeOCKImplementation.h"
 #include "Padding.h"
 #include "Utils.h"
 #include "zHardwareFunctions.h"
