@@ -25,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.ibm.crypto.plus.provider.base.DHKey;
 import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.util.KeyUtil;
 
