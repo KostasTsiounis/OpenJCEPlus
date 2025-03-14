@@ -111,7 +111,7 @@ final class DHPrivateKey extends PKCS8Key implements javax.crypto.interfaces.DHP
 
             this.dhKey = dhKey;
         } catch (Exception exception) {
-            throw provider.providerException("Failure in DHPrivateKey", exception);
+            throw NativeOCKAdapter.providerException("Failure in DHPrivateKey", exception);
         }
     }
 
@@ -345,7 +345,7 @@ final class DHPrivateKey extends PKCS8Key implements javax.crypto.interfaces.DHP
         try {
             return this.dhParams.engineGetParameterSpec(DHParameterSpec.class);
         } catch (InvalidParameterSpecException e) {
-            throw provider.providerException("Failure in DHPrivateKey", e);
+            throw NativeOCKAdapter.providerException("Failure in DHPrivateKey", e);
         }
     }
 

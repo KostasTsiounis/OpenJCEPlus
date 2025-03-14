@@ -61,7 +61,7 @@ abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
                 this.alg = params.getName();
             }
         } catch (InvalidAlgorithmParameterException e) {
-            throw provider.providerException("Failure in XDHKeyPairGenerator: ", e);
+            throw NativeOCKAdapter.providerException("Failure in XDHKeyPairGenerator: ", e);
         }
     }
 
@@ -125,7 +125,7 @@ abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
             XDHPublicKeyImpl pubKey = new XDHPublicKeyImpl(provider, xecKey, this.serviceCurve);
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair", e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair", e);
         }
 
     }

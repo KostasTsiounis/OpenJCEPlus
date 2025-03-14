@@ -158,7 +158,7 @@ public final class DSAKeyPairGenerator extends KeyPairGenerator
             java.security.interfaces.DSAPublicKey pubKey = new DSAPublicKey(provider, dsaKey);
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair", e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair", e);
         }
     }
 }

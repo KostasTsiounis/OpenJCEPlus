@@ -65,7 +65,7 @@ public final class RSA extends CipherSpi {
         try {
             this.rsaCipher = RSACipher.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSA cipher", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSA cipher", e);
         }
     }
 
@@ -86,7 +86,7 @@ public final class RSA extends CipherSpi {
                 return output;
             }
         } catch (ShortBufferException sbe) {
-            throw provider.providerException("Failure in engineDoFinal", sbe);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", sbe);
         }
     }
 
@@ -159,7 +159,7 @@ public final class RSA extends CipherSpi {
         } catch (Exception e) {
             // Unsure of msg length behavior on failure. e.g. do we set it to 0?
             // do we clear the buffer?
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
@@ -189,7 +189,7 @@ public final class RSA extends CipherSpi {
         try {
             return this.rsaCipher.getOutputSize();
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineGetOutputSize", e);
+            throw NativeOCKAdapter.providerException("Failure in engineGetOutputSize", e);
         }
     }
 
@@ -294,7 +294,7 @@ public final class RSA extends CipherSpi {
                 rsaCipher.initialize(rsaPub.getOCKKey(), false);
                 this.keyType = Cipher.PUBLIC_KEY;
             } catch (Exception e) {
-                throw provider.providerException("Failure in internalInit", e);
+                throw NativeOCKAdapter.providerException("Failure in internalInit", e);
             }
         } else if (key instanceof java.security.interfaces.RSAPrivateCrtKey) {
             if (doTypeChecking) {
@@ -307,7 +307,7 @@ public final class RSA extends CipherSpi {
                 rsaCipher.initialize(rsaPriv.getOCKKey(), false);
                 this.keyType = Cipher.PRIVATE_KEY;
             } catch (Exception e) {
-                throw provider.providerException("Failure in internalInit", e);
+                throw NativeOCKAdapter.providerException("Failure in internalInit", e);
             }
         } else if (key instanceof java.security.interfaces.RSAPrivateKey) {
             if (doTypeChecking) {
@@ -320,7 +320,7 @@ public final class RSA extends CipherSpi {
                 rsaCipher.initialize(rsaPriv.getOCKKey(), true);
                 this.keyType = Cipher.PRIVATE_KEY;
             } catch (Exception e) {
-                throw provider.providerException("Failure in internalInit", e);
+                throw NativeOCKAdapter.providerException("Failure in internalInit", e);
             }
         } else {
             throw new InvalidKeyException("key type not supported");
@@ -331,7 +331,7 @@ public final class RSA extends CipherSpi {
             this.msgLength = 0;
             this.initialized = true;
         } catch (Exception e) {
-            throw provider.providerException("Failure in internalInit", e);
+            throw NativeOCKAdapter.providerException("Failure in internalInit", e);
         }
 
         if (opmode == Cipher.ENCRYPT_MODE || opmode == Cipher.WRAP_MODE) {
@@ -457,7 +457,7 @@ public final class RSA extends CipherSpi {
             int digestLength = 20; // sha-1 digest length
             return rsaCipher.getOutputSize() - (2 * digestLength) - 2;
         } catch (Exception e) {
-            throw provider.providerException("Unable to get input limit", e);
+            throw NativeOCKAdapter.providerException("Unable to get input limit", e);
         }
     }
 
@@ -465,7 +465,7 @@ public final class RSA extends CipherSpi {
         try {
             return rsaCipher.getOutputSize() - 11;
         } catch (Exception e) {
-            throw provider.providerException("Unable to get input limit", e);
+            throw NativeOCKAdapter.providerException("Unable to get input limit", e);
         }
     }
 

@@ -41,6 +41,7 @@ import java.util.Arrays;
 
 import com.ibm.crypto.plus.provider.base.RSACipher;
 import com.ibm.crypto.plus.provider.base.RSAPadding;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 //------------------------------------------------------------------------------
 // NOTE:
@@ -68,7 +69,7 @@ public final class RSASignatureSSL extends SignatureSpi {
             this.provider = provider;
             this.rsaCipher = RSACipher.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize RSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize RSA signature", e);
         }
     }
 
@@ -96,7 +97,7 @@ public final class RSASignatureSSL extends SignatureSpi {
         try {
             rsaCipher.initialize(rsaPublic.getOCKKey(), false);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         if (data == null) {
@@ -140,7 +141,7 @@ public final class RSASignatureSSL extends SignatureSpi {
                 this.rsaCipher.initialize(((RSAPrivateKey) rsaPrivate).getOCKKey(), true);
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
 
         if (data == null) {
