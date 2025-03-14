@@ -18,6 +18,7 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.EdDSAParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.SignatureEdDSA;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
