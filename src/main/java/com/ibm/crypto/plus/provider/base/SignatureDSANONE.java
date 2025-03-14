@@ -15,23 +15,21 @@ import java.security.InvalidKeyException;
  */
 public final class SignatureDSANONE {
 
-    private OCKContext ockContext = null;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private DSAKey key = null;
     private boolean initialized = false;
     private final static String debPrefix = "SignatureDSANONE";
     private final static String badIdMsg = "DSA Key Identifier is not valid";
 
 
-    public static SignatureDSANONE getInstance(OCKContext ockContext) throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
-        return new SignatureDSANONE(ockContext);
+    public static SignatureDSANONE getInstance(boolean isFIPS) throws OCKException {
+        return new SignatureDSANONE(isFIPS);
     }
 
-    private SignatureDSANONE(OCKContext ockContext) throws OCKException {
-        this.ockContext = ockContext;
+    private SignatureDSANONE(boolean isFIPS) throws OCKException {
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
     }
 
     public void initialize(DSAKey key) throws InvalidKeyException, OCKException {
@@ -59,7 +57,7 @@ public final class SignatureDSANONE {
         if (!validId(this.key.getDSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        byte[] signature = NativeInterface.DSANONE_SIGNATURE_sign(this.ockContext.getId(), digest,
+        byte[] signature = this.nativeImpl.DSANONE_SIGNATURE_sign(digest,
                 this.key.getDSAKeyId());
         //OCKDebug.Msg(debPrefix, methodName, "signature :", signature);
         return signature;
@@ -85,7 +83,7 @@ public final class SignatureDSANONE {
         if (!validId(this.key.getDSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        boolean verified = NativeInterface.DSANONE_SIGNATURE_verify(this.ockContext.getId(), digest,
+        boolean verified = this.nativeImpl.DSANONE_SIGNATURE_verify(digest,
                 this.key.getDSAKeyId(), sigBytes);
         //        if (!verified) {
         //            OCKDebug.Msg (debPrefix, methodName, "Failed to verify signature.");

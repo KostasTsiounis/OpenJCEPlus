@@ -9,18 +9,14 @@
 package com.ibm.crypto.plus.provider.base;
 
 public final class BasicRandom {
+    private NativeInterface nativeImpl;
 
-    OCKContext ockContext;
-
-    public static BasicRandom getInstance(OCKContext ockContext) {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-        return new BasicRandom(ockContext);
+    public static BasicRandom getInstance(boolean isFIPS) {
+        return new BasicRandom(isFIPS);
     }
 
-    private BasicRandom(OCKContext ockContext) {
-        this.ockContext = ockContext;
+    private BasicRandom(boolean isFIPS) {
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
     }
 
     public void nextBytes(byte[] bytes) throws OCKException {
@@ -29,7 +25,7 @@ public final class BasicRandom {
         }
 
         if (bytes.length > 0) {
-            NativeInterface.RAND_nextBytes(ockContext.getId(), bytes);
+            this.nativeImpl.RAND_nextBytes(bytes);
         }
     }
 
@@ -39,7 +35,7 @@ public final class BasicRandom {
         }
 
         if (seed.length > 0) {
-            NativeInterface.RAND_setSeed(ockContext.getId(), seed);
+            this.nativeImpl.RAND_setSeed(seed);
         }
     }
 
@@ -50,7 +46,7 @@ public final class BasicRandom {
 
         byte[] seed = new byte[numBytes];
         if (numBytes > 0) {
-            NativeInterface.RAND_generateSeed(ockContext.getId(), seed);
+            this.nativeImpl.RAND_generateSeed(seed);
         }
         return seed;
     }

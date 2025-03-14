@@ -10,25 +10,24 @@ package com.ibm.crypto.plus.provider.base;
 
 public final class ExtendedRandom {
 
-    OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     long ockPRNGContextId;
 
-    public static ExtendedRandom getInstance(OCKContext ockContext, String algName)
+    public static ExtendedRandom getInstance(boolean isFIPS, String algName)
             throws OCKException {
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if ((algName == null) || algName.isEmpty()) {
             throw new IllegalArgumentException("algName is null/empty");
         }
 
-        return new ExtendedRandom(ockContext, algName);
+        return new ExtendedRandom(isFIPS, algName);
     }
 
-    private ExtendedRandom(OCKContext ockContext, String algName) throws OCKException {
-        this.ockContext = ockContext;
-        this.ockPRNGContextId = NativeInterface.EXTRAND_create(ockContext.getId(), algName);
+    private ExtendedRandom(boolean isFIPS, String algName) throws OCKException {
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        this.ockPRNGContextId = this.nativeImpl.EXTRAND_create(algName);
     }
 
     public synchronized void nextBytes(byte[] bytes) throws OCKException {
@@ -37,7 +36,7 @@ public final class ExtendedRandom {
         }
 
         if (bytes.length > 0) {
-            NativeInterface.EXTRAND_nextBytes(ockContext.getId(), ockPRNGContextId, bytes);
+            this.nativeImpl.EXTRAND_nextBytes(ockPRNGContextId, bytes);
         }
     }
 
@@ -47,7 +46,7 @@ public final class ExtendedRandom {
         }
 
         if (seed.length > 0) {
-            NativeInterface.EXTRAND_setSeed(ockContext.getId(), ockPRNGContextId, seed);
+            this.nativeImpl.EXTRAND_setSeed(ockPRNGContextId, seed);
         }
     }
 
@@ -55,7 +54,7 @@ public final class ExtendedRandom {
     protected synchronized void finalize() throws Throwable {
         try {
             if (ockPRNGContextId != 0) {
-                NativeInterface.EXTRAND_delete(ockContext.getId(), ockPRNGContextId);
+                this.nativeImpl.EXTRAND_delete(ockPRNGContextId);
                 ockPRNGContextId = 0;
             }
         } finally {
