@@ -12,6 +12,9 @@ import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
 public interface NativeInterface {
+    public String getLibraryVersion() throws OCKException;
+
+    public String getLibraryInstallPath() throws OCKException;
 
     void validateLibraryLocation() throws ProviderException, OCKException;
 

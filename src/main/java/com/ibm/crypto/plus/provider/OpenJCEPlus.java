@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
 
+import com.ibm.crypto.plus.provider.base.NativeInterface;
+import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
 import com.ibm.crypto.plus.provider.base.OCKContext;
 import com.ibm.crypto.plus.provider.base.OCKException;
 
@@ -88,11 +90,12 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
         }
     
         if (debug != null) {
+            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(false);
             debug.println("OpenJCEPlus Build-Level: " + getDebugDate(this.getClass().getName()));
-            debug.println("OpenJCEPlus library build date: " + OCKContext.getLibraryBuildDate());
+            debug.println("OpenJCEPlus library build date: " + nativeImpl.getLibraryBuildDate());
             try {
-                debug.println("OpenJCEPlus dependent library version: " + ockContext.getOCKVersion());
-                debug.println("OpenJCEPlus dependent library path: " + ockContext.getOCKInstallPath());
+                debug.println("OpenJCEPlus dependent library version: " + nativeImpl.getLibraryVersion());
+                debug.println("OpenJCEPlus dependent library path: " + nativeImpl.getLibraryInstallPath());
             } catch (Throwable t) {
                 t.printStackTrace(System.out);
             }
