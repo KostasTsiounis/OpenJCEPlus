@@ -24,7 +24,7 @@
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RAND_1nextBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1nextBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray bytes) {
     static const char *functionName = "NativeInterface.RAND_nextbytes";
 
@@ -69,7 +69,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RAND_1nextBytes(
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RAND_1setSeed(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1setSeed(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray seed) {
     static const char *functionName = "NativeInterface.RAND_setSeed";
 
@@ -110,7 +110,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RAND_1setSeed(
  * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RAND_1generateSeed(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1generateSeed(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jbyteArray seed) {
     static const char *functionName = "NativeInterface.RAND_generateSeed";
 

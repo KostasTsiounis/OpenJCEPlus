@@ -25,7 +25,7 @@
  * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1create(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring digestAlgo) {
     static const char *functionName = "NativeInterface.DIGEST_create";
 
@@ -157,7 +157,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1create(
  * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1copy(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1copy(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId) {
     static const char *functionName = "NativeInterface.DIGEST_copy";
 
@@ -266,7 +266,7 @@ JNIEXPORT int DIGEST_update_internal(ICC_CTX *ockCtx, OCKDigest *ockDigest,
 }
 
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1update(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1update(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId,
     jbyteArray data, jint offset, jint dataLen) {
     static const char *functionName = "NativeInterface.DIGEST_update";
@@ -344,7 +344,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1update(
  * Signature: (JJJI)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1updateFastJNI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1updateFastJNI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId,
     jlong dataBuffer, jint dataLen) {
     static const char *functionName = "NativeInterface.DIGEST_updateFastJNI";
@@ -393,7 +393,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1updateFastJNI(
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1digest(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1digest(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId) {
     static const char *functionName = "NativeInterface.DIGEST_digest";
 
@@ -499,7 +499,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1digest(
  * Signature: (JJJI)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1digest_1and_1reset__JJJI(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1digest_1and_1reset__JJJI(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId,
     jlong digestBytes, jint length) {
     static const char *functionName = "NativeInterface.DIGEST_digest_and_reset";
@@ -574,7 +574,7 @@ JNIEXPORT int DIGEST_digest_and_reset_internal(
 }
 
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1digest_1and_1reset__JJ_3B(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1digest_1and_1reset__JJ_3B(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId,
     jbyteArray digestBytes) {
     static const char *functionName = "NativeInterface.DIGEST_digest_and_reset";
@@ -630,7 +630,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1digest_1and_1reset
  * Signature: (JJ)V
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1size(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1size(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId) {
     static const char *functionName = "NativeInterface.DIGEST_size";
 
@@ -679,7 +679,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1size(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1reset(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1reset(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId) {
     static const char *functionName = "NativeInterface.DIGEST_reset";
 
@@ -731,7 +731,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1reset(
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_DIGEST_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId) {
     static const char *functionName = "NativeInterface.DIGEST_delete";
 
