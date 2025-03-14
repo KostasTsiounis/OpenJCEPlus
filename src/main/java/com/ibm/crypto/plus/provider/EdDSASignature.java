@@ -36,7 +36,7 @@ abstract class EdDSASignature extends SignatureSpi {
     EdDSASignature(OpenJCEPlusProvider provider) {
         try {
             this.provider = provider;
-            this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
+            this.signature = SignatureEdDSA.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }
@@ -45,7 +45,7 @@ abstract class EdDSASignature extends SignatureSpi {
     EdDSASignature(OpenJCEPlusProvider provider, String Alg) {
         try {
             this.provider = provider;
-            this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
+            this.signature = SignatureEdDSA.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }

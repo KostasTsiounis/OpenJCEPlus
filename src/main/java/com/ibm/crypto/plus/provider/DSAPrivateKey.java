@@ -68,7 +68,7 @@ final class DSAPrivateKey extends PKCS8Key
 
         try {
             byte[] privateKeyBytes = buildOCKPrivateKeyBytes();
-            this.dsaKey = DSAKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes);
+            this.dsaKey = DSAKey.createPrivateKey(provider.isFIPS(), privateKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
@@ -90,7 +90,7 @@ final class DSAPrivateKey extends PKCS8Key
         try {
             parseKeyBits();
             byte[] privateKeyBytes = buildOCKPrivateKeyBytes();
-            this.dsaKey = DSAKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes);
+            this.dsaKey = DSAKey.createPrivateKey(provider.isFIPS(), privateKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);

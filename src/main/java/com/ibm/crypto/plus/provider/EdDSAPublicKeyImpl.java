@@ -117,7 +117,7 @@ final class EdDSAPublicKeyImpl extends X509Key implements EdECPublicKey {
             byte[] der = buildOCKPublicKeyBytes();
             byte[] alteredEncoded = alterEncodedPublicKey(der); // Alters encoded to fit GSKit, and sets params
 
-            this.xecKey = XECKey.createPublicKey(provider.getOCKContext(), alteredEncoded);
+            this.xecKey = XECKey.createPublicKey(provider.isFIPS(), alteredEncoded);
 
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EdDSA public key");
@@ -150,7 +150,7 @@ final class EdDSAPublicKeyImpl extends X509Key implements EdECPublicKey {
             this.point = new EdECPoint(xOdd, y);
 
             byte[] der = buildOCKPublicKeyBytes();
-            this.xecKey = XECKey.createPublicKey(provider.getOCKContext(), der);
+            this.xecKey = XECKey.createPublicKey(provider.isFIPS(), der);
 
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EdDSA public key");
