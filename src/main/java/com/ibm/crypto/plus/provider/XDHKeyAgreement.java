@@ -108,7 +108,7 @@ abstract class XDHKeyAgreement extends KeyAgreementSpi {
             } else {
                 secrectBufferSize = 0; // Let OCK decide the size
             }
-            this.secret = XECKey.computeECDHSecret(provider.getOCKContext(), genCtx,
+            this.secret = XECKey.computeECDHSecret(provider.isFIPS(), genCtx,
                     ockXecKeyPub.getPKeyId(), ockXecKeyPriv.getPKeyId(), secrectBufferSize);
         } catch (OCKException e) {
             throw new IllegalStateException("Failed to generate secret", e);

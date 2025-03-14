@@ -33,7 +33,7 @@ abstract class HmacCore extends MacSpi {
 
         try {
             this.provider = provider;
-            this.hmac = HMAC.getInstance(provider.getOCKContext(), ockDigestAlgo);
+            this.hmac = HMAC.getInstance(provider.isFIPS(), ockDigestAlgo);
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in HmacCore", e);
         }

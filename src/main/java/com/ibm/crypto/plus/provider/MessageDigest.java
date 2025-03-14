@@ -21,7 +21,7 @@ abstract class MessageDigest extends MessageDigestSpi implements Cloneable {
     MessageDigest(OpenJCEPlusProvider provider, String ockDigestAlgo) {
         try {
             this.provider = provider;
-            this.digest = Digest.getInstance(provider.getOCKContext(), ockDigestAlgo);
+            this.digest = Digest.getInstance(provider.isFIPS(), ockDigestAlgo);
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in MessageDigest", e);
         }

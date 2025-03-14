@@ -94,7 +94,7 @@ public final class RSAPSSSignature extends SignatureSpi {
                     && (provider.isFIPS())) {
                 throw NativeOCKAdapter.providerException("SHA1 not supported by FIPS.", null);
             }
-            this.signature = SignatureRSAPSS.getInstance(provider.getOCKContext(),
+            this.signature = SignatureRSAPSS.getInstance(provider.isFIPS(),
                     pssParameterSpec.getDigestAlgorithm(), pssParameterSpec.getSaltLength(),
                     pssParameterSpec.getTrailerField(), pssParameterSpec.getMGFAlgorithm(),
                     mgf1ParamSpec.getDigestAlgorithm());
@@ -166,7 +166,7 @@ public final class RSAPSSSignature extends SignatureSpi {
             }
             MGF1ParameterSpec mgf1ParamSpec = (MGF1ParameterSpec) pssParameterSpec
                     .getMGFParameters();
-            this.signature = SignatureRSAPSS.getInstance(provider.getOCKContext(), ockDigestAlgo,
+            this.signature = SignatureRSAPSS.getInstance(provider.isFIPS(), ockDigestAlgo,
                     pssParameterSpec.getSaltLength(), pssParameterSpec.getTrailerField(),
                     pssParameterSpec.getMGFAlgorithm(), mgf1ParamSpec.getDigestAlgorithm());
             //System.out.println("In get Instance " + this.signature);
