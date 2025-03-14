@@ -20,6 +20,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.spec.DHParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.DHKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
 
@@ -152,7 +153,7 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
             javax.crypto.interfaces.DHPublicKey pubKey = new DHPublicKey(provider, dhKey);
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair", e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair", e);
         }
     }
 }

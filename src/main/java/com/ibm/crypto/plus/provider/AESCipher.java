@@ -29,6 +29,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.Padding;
 import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class AESCipher extends CipherSpi implements AESConstants {
 
@@ -72,14 +73,14 @@ public final class AESCipher extends CipherSpi implements AESConstants {
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
@@ -147,18 +148,18 @@ public final class AESCipher extends CipherSpi implements AESConstants {
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            provider.setOCKExceptionCause(bpe, ock_bpe);
+            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            provider.setOCKExceptionCause(ibse, ock_ibse);
+            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 
@@ -194,7 +195,7 @@ public final class AESCipher extends CipherSpi implements AESConstants {
                 return symmetricCipher.getOutputSize(inputLen);
             }
         } catch (Exception e) {
-            throw provider.providerException("Unable to get output size", e);
+            throw NativeOCKAdapter.providerException("Unable to get output size", e);
         }
     }
 
@@ -315,7 +316,7 @@ public final class AESCipher extends CipherSpi implements AESConstants {
             this.encrypting = isEncrypt;
             this.initialized = true;
         } catch (Exception e) {
-            throw provider.providerException("Failed to init cipher", e);
+            throw NativeOCKAdapter.providerException("Failed to init cipher", e);
         }
     }
 
@@ -368,7 +369,7 @@ public final class AESCipher extends CipherSpi implements AESConstants {
                 return output;
             }
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineUpdate", e);
+            throw NativeOCKAdapter.providerException("Failure in engineUpdate", e);
         }
     }
 
@@ -464,10 +465,10 @@ public final class AESCipher extends CipherSpi implements AESConstants {
             }
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            provider.setOCKExceptionCause(sbe, ock_sbe);
+            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineDoFinal", e);
+            throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         }
     }
 

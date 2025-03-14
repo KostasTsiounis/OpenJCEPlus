@@ -16,6 +16,7 @@ import java.security.SignatureException;
 import java.security.SignatureSpi;
 
 import com.ibm.crypto.plus.provider.base.SignatureDSANONE;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DSASignatureNONE extends SignatureSpi {
 
@@ -29,7 +30,7 @@ public final class DSASignatureNONE extends SignatureSpi {
             this.provider = provider;
             this.signature = SignatureDSANONE.getInstance(provider.getOCKContext());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize DSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize DSA signature", e);
         }
     }
 
@@ -40,7 +41,7 @@ public final class DSASignatureNONE extends SignatureSpi {
         try {
             this.signature.initialize(dsaPublic.getOCKKey());
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         this.ofs = 0;
@@ -53,7 +54,7 @@ public final class DSASignatureNONE extends SignatureSpi {
         try {
             this.signature.initialize(dsaPrivate.getOCKKey());
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
 
         this.ofs = 0;

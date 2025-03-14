@@ -21,6 +21,7 @@ import javax.crypto.spec.DHGenParameterSpec;
 import javax.crypto.spec.DHParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.DHKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DHParameterGenerator extends AlgorithmParameterGeneratorSpi {
 
@@ -262,7 +263,7 @@ public final class DHParameterGenerator extends AlgorithmParameterGeneratorSpi {
             }
 
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateGenerateParameters", e);
+            throw NativeOCKAdapter.providerException("Failure in generateGenerateParameters", e);
         }
     }
 

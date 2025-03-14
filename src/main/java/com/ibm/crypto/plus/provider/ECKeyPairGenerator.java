@@ -18,6 +18,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 
 import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 import sun.security.util.ObjectIdentifier;
 
@@ -83,7 +84,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
 
         if (provider.isFIPS()) {
             if (!ECNamedCurve.isFIPS(this.oid.toString())) {
-                throw provider.providerException("Curve not supported in FIPS", null);
+                throw NativeOCKAdapter.providerException("Curve not supported in FIPS", null);
             }
         }
 
@@ -127,7 +128,7 @@ public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
             java.security.interfaces.ECPublicKey pubKey = new ECPublicKey(provider, ecKey);
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair", e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair", e);
         }
 
     }
