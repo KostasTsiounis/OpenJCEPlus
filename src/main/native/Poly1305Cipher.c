@@ -871,15 +871,15 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
                 errCode      = ICC_ERR_peek_last_error(ockCtx);
                 errStr       = ICC_ERR_reason_error_string(ockCtx, errCode);
                 exceptionMsg = "ICC_EVP_DecryptFinal failed!\n";
-
+/*
 #ifdef DEBUG_CIPHER_DATA
-                if (debug) {
+                if (debug) {*/
                     gslogMessage("errCode:      %ul", errCode);
                     gslogMessage("errStr:       %s", errStr);
                     gslogMessage("exceptionMsg: %s", exceptionMsg);
-                }
+/*                }
 #endif
-
+*/
                 if (errStr == NULL) {
                     exceptionCode = GKR_UNSPECIFIED;
                 }
