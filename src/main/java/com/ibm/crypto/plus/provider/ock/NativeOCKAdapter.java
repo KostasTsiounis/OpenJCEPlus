@@ -927,8 +927,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
 
     @Override
     public long RSAPSS_createContext(String digestAlgo, String mgf1SpecAlgo) throws OCKException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'RSAPSS_createContext'");
+        return NativeOCKImplementation.RSAPSS_createContext(ockContext.getId(), digestAlgo, mgf1SpecAlgo);
     }
 
     @Override
