@@ -349,6 +349,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
                         tag);
             }
         } catch (OCKException e) {
+            System.err.println("POLY1305CIPHER_decryptFinal error: " + OCKException.errorMessage(e.getCode()));
             if (e.getCode() == OCKException.GKR_DECRYPT_FINAL_BAD_PADDING_ERROR) {
                 throw new BadPaddingException("Unexpected padding");
             } else {
