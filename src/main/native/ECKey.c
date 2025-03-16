@@ -2260,7 +2260,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECD
             ICC_EVP_PKEY_derive(ockCtx, gen_ctx, NULL,
                                 &secret_key_len); /* Get secret key size */
         }
-        fprintf(stderr, "[DEBUG] XECKEY: secret key len: %d\n", secret_key_len);
+        fprintf(stderr, "[DEBUG] XECKEY: secret key len: %lu\n", secret_key_len);
         secretBytes = (*env)->NewByteArray(
             env, secret_key_len); /* Create Java secret bytes array with size */
         if (NULL == secretBytes) {
