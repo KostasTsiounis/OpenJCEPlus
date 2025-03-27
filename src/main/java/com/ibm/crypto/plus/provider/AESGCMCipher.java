@@ -193,7 +193,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     AEADBadTagException abte = new AEADBadTagException(
                             "Unable to perform engine doFinal; "
                                     + "Possibly a bad tag or bad padding or illegalBlockSize");
-                                    NativeOCKAdapter.setOCKExceptionCause(abte, e);
+                    NativeOCKAdapter.setOCKExceptionCause(abte, e);
                     resetVars(true);
                     throw abte;
                 } else {
