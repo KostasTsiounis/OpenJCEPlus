@@ -8,6 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
+import com.ibm.crypto.plus.provider.base.XECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -17,11 +20,6 @@ import java.security.interfaces.EdECPublicKey;
 import java.security.spec.EdECPoint;
 import java.security.spec.NamedParameterSpec;
 import java.util.Arrays;
-
-import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
-import com.ibm.crypto.plus.provider.base.XECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import sun.security.util.BitArray;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;

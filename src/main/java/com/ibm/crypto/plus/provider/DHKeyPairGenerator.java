@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.DHKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -16,11 +18,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGeneratorSpi;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
-
 import javax.crypto.spec.DHParameterSpec;
-
-import com.ibm.crypto.plus.provider.base.DHKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
 

@@ -8,6 +8,10 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.NativeInterface;
+import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
+import com.ibm.crypto.plus.provider.base.OCKContext;
+import com.ibm.crypto.plus.provider.base.OCKException;
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 import java.security.Key;
@@ -21,12 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
-
-import com.ibm.crypto.plus.provider.base.NativeInterface;
-import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
-import com.ibm.crypto.plus.provider.base.OCKContext;
-import com.ibm.crypto.plus.provider.base.OCKException;
-
 import sun.security.util.Debug;
 
 public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
