@@ -8,6 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.DHKey;
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,14 +18,8 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
-
 import javax.crypto.spec.DHParameterSpec;
 import javax.security.auth.DestroyFailedException;
-
-import com.ibm.crypto.plus.provider.base.DHKey;
-import com.ibm.crypto.plus.provider.base.OCKException;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;

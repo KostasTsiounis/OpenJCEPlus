@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.HKDF;
+import com.ibm.crypto.plus.provider.base.OCKException;
 import ibm.security.internal.spec.HKDFExpandParameterSpec;
 import ibm.security.internal.spec.HKDFExtractParameterSpec;
 import ibm.security.internal.spec.HKDFParameterSpec;
@@ -20,9 +22,6 @@ import java.util.Objects;
 import javax.crypto.KeyGeneratorSpi;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.ibm.crypto.plus.provider.base.HKDF;
-import com.ibm.crypto.plus.provider.base.OCKException;
 
 /**
  * KeyGenerator implementation for the SSL/TLS master secret derivation.

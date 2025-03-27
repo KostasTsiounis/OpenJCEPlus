@@ -8,17 +8,15 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.HMAC;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
-
 import javax.crypto.MacSpi;
 import javax.crypto.SecretKey;
-
-import com.ibm.crypto.plus.provider.base.HMAC;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 abstract class HmacCore extends MacSpi {
 
