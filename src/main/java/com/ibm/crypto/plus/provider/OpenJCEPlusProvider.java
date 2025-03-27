@@ -8,8 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import java.security.ProviderException;
-
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
 // Implemented as an abstract class rather than an interface so that 
 // methods can be package protected, as interfaces have only public methods.
