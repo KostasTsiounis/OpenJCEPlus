@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.GCMCipher;
-import com.ibm.crypto.plus.provider.base.OCKException;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.AlgorithmParameters;
@@ -23,6 +20,7 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+
 import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -31,6 +29,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.GCMParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.GCMCipher;
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMConstants {
 
@@ -193,11 +195,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     AEADBadTagException abte = new AEADBadTagException(
                             "Unable to perform engine doFinal; "
                                     + "Possibly a bad tag or bad padding or illegalBlockSize");
-<<<<<<< HEAD
                     NativeOCKAdapter.setOCKExceptionCause(abte, e);
-=======
-                                    NativeOCKAdapter.setOCKExceptionCause(abte, e);
->>>>>>> fed843a (Use different version of method to create exception)
                     resetVars(true);
                     throw abte;
                 } else {
