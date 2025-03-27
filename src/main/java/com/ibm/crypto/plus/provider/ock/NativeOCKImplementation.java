@@ -8,16 +8,10 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
-import java.io.BufferedReader;
+import com.ibm.crypto.plus.provider.base.OCKException;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
-
-import com.ibm.crypto.plus.provider.base.NativeInterface;
-import com.ibm.crypto.plus.provider.base.OCKContext;
-import com.ibm.crypto.plus.provider.base.OCKException;
-
 import sun.security.util.Debug;
 
 final class NativeOCKImplementation {

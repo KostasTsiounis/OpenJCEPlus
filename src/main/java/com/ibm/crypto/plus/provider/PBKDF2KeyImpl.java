@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.PBEKeySpec;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
