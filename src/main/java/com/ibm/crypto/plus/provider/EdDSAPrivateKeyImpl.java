@@ -11,7 +11,6 @@ package com.ibm.crypto.plus.provider;
 import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
 import com.ibm.crypto.plus.provider.base.XECKey;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;

@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.base.PBKDF;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -22,10 +24,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.PBEKeySpec;
-
-import com.ibm.crypto.plus.provider.base.OCKException;
-import com.ibm.crypto.plus.provider.base.PBKDF;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**

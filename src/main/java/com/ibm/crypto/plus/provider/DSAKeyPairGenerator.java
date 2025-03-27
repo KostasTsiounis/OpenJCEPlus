@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.DSAKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -19,9 +21,6 @@ import java.security.SecureRandom;
 import java.security.interfaces.DSAParams;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
-
-import com.ibm.crypto.plus.provider.base.DSAKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 /**
  * This class is a concrete implementation for the generation of a pair of DSA

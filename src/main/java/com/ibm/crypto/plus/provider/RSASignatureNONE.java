@@ -23,6 +23,9 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.RSACipher;
+import com.ibm.crypto.plus.provider.base.RSAPadding;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
@@ -31,10 +34,6 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.util.Arrays;
-
-import com.ibm.crypto.plus.provider.base.RSACipher;
-import com.ibm.crypto.plus.provider.base.RSAPadding;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 //------------------------------------------------------------------------------
 // NOTE:

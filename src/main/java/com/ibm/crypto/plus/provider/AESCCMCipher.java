@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
-
 import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -28,10 +27,8 @@ import javax.crypto.CipherSpi;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
-
 import com.ibm.crypto.plus.provider.base.CCMCipher;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import ibm.security.internal.spec.CCMParameterSpec;
 import sun.security.util.Debug;
 
