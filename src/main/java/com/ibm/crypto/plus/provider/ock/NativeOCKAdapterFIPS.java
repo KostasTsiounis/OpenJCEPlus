@@ -22,5 +22,4 @@ public class NativeOCKAdapterFIPS extends NativeOCKAdapter {
 
         return instance;
     }
-
 }
