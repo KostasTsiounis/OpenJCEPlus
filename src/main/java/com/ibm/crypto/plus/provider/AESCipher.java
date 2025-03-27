@@ -8,6 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.Padding;
+import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -18,7 +21,6 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherSpi;
@@ -26,10 +28,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
-
-import com.ibm.crypto.plus.provider.base.Padding;
-import com.ibm.crypto.plus.provider.base.SymmetricCipher;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class AESCipher extends CipherSpi implements AESConstants {
 

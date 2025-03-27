@@ -8,6 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -20,15 +23,10 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidParameterSpecException;
-
 import javax.crypto.KeyAgreementSpi;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.ibm.crypto.plus.provider.base.ECKey;
-import com.ibm.crypto.plus.provider.base.OCKException;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class ECDHKeyAgreement extends KeyAgreementSpi { // implements
                                                               // AlgorithmStatus

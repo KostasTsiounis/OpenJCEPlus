@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
@@ -16,10 +18,6 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
-
-import com.ibm.crypto.plus.provider.base.ECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import sun.security.util.ObjectIdentifier;
 
 public final class ECKeyPairGenerator extends KeyPairGeneratorSpi {
