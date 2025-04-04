@@ -1457,7 +1457,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     //Reset class variables after an exception
     private void resetVars(boolean afterFailure) {
         sbeInLastFinalEncrypt = false;
-        this.requireReinit = (!this.encrypting);
+        this.requireReinit = this.encrypting;
         authData = null;
         this.aadDone = false;
         initCalledInEncSeq = false;
