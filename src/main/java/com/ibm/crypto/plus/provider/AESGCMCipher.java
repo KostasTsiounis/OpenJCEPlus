@@ -169,31 +169,24 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             // inputLen=" + inputLen + " input[]", input);
             try {
                 results = doFinalForUpdates(input, inputOffset, inputLen);
-                resetVars(false);
                 return results;
-            } catch (IllegalStateException e) {
-                resetVars(true);
-
-                throw e;
             } catch (OCKException e) {
                 // OCKDebug.Msg(debPrefix, methodName, "OCKException encountered = " +
                 // e.getMessage());
-
 
                 if (!encrypting) {
                     AEADBadTagException abte = new AEADBadTagException(
                             "Unable to perform engine doFinal; "
                                     + "Possibly a bad tag or bad padding or illegalBlockSize");
                     provider.setOCKExceptionCause(abte, e);
-                    resetVars(true);
                     throw abte;
                 } else {
-                    resetVars(true);
                     throw provider
                             .providerException("unable to perform to engineDoFinal encrypting ", e);
                 }
+            } finally {
+                resetVars();
             }
-
         }
 
         try {
@@ -203,7 +196,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 output = new byte[inputLen + tagLenInBytes];
             } else {
                 if (inputLen < tagLenInBytes) {
-                    resetVars(true);
                     throw new AEADBadTagException("Input too short - not enough bytes for the tag");
                 } else {
                     output = new byte[inputLen - tagLenInBytes];
@@ -211,7 +203,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             }
 
             int outputLen = engineDoFinal(input, inputOffset, inputLen, output, 0);
-            resetVars(false);
             if (outputLen < output.length) {
                 byte[] out = Arrays.copyOfRange(output, 0, outputLen);
                 if (!encrypting) {
@@ -227,7 +218,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
              * but engineDoFinal(..) is declared to be able to throw it since it also
              * handles user provided output buffers
              */
-            resetVars(true);
             // OCKDebug.Msg(debPrefix, methodName, "OCKException seen");
             if (!encrypting) {
 
@@ -240,9 +230,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             } else {
                 throw provider.providerException("unable to perform to engineDoFinal ", e);
             }
-        } catch (IllegalStateException ex) {
-            resetVars(true);
-            throw ex;
+        } finally {
+            resetVars();
         }
 
     }
@@ -264,16 +253,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 ret = doFinalForUpdates(input, inputOffset, inputLen, output, outputOffset);
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: " + ret);
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
-                resetVars(false);
 
                 return ret;
-            } catch (IllegalStateException e) {
-                // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
-                resetVars(true);
-                //                    updateCalled = false;
-                //                    requireReinit = true;
-
-                throw e;
             } catch (OCKException e) {
 
                 //updateCalled = false;
@@ -285,14 +266,13 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     AEADBadTagException abte = new AEADBadTagException(e.getMessage());
                     provider.setOCKExceptionCause(abte, e);
                     // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
-                    resetVars(true);
                     throw abte;
                 } else {
-                    resetVars(true);
                     throw new ProviderException(
                             "engineDoFinal cannot perform update during encryption");
                 }
-
+            } finally {
+                resetVars();
             }
         }
 
@@ -301,23 +281,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 if ((output == null) || (output.length - outputOffset < inputLen + tagLenInBytes)) {
                     throw new ShortBufferException(
                             "Output buffer is not long enough to contain ciphertext and tag");
-                }
-
-                /*
-                 * switch to the newly generated IV only at this point, need to keep the old IV
-                 * around since getIV() might be called up to this point
-                 */
-
-                if (generateIV && newIV != null) {
-                    IV = newIV.clone();
-                    newIV = null;
-                }
-                if ((!sbeInLastFinalEncrypt) && encrypting && !initCalledInEncSeq) {
-                    boolean sameKeyIv = checkKeyAndNonce(Key, IV, lastEncKey, lastEncIv);
-                    if (sameKeyIv) {
-                        resetVars(true);
-                        throw new IllegalStateException("Cannot reuse iv for AESGCM encryption");
-                    }
                 }
 
                 int ret = GCMCipher.doGCMFinal_Encrypt(ockContext, Key, IV, tagLenInBytes, input,
@@ -342,17 +305,17 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 return ret;
             }
         } catch (AEADBadTagException e) {
-            resetVars(true);
+            resetVars();
             AEADBadTagException abte = new AEADBadTagException(e.getMessage());
             provider.setOCKExceptionCause(abte, e);
             throw abte;
         } catch (BadPaddingException ock_bpe) {
-            resetVars(true);
+            resetVars();
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
             provider.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
-            resetVars(true);
+            resetVars();
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
             provider.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
@@ -362,12 +325,12 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (com.ibm.crypto.plus.provider.ock.OCKException ock_excp) {
-            resetVars(true);
+            resetVars();
             AEADBadTagException tagexcp = new AEADBadTagException(ock_excp.getMessage());
             provider.setOCKExceptionCause(tagexcp, ock_excp);
             throw tagexcp;
         } catch (Exception e) {
-            resetVars(true);
+            resetVars();
             throw provider.providerException("Failure in engineDoFinal", e);
         }
 
@@ -576,8 +539,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             }
         } else {
             if (encrypting) {
-                IV = createIv(random);
-                spec = new GCMParameterSpec(DEFAULT_TAG_LEN * 8, iv);
+                iv = createIv(random);
+                spec = new GCMParameterSpec(DEFAULT_TAG_LENGTH, iv);
             } else {
                 /* Decryption requires explicit algorithm parameters */
                 throw new InvalidAlgorithmParameterException(
@@ -692,87 +655,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         return iv;
     }
 
-    /*
-     * Generate internal AES-GCM initialization vector per NIST SP 800-38D
-     * sections: 5.2.1.1 Input Data 8.2.1 Deterministic Construction 8.3
-     * Constraints on Number of Invocations
-     */
-
-    private byte[] generateInternalIV(boolean firstIV) throws IllegalStateException {
-
-        byte[] generatedIV = null;
-
-        /*
-         * The fixed device and invocation counter fields are initialized once per
-         * cipher instance.
-         */
-
-        if (firstIV) {
-            // SecureRandom random = null;
-            if (random == null) {
-                synchronized (AESGCMCipher.class) {
-                    if (random == null) {
-                        random = provider.getSecureRandom(null);
-                    }
-                }
-            }
-            generatedIVDevField = new byte[GENERATED_IV_DEVICE_FIELD_LENGTH];
-            random.nextBytes(generatedIVDevField);
-            generatedIVCtrField = new BigInteger(GENERATED_IV_MAX_INVOCATIONS);
-        }
-
-        /*
-         * The invocation counter is initialized to the maximum allowable invocations
-         * for the current crypto key. With each invocation it is decremented to
-         * indicate the remaining number of invocations. A zero counter indicates that
-         * the cipher must be reinitialized with a fresh crypto key before continuing.
-         */
-
-        if (!generatedIVCtrField.equals(BigInteger.ZERO)) {
-
-            /* Combine the IV fixed device field and invocation counter field */
-
-            generatedIV = new byte[GENERATED_IV_TOTAL_LENGTH];
-
-            System.arraycopy(generatedIVDevField, 0, generatedIV, 0,
-                    GENERATED_IV_DEVICE_FIELD_LENGTH);
-
-            /*
-             * Since BigInteger uses the minimum number of bytes to represent integer
-             * values, the length of the generated IV invocation field is not fixed, and
-             * will shrink as it is decremented. So, we have to allow for that in the offset
-             * calculation.
-             */
-
-            byte[] genIVCtrFieldByteArray = stripOffSignByte(generatedIVCtrField.toByteArray());
-            int genIVCtrFieldByteArrayLength = genIVCtrFieldByteArray.length;
-            int genIVCtrFieldByteArrayOffset = GENERATED_IV_TOTAL_LENGTH
-                    - genIVCtrFieldByteArrayLength;
-
-            System.arraycopy(genIVCtrFieldByteArray, 0, generatedIV, genIVCtrFieldByteArrayOffset,
-                    genIVCtrFieldByteArrayLength);
-
-            /* Decrement the remaining generated IV invocations counter field */
-
-            generatedIVCtrField = generatedIVCtrField.subtract(BigInteger.ONE);
-
-        } else {
-
-            /*
-             * The maximum number of invocations have been exhausted. So, the crypto key is
-             * stale and the user must reinitialize the cipher instance with a fresh crypto
-             * key before continuing with the encryption process to be NIST SP 800-38D
-             * compliant.
-             */
-
-            throw new IllegalStateException(
-                    "The maximum number of IV invocations for the current key "
-                            + "have been exhausted.");
-        }
-
-        return generatedIV;
-    }
-
     @Override
     protected void engineSetMode(String mode) throws NoSuchAlgorithmException {
         return;
@@ -873,7 +755,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
              * but engineDoFinal(..) is declared to be able to throw it since it also
              * handles user provided output buffers
              */
-            resetVars(true);
+            resetVars();
             throw provider.providerException("Failure in engineUpdate", e);
         }
     }
@@ -932,18 +814,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     // OCKDebug.Msg(debPrefix, methodName, "returning ret from
                     // InitForUpdateDecrypt=" + outLen);
                 } else {
-                    if (!initCalledInEncSeq && !sbeInLastUpdateEncrypt) {
-                        if (generateIV && (newIV != null)) {
-                            IV = newIV.clone();
-                            newIV = null;
-                        }
-                        boolean sameKeyIv = checkKeyAndNonce(Key, IV, lastEncKey, lastEncIv);
-                        if (sameKeyIv) {
-                            resetVars(true);
-                            throw new IllegalStateException(
-                                    "Cannot reuse iv for AESGCM encryption");
-                        }
-                    }
                     // OCKDebug.Msg(debPrefix, methodName, "Calling do_GCM_InitForUpdateEncrypt");
                     outLen = GCMCipher.do_GCM_InitForUpdateEncrypt(ockContext, Key, IV,
                             tagLenInBytes, buffer, 0, len, output, outputOffset, authData);
@@ -1375,25 +1245,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         }
     }
 
-
-    private boolean checkKeyAndNonce(byte[] curKeyBytes, byte[] curNonce, byte[] lastKeyBytes,
-            byte[] lastNonce) {
-
-        // A new initialization must have either a different key or nonce
-        // so the starting state for each block is not the same as the
-        // previous initialization.
-        boolean equalFlag = false;
-
-        if (MessageDigest.isEqual(curKeyBytes, lastKeyBytes)
-                && MessageDigest.isEqual(curNonce, lastNonce)) {
-            equalFlag = true;
-        }
-        return equalFlag;
-
-    }
-
     //Reset class variables after an exception
-    private void resetVars(boolean afterFailure) {
+    private void resetVars() {
         sbeInLastFinalEncrypt = false;
         this.requireReinit = this.encrypting;
         authData = null;

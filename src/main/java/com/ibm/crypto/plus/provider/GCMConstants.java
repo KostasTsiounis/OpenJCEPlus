@@ -27,6 +27,7 @@ interface GCMConstants {
             + GENERATED_IV_COUNTER_FIELD_LENGTH;
 
     public static final int DEFAULT_TAG_LENGTH = 128;
+    public static final int DEFAULT_IV_LEN = 12; // in bytes
 
     public static final int[] GCM_TAG_LENGTHS = {128, 120, 112, 104, 96};
 
