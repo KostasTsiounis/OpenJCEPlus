@@ -304,6 +304,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             throw sbe;
         } catch (com.ibm.crypto.plus.provider.ock.OCKException ock_excp) {
             resetVars();
+            ock_excp.printStackTrace();
             AEADBadTagException tagexcp = new AEADBadTagException(ock_excp.getMessage());
             provider.setOCKExceptionCause(tagexcp, ock_excp);
             throw tagexcp;
