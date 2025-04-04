@@ -171,14 +171,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             try {
                 results = doFinalForUpdates(input, inputOffset, inputLen);
                 resetVars(false);
-
-                if (generateIV) {
-                    /*
-                     * Generate the next internal AES-GCM initialization vector per NIST SP 800-38D
-                     */
-                    newIV = generateInternalIV(false).clone();
-                }
-
                 return results;
             } catch (IllegalStateException e) {
                 resetVars(true);
@@ -1465,11 +1457,9 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     //Reset class variables after an exception
     private void resetVars(boolean afterFailure) {
         sbeInLastFinalEncrypt = false;
-        if (afterFailure) {
-            this.requireReinit = true;
-            authData = null;
-            this.aadDone = false;
-        }
+        this.requireReinit = true;
+        authData = null;
+        this.aadDone = false;
         initCalledInEncSeq = false;
         updateCalled = false;
         sbeInLastUpdateEncrypt = false;
