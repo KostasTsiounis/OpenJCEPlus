@@ -498,6 +498,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     @Override
     protected void engineInit(int opmode, Key key, AlgorithmParameterSpec params,
             SecureRandom random) throws InvalidKeyException, InvalidAlgorithmParameterException {
+        this.encrypting = ((opmode == Cipher.ENCRYPT_MODE) || (opmode == Cipher.WRAP_MODE));
         GCMParameterSpec spec;
         byte[] iv;
         if (params != null) { // if we have a ParameterSpec, check to see if it
@@ -516,7 +517,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         "Wrong parameter " + "type: GCM " + "expected");
             }
         } else {
-            if (encrypting) {
+            if (this.encrypting) {
                 iv = createIv(random);
                 spec = new GCMParameterSpec(DEFAULT_TAG_LENGTH, iv);
             } else {
@@ -545,9 +546,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
     private void internalInit(int opmode, Key key, GCMParameterSpec spec)
             throws InvalidKeyException, InvalidAlgorithmParameterException {
-        boolean encryption = (opmode == Cipher.ENCRYPT_MODE) ||
-            (opmode == Cipher.WRAP_MODE);
-
         int tagLen = spec.getTLen();
         if (tagLen < 96 || tagLen > 128 || ((tagLen & 0x07) != 0)) {
             throw new InvalidAlgorithmParameterException
@@ -582,7 +580,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         byte[] iv = spec.getIV();
         // Check for reuse
-        if (encryption) {
+        if (this.encrypting) {
             if (MessageDigest.isEqual(keyValue, lastEncKey) &&
                 MessageDigest.isEqual(iv, lastEncIv)) {
                 Arrays.fill(keyValue, (byte) 0);
@@ -602,7 +600,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         this.Key = keyValue.clone();
         this.IV = iv.clone();
-        this.encrypting = encryption;
         this.initialized = true;
         this.initCalledInEncSeq = true;
         this.requireReinit = false;
