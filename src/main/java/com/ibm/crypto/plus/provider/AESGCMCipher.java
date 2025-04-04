@@ -148,11 +148,12 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             // inputLen=" + inputLen + " input[]", input);
             try {
                 results = doFinalForUpdates(input, inputOffset, inputLen);
+                resetVars();
                 return results;
             } catch (OCKException e) {
                 // OCKDebug.Msg(debPrefix, methodName, "OCKException encountered = " +
                 // e.getMessage());
-
+                resetVars();
                 if (!encrypting) {
                     AEADBadTagException abte = new AEADBadTagException(
                             "Unable to perform engine doFinal; "
@@ -163,8 +164,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     throw provider
                             .providerException("unable to perform to engineDoFinal encrypting ", e);
                 }
-            } finally {
-                resetVars();
             }
         }
 
@@ -232,7 +231,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 ret = doFinalForUpdates(input, inputOffset, inputLen, output, outputOffset);
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: " + ret);
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
-
+                resetVars();
                 return ret;
             } catch (OCKException e) {
 
@@ -240,7 +239,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 //
                 //requireReinit = true;
 
-
+                resetVars();
                 if (!encrypting) {
                     AEADBadTagException abte = new AEADBadTagException(e.getMessage());
                     provider.setOCKExceptionCause(abte, e);
@@ -250,8 +249,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     throw new ProviderException(
                             "engineDoFinal cannot perform update during encryption");
                 }
-            } finally {
-                resetVars();
             }
         }
 

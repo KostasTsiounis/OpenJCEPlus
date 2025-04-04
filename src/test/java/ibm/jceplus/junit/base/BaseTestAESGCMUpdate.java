@@ -1146,9 +1146,6 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
             }
 
             // Try
-            cpl.init(Cipher.ENCRYPT_MODE, key);
-            cpl.updateAAD(aadBytes, 0, aadBytes.length);
-
             byte[] result1 = encrypt(cpl);
             byte[] result2 = encrypt(cpl);
 
@@ -1349,10 +1346,12 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
     }
 
     private byte[] encrypt(Cipher cpl)
-            throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+            throws ShortBufferException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         byte[] part71 = new byte[cpl.getOutputSize(plainText128.length)];
         // System.out.println ("=======part71 length=" + part71.length);
         int offset = plainText128.length > ARRAY_OFFSET ? ARRAY_OFFSET : 0;
+        cpl.init(Cipher.ENCRYPT_MODE, key);
+        cpl.updateAAD(aadBytes, 0, aadBytes.length);
         int len = cpl.update(plainText128, 0, plainText128.length - offset, part71, 0);
         byte[] part72 = cpl.doFinal(plainText128, plainText128.length - offset, offset);
         byte[] outputText7 = new byte[len + part72.length];

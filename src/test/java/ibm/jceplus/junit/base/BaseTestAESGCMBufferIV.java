@@ -41,7 +41,7 @@ public class BaseTestAESGCMBufferIV extends BaseTestJunit5 {
     }
 
     private void testBufferIV(int buffLen, int ivLen) throws Exception {
-        GCMParameterSpec iv = new GCMParameterSpec(16, generateRandomIv(ivLen));
+        GCMParameterSpec iv = new GCMParameterSpec(ivLen * 8, generateRandomIv(ivLen));
 
         System.out.println("Encrypting --- buffLen: " + buffLen + " ivLen: " + ivLen);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
