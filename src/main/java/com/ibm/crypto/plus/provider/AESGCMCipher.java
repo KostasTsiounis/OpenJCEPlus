@@ -630,6 +630,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         this.encrypting = encryption;
         this.initialized = true;
         this.initCalledInEncSeq = true;
+        this.requireReinit = false;
         this.authData = null; // Before returning from internalInit(), restore AAD to uninitialized state
         this.updateCalled = false;
         this.sbeInLastFinalEncrypt = false;
