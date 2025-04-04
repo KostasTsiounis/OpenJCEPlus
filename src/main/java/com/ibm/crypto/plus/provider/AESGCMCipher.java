@@ -45,7 +45,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
     private BigInteger generatedIVCtrField = null;
     private byte[] generatedIVDevField = null;
-    private boolean generateIV = false;
     private static SecureRandom random = null;
 
     private byte[] IV = null;
@@ -267,13 +266,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
                 resetVars(false);
 
-                if (generateIV) {
-                    /*
-                     * Generate the next internal AES-GCM initialization vector per NIST SP 800-38D
-                     */
-                    newIV = generateInternalIV(false).clone();
-                }
-
                 return ret;
             } catch (IllegalStateException e) {
                 // OCKDebug.Msg (debPrefix, methodName, "Ret from engineDoFinal: ");
@@ -331,13 +323,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                 int ret = GCMCipher.doGCMFinal_Encrypt(ockContext, Key, IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
-
-                if (generateIV) {
-                    /*
-                     * Generate the next internal AES-GCM initialization vector per NIST SP 800-38D
-                     */
-                    newIV = generateInternalIV(false).clone();
-                }
 
                 return ret;
             } else {
@@ -556,106 +541,34 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
     @Override
     protected void engineInit(int opmode, Key key, SecureRandom random) throws InvalidKeyException {
-
         if ((opmode == Cipher.DECRYPT_MODE) || (opmode == Cipher.UNWRAP_MODE)) {
             encrypting = false;
             /* Decryption requires explicit algorithm parameters */
             throw new InvalidKeyException("Decryption requires explicit algorithm parameters");
-            // throw new InvalidAlgorithmParameterException ("Decryption requires explicit
-            // algorithm parameters");
-        } else {
-            encrypting = true;
-            generateIV = true;
         }
 
-        if (key == null) {
-            throw new InvalidKeyException("No key given");
+        try {
+            engineInit(opmode, key, (AlgorithmParameterSpec) null, random);
+        } catch (InvalidAlgorithmParameterException e) {
+            // Should never happen since we don't actually pass a spec.
         }
-
-        /*
-         * Generate the first internal AES-GCM initialization vector per NIST SP 800-38D
-         */
-        byte[] tempIV = generateInternalIV(true);
-
-        if (encrypting) {
-            byte[] keyBytes = key.getEncoded().clone();
-            requireReinit = Arrays.equals(tempIV, lastEncIv)
-                    && MessageDigest.isEqual(keyBytes, lastEncKey);
-            if (requireReinit) {
-                throw new ProviderException("Cannot reuse iv for GCM encryption");
-            }
-            lastEncIv = tempIV;
-            lastEncKey = keyBytes;
-        } else {
-            requireReinit = false;
-        }
-
-        internalInit(opmode, key, tempIV);
-        requireReinit = false;
     }
 
     @Override
     protected void engineInit(int opmode, Key key, AlgorithmParameterSpec params,
             SecureRandom random) throws InvalidKeyException, InvalidAlgorithmParameterException {
-
-        if ((opmode == Cipher.DECRYPT_MODE) || (opmode == Cipher.UNWRAP_MODE)) {
-            encrypting = false;
-        } else {
-            encrypting = true;
-            generateIV = false;
-        }
-
-        if (key == null) {
-            throw new InvalidKeyException("No key given");
-        }
+        GCMParameterSpec spec;
+        byte[] iv;
         if (params != null) { // if we have a ParameterSpec, check to see if it
                               // is GCMParameterSpec
             if (params instanceof GCMParameterSpec) {
-                byte[] ivTemp = ((GCMParameterSpec) params).getIV();
-                if (ivTemp.length == 0) {
-                    if (encrypting) {
-                        tagLenInBytes = ((GCMParameterSpec) params).getTLen() / 8;
-
-                        byte[] newIV = generateInternalIV(true);
-                        byte[] keyBytes = key.getEncoded().clone();
-
-                        requireReinit = Arrays.equals(newIV, lastEncIv)
-                                && MessageDigest.isEqual(keyBytes, lastEncKey);
-                        if (requireReinit) {
-                            throw new InvalidAlgorithmParameterException(
-                                    "Cannot reuse iv for GCM encryption");
-                        }
-                        lastEncIv = newIV.clone();
-                        lastEncKey = keyBytes;
-                        // ibuffer = null;
-                        // minBytes = 0;
-                        internalInit(opmode, key, newIV);
-                    } else {
-                        /* Decryption requires explicit algorithm parameters */
-                        throw new InvalidAlgorithmParameterException(
-                                "Decryption requires explicit algorithm parameters");
-                    }
-                } else {
-                    tagLenInBytes = ((GCMParameterSpec) params).getTLen() / 8;
-
-                    if (encrypting) {
-                        byte[] keyBytes = key.getEncoded().clone();
-                        requireReinit = Arrays.equals(ivTemp, lastEncIv)
-                                && MessageDigest.isEqual(keyBytes, lastEncKey);
-                        if (requireReinit) {
-                            throw new InvalidAlgorithmParameterException(
-                                    "Cannot reuse iv for GCM encryption");
-                        }
-                        lastEncIv = ivTemp.clone();
-                        lastEncKey = keyBytes;
-                        // ibuffer = null;
-                    } else {
-                        requireReinit = false;
-                        // ibuffer = new ByteArrayOutputStream();
-                        // minBytes = tagLenInBytes;
-                    }
-
-                    internalInit(opmode, key, ((GCMParameterSpec) params).getIV().clone());
+                spec = (GCMParameterSpec) params;
+                iv = spec.getIV();
+                if (iv == null) {
+                    throw new InvalidAlgorithmParameterException("IV is null");
+                }
+                if (iv.length == 0) {
+                    throw new InvalidAlgorithmParameterException("IV is empty");
                 }
             } else {
                 throw new InvalidAlgorithmParameterException(
@@ -663,56 +576,49 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             }
         } else {
             if (encrypting) {
-                /* Must generate the algorithm parameters internally */
-                engineInit(opmode, key, random);
+                IV = createIv(random);
+                spec = new GCMParameterSpec(DEFAULT_TAG_LEN * 8, iv);
             } else {
                 /* Decryption requires explicit algorithm parameters */
                 throw new InvalidAlgorithmParameterException(
                         "Decryption requires explicit algorithm parameters");
             }
         }
+        internalInit(opmode, key, spec);
     }
 
     @Override
     protected void engineInit(int opmode, Key key, AlgorithmParameters params, SecureRandom random)
             throws InvalidKeyException, InvalidAlgorithmParameterException {
 
-        if ((opmode == Cipher.DECRYPT_MODE) || (opmode == Cipher.UNWRAP_MODE)) {
-            encrypting = false;
-        } else {
-            encrypting = true;
-            generateIV = false;
-        }
-
-        if (key == null) {
-            throw new InvalidKeyException("No key given");
-        }
-
+        GCMParameterSpec spec = null;
         if (params != null) {
-            GCMParameterSpec ivSpec = null;
             try {
-                ivSpec = params.getParameterSpec(GCMParameterSpec.class);
-            } catch (InvalidParameterSpecException ipse) {
-                throw new InvalidAlgorithmParameterException(
-                        "Wrong parameter " + "type: GCM " + "expected");
-            }
-            engineInit(opmode, key, ivSpec, random);
-        } else {
-            if (encrypting) {
-                /* Must generate the algorithm parameters internally */
-                engineInit(opmode, key, random);
-            } else {
-                /* Decryption requires explicit algorithm parameters */
-                throw new InvalidAlgorithmParameterException(
-                        "Decryption requires explicit algorithm parameters");
+                spec = params.getParameterSpec(GCMParameterSpec.class);
+            } catch (InvalidParameterSpecException e) {
+                throw new InvalidAlgorithmParameterException(e);
             }
         }
+        engineInit(opmode, key, spec, random);
     }
 
-    private void internalInit(int opmode, Key key, byte[] iv) throws InvalidKeyException {
-        initCalledInEncSeq = false;
+    private void internalInit(int opmode, Key key, GCMParameterSpec spec)
+            throws InvalidKeyException, InvalidAlgorithmParameterException {
+        boolean encryption = (opmode == Cipher.ENCRYPT_MODE) ||
+            (opmode == Cipher.WRAP_MODE);
+
+        int tagLen = spec.getTLen();
+        if (tagLen < 96 || tagLen > 128 || ((tagLen & 0x07) != 0)) {
+            throw new InvalidAlgorithmParameterException
+                ("Unsupported TLen value.  Must be one of " +
+                    "{128, 120, 112, 104, 96}");
+        }
+
+        tagLenInBytes = tagLen >> 3;
+
+        // Check the Key object is valid and the right size
         if (key == null) {
-            throw new InvalidKeyException("Key missing");
+            throw new InvalidKeyException("The key must not be null");
         }
 
         if (!(key.getAlgorithm().equalsIgnoreCase("AES"))) {
@@ -723,35 +629,67 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             throw new InvalidKeyException("Wrong format: RAW bytes needed");
         }
 
-        byte[] rawKey = key.getEncoded();
-        if (rawKey == null) {
-            throw new InvalidKeyException("RAW bytes missing");
+        byte[] keyValue = key.getEncoded();
+        if (keyValue == null) {
+            throw new InvalidKeyException("Key encoding must not be null");
         }
 
-        if (!AESUtils.isKeySizeValid(rawKey.length)) {
-            throw new InvalidKeyException("Invalid AES key length: " + rawKey.length + " bytes");
+        if (!AESUtils.isKeySizeValid(keyValue.length)) {
+            Arrays.fill(keyValue, (byte) 0);
+            throw new InvalidKeyException("Invalid AES key length: " + keyValue.length + " bytes");
         }
 
-        try {
-            boolean isEncrypt = (opmode == Cipher.ENCRYPT_MODE) || (opmode == Cipher.WRAP_MODE);
+        byte[] iv = spec.getIV();
+        // Check for reuse
+        if (encryption) {
+            if (MessageDigest.isEqual(keyValue, lastEncKey) &&
+                MessageDigest.isEqual(iv, lastEncIv)) {
+                Arrays.fill(keyValue, (byte) 0);
+                throw new InvalidAlgorithmParameterException(
+                    "Cannot reuse iv for GCM encryption");
+            }
 
-            this.newIV = null;
-            this.Key = rawKey.clone();
-            this.IV = iv.clone();
-            this.encrypting = isEncrypt;
-            this.initialized = true;
-            this.initCalledInEncSeq = true;
-            this.authData = null; // Before returning from internalInit(), restore AAD to uninitialized state
-            this.updateCalled = false;
-            this.sbeInLastFinalEncrypt = false;
-            this.sbeInLastUpdateEncrypt = false;
-            this.buffered = 0;
-            Arrays.fill(buffer, (byte) 0x0);
-
-        } catch (Exception e) {
-            resetVars(false);
-            throw provider.providerException("Failed to init cipher", e);
+            // Both values are already clones
+            if (lastEncKey != null) {
+                Arrays.fill(lastEncKey, (byte) 0);
+            }
+            lastEncKey = keyValue;
+            lastEncIv = iv;
         }
+
+        initCalledInEncSeq = false;
+
+        
+
+        this.newIV = null;
+        this.Key = keyValue.clone();
+        this.IV = iv.clone();
+        this.encrypting = encryption;
+        this.initialized = true;
+        this.initCalledInEncSeq = true;
+        this.authData = null; // Before returning from internalInit(), restore AAD to uninitialized state
+        this.updateCalled = false;
+        this.sbeInLastFinalEncrypt = false;
+        this.sbeInLastUpdateEncrypt = false;
+        this.buffered = 0;
+        Arrays.fill(buffer, (byte) 0x0);
+    }
+
+    /**
+     * Create a random 16-byte iv.
+     *
+     * @param rand a {@code SecureRandom} object.  If {@code null} is
+     * provided a new {@code SecureRandom} object will be instantiated.
+     *
+     * @return a 16-byte array containing the random nonce.
+     */
+    private static byte[] createIv(SecureRandom rand) {
+        byte[] iv = new byte[DEFAULT_IV_LEN];
+        if (rand == null) {
+            rand = JCAUtil.getDefSecureRandom();
+        }
+        rand.nextBytes(iv);
+        return iv;
     }
 
     /*
