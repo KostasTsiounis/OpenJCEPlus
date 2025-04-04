@@ -646,10 +646,10 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
      *
      * @return a 16-byte array containing the random nonce.
      */
-    private static byte[] createIv(SecureRandom rand) {
+    private byte[] createIv(SecureRandom rand) {
         byte[] iv = new byte[DEFAULT_IV_LEN];
         if (rand == null) {
-            rand = JCAUtil.getDefSecureRandom();
+            rand = provider.getSecureRandom(null);
         }
         rand.nextBytes(iv);
         return iv;
