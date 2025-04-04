@@ -43,32 +43,11 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     private boolean initialized = false;
     private int tagLenInBytes = DEFAULT_TAG_LENGTH / 8;
 
-    private BigInteger generatedIVCtrField = null;
-    private byte[] generatedIVDevField = null;
-    private static SecureRandom random = null;
-
     private byte[] IV = null;
-    private byte[] newIV = null;
     private byte[] Key = null;
     private byte[] authData = null;
     private boolean updateCalled = false;
 
-    // Java 8 Cipher.class documentation does not require that an cipher.init is
-    // called between successive encryption or decryption. However it requires
-    // prior IV+ Key cannot be used. Since it is not feasible to maintain a history
-    // of previously called IV+Key combination, this implementation checks the
-    // previous encryption. The exception to this requirement is when
-    // a ShortBufferException was encountered, the Cipher class allows same IV and Key but with a
-    // larger buffer.
-    // Calling encryption/decryption after a sbe is allowed which allows applications
-    // to call failed operation with a larger buffer
-    // This implementation deviates from Sun's implementation.
-
-    // Keeps track if a shortBufferException was experienced in last call.
-    // Calling encryption/decrytion after a sbe is allowed which allows applications
-    // to call failed operation with a larger buffer.
-    private boolean sbeInLastFinalEncrypt = false;
-    private boolean sbeInLastUpdateEncrypt = false;
     boolean initCalledInEncSeq = false;
     boolean aadDone = false;
 
@@ -320,7 +299,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             provider.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
-            sbeInLastFinalEncrypt = encrypting;
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
@@ -505,7 +483,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     @Override
     protected void engineInit(int opmode, Key key, SecureRandom random) throws InvalidKeyException {
         if ((opmode == Cipher.DECRYPT_MODE) || (opmode == Cipher.UNWRAP_MODE)) {
-            encrypting = false;
             /* Decryption requires explicit algorithm parameters */
             throw new InvalidKeyException("Decryption requires explicit algorithm parameters");
         }
@@ -622,9 +599,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         initCalledInEncSeq = false;
 
-        
-
-        this.newIV = null;
         this.Key = keyValue.clone();
         this.IV = iv.clone();
         this.encrypting = encryption;
@@ -632,9 +606,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         this.initCalledInEncSeq = true;
         this.requireReinit = false;
         this.authData = null; // Before returning from internalInit(), restore AAD to uninitialized state
+        this.aadDone = false;
         this.updateCalled = false;
-        this.sbeInLastFinalEncrypt = false;
-        this.sbeInLastUpdateEncrypt = false;
         this.buffered = 0;
         Arrays.fill(buffer, (byte) 0x0);
     }
@@ -795,7 +768,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         if ((output == null) || ((output.length - outputOffset) < len)) {
             // OCKDebug.Msg(debPrefix, methodName, "throwing Short buffer exception");
-            sbeInLastUpdateEncrypt = encrypting;
             throw new ShortBufferException(
                     "Output buffer must be (at least) " + len + " bytes long");
         }
@@ -939,37 +911,30 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             }
 
         } catch (IllegalStateException ock_illse) {
-            sbeInLastUpdateEncrypt = false;
             IllegalStateException illse = new IllegalStateException(ock_illse.getMessage());
             provider.setOCKExceptionCause(illse, ock_illse);
             throw illse;
         } catch (AEADBadTagException e) {
-            sbeInLastUpdateEncrypt = false;
             AEADBadTagException abte = new AEADBadTagException(e.getMessage());
             provider.setOCKExceptionCause(abte, e);
             throw abte;
         } catch (BadPaddingException ock_bpe) {
-            sbeInLastUpdateEncrypt = false;
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
             provider.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
-            sbeInLastUpdateEncrypt = false;
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
             provider.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
-            sbeInLastUpdateEncrypt = encrypting;
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
             provider.setOCKExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (com.ibm.crypto.plus.provider.ock.OCKException ock_excp) {
-            sbeInLastUpdateEncrypt = false;
             AEADBadTagException tagexcp = new AEADBadTagException(ock_excp.getMessage());
             provider.setOCKExceptionCause(tagexcp, ock_excp);
             throw tagexcp;
         } catch (Exception e) {
-            sbeInLastUpdateEncrypt = false;
             throw provider.providerException("Failure in engineUpdate", e);
         }
 
@@ -980,7 +945,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             System.arraycopy(input, inputOffset, buffer, buffered, inputLen);
             buffered = Math.addExact(buffered, inputLen);
         }
-        sbeInLastUpdateEncrypt = false;
         return outLen;
     }
 
@@ -1248,13 +1212,11 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
     //Reset class variables after an exception
     private void resetVars() {
-        sbeInLastFinalEncrypt = false;
         this.requireReinit = this.encrypting;
         authData = null;
         this.aadDone = false;
         initCalledInEncSeq = false;
         updateCalled = false;
-        sbeInLastUpdateEncrypt = false;
         this.buffered = 0;
         Arrays.fill(buffer, (byte) 0x0);
     }
