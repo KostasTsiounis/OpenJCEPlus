@@ -36,8 +36,8 @@ public class BaseTestAESGCMBufferIV extends BaseTestJunit5 {
         testBufferIV(46, 12);
         testBufferIV(47, 16);
         testBufferIV(48, 16);
-        testBufferIV(49, 128);
-        testBufferIV(50, 128);
+        testBufferIV(49, 14);
+        testBufferIV(50, 16);
     }
 
     private void testBufferIV(int buffLen, int ivLen) throws Exception {
