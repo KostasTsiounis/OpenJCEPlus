@@ -544,7 +544,9 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     private void internalInit(int opmode, Key key, GCMParameterSpec spec)
             throws InvalidKeyException, InvalidAlgorithmParameterException {
         int tagLen = spec.getTLen();
-        if (tagLen < 96 || tagLen > 128 || ((tagLen & 0x07) != 0)) {
+
+        boolean skipCheck = (System.getProperty("openjceplus.gcm.tlen.skipcheck") != null);
+        if (!skipCheck && ((tagLen < 96) || (tagLen > 128) || ((tagLen & 0x07) != 0))) {
             throw new InvalidAlgorithmParameterException
                 ("Unsupported TLen value.  Must be one of " +
                     "{128, 120, 112, 104, 96}");

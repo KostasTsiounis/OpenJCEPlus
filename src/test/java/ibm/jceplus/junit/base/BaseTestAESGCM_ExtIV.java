@@ -11,14 +11,14 @@ package ibm.jceplus.junit.base;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,53 +38,8 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
 
     private AlgorithmParameterSpec gcm_param_spec = null;
 
-    private static Class<?> classGCMParameterSpec = null;
-    private static Constructor<?> ctorGCMParameterSpec = null;
-    private static Method methGCMParameterSpecSetADD = null;
-
-    private static Class<?> classAESGCMCipher = null;
-    private static Constructor<?> ctorAESGCMCipher = null;
-    private static Method methAESGCMCipherUpdateAAD = null;
-
-    private static Method methCipherGetInstance = null;
-
     @BeforeEach
     public void setUp() throws Exception {
-
-        /*
-         * Try constructing a javax.crypto.spec.GCMParameterSpec instance (Java
-         * 7+)
-         */
-
-        try {
-            classGCMParameterSpec = Class.forName("javax.crypto.spec.GCMParameterSpec");
-            ctorGCMParameterSpec = classGCMParameterSpec
-                    .getConstructor(new Class<?>[] {int.class, byte[].class});
-            classAESGCMCipher = Class.forName("javax.crypto.Cipher");
-            methAESGCMCipherUpdateAAD = classAESGCMCipher.getMethod("updateAAD",
-                    new Class<?>[] {byte[].class});
-        } catch (Exception ex) {
-            /* Differ to calling code in test cases that follow... */
-        }
-
-        /*
-         * Try constructing an ibm.security.internal.spec.GCMParameterSpec
-         * instance (IBM Java 6)
-         */
-
-        if (ctorGCMParameterSpec == null) {
-            try {
-                classGCMParameterSpec = Class
-                        .forName("ibm.security.internal.spec.GCMParameterSpec");
-                ctorGCMParameterSpec = classGCMParameterSpec
-                        .getConstructor(new Class<?>[] {int.class, byte[].class});
-                methGCMParameterSpecSetADD = classGCMParameterSpec.getMethod("setAAD",
-                        new Class<?>[] {byte[].class, int.class, int.class});
-            } catch (Exception ex) {
-                /* Differ to calling code in test cases that follow... */
-            }
-        }
-
         byte[] iv = new byte[16];// com.ibm.crypto.plus.provider.AESConstants.AES_BLOCK_SIZE];
         SecureRandom rnd = new java.security.SecureRandom();
         rnd.nextBytes(iv);
@@ -125,35 +80,50 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
 
     @Test
     public void testAESGCM_ExtIV_Test03() throws Exception {
-        runTestEncrypt(64, // init_tag_length,
-                "41d0e604d7be7bc069bcc725e6b9ac1d", // str_key_bytes,
-                "99", // str_init_vec,
-                "", // str_plain_text,
-                "f14ec0d5cdd1cb1aa902f9f9d48ffc770269f186", // str_added_auth_data,
-                "", // str_cipher_text,
-                "81c928129992ba8d"); // str_tag
+        try {
+            runTestEncrypt(64, // init_tag_length,
+                    "41d0e604d7be7bc069bcc725e6b9ac1d", // str_key_bytes,
+                    "99", // str_init_vec,
+                    "", // str_plain_text,
+                    "f14ec0d5cdd1cb1aa902f9f9d48ffc770269f186", // str_added_auth_data,
+                    "", // str_cipher_text,
+                    "81c928129992ba8d"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test04() throws Exception {
-        runTestEncrypt(64, // init_tag_length,
-                "7e95066b60093f66175493d141359dbd", // str_key_bytes,
-                "4057da04c773361c33be7f10d7ba708b2278503fd7b0a6dd130a962952b8887d6a412074c1572eb0c53edf81ee701cabc60552aceb0f662697d3b2acc037eab9445242bff4496606b8cfbf2d3c72874b769b9b63234b64d429829f467305acab4ae8d45c8f7c4f5b5771cb7cbdccc8c7273a4a2038464fadfdf733b631179017", // str_init_vec,
-                "5ea1312e26c95bcf005b617423", // str_plain_text,
-                "660c28a460fa93e112aac6ceb54a80a2", // str_added_auth_data,
-                "5517fba376ab16c7e2ad16c1e2", // str_cipher_text,
-                "4fd94671abde616e"); // str_tag
+        try {
+            runTestEncrypt(64, // init_tag_length,
+                    "7e95066b60093f66175493d141359dbd", // str_key_bytes,
+                    "4057da04c773361c33be7f10d7ba708b2278503fd7b0a6dd130a962952b8887d6a412074c1572eb0c53edf81ee701cabc60552aceb0f662697d3b2acc037eab9445242bff4496606b8cfbf2d3c72874b769b9b63234b64d429829f467305acab4ae8d45c8f7c4f5b5771cb7cbdccc8c7273a4a2038464fadfdf733b631179017", // str_init_vec,
+                    "5ea1312e26c95bcf005b617423", // str_plain_text,
+                    "660c28a460fa93e112aac6ceb54a80a2", // str_added_auth_data,
+                    "5517fba376ab16c7e2ad16c1e2", // str_cipher_text,
+                    "4fd94671abde616e"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test05() throws Exception {
-        runTestEncrypt(32, // init_tag_length,
-                "62dc8e1a98863c7de64f30b74c01d530", // str_key_bytes,
-                "e9f658589f973895510cb34eef99b0cf34fc311c20c21464e07c4d6d34a15fcad3ea9ef51ef05513fb700cbb92aeef35e4cdda47b2c06c1104e987afa1cd6f827e7bc5a8db6d0657345945c068cabfd6e6b57533c929fe5804e121809b8b43d050a211fbee319879b1ba4cc2768df3a92014839086a377663a1d1967d7c602e9", // str_init_vec,
-                "f2c54a35286a225389e853e51f3f64b6980a79262e5545856c053d558d87d7b739eb75f27587efe219eb82e9a176fa14419dbe", // str_plain_text,
-                "5d78b486c29131866569768d5eedb61afc48de7d1a223d0cccc647cf35408bb932293f3bc1b51a504e13c27548d083c8e8a45d4e9d4dc923c3c2bde38d6cdeaed2929b67e371356f74f635b3b1183ee0db71476f2024e1f5e13c", // str_added_auth_data,
-                "fe0c3ae08418ef91b478360942a84a58f8d93df7fe5bde138f59cc23432f04b9637841ccf7a5d539a36f621a7d17e026d4cc2c", // str_cipher_text,
-                "e413041a"); // str_tag
+        try {
+            runTestEncrypt(32, // init_tag_length,
+                    "62dc8e1a98863c7de64f30b74c01d530", // str_key_bytes,
+                    "e9f658589f973895510cb34eef99b0cf34fc311c20c21464e07c4d6d34a15fcad3ea9ef51ef05513fb700cbb92aeef35e4cdda47b2c06c1104e987afa1cd6f827e7bc5a8db6d0657345945c068cabfd6e6b57533c929fe5804e121809b8b43d050a211fbee319879b1ba4cc2768df3a92014839086a377663a1d1967d7c602e9", // str_init_vec,
+                    "f2c54a35286a225389e853e51f3f64b6980a79262e5545856c053d558d87d7b739eb75f27587efe219eb82e9a176fa14419dbe", // str_plain_text,
+                    "5d78b486c29131866569768d5eedb61afc48de7d1a223d0cccc647cf35408bb932293f3bc1b51a504e13c27548d083c8e8a45d4e9d4dc923c3c2bde38d6cdeaed2929b67e371356f74f635b3b1183ee0db71476f2024e1f5e13c", // str_added_auth_data,
+                    "fe0c3ae08418ef91b478360942a84a58f8d93df7fe5bde138f59cc23432f04b9637841ccf7a5d539a36f621a7d17e026d4cc2c", // str_cipher_text,
+                    "e413041a"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
@@ -279,46 +249,66 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
 
     @Test
     public void testAESGCM_ExtIV_Test17() throws Exception {
-        runTestDecrypt(64, // init_tag_length,
-                "8a68f0860f05db6d688e38c3dd931b7e1c476df9ea835fd5", // str_key_bytes,
-                "99", // str_init_vec,
-                "03ca877225df6b1ff0079f0ec88b13b097fc15ca35354fab55656437feb3f0df", // str_plain_text,
-                "e7073b10fec236065adf88962444de109b9eea3b2ec60b2d337fe9105d3958060440670b8d77f5493f23343b121d32c3ee3fbb7ead8dbcb4ac0c3e4d240d103f9d11875ae9e47546a92e329f58628ab951d2372f7e3941ec15be", // str_added_auth_data,
-                "6741d4a89a14c3ce88643f706e44a7bce3298e8f8adac05188264603717b1bd5", // str_cipher_text,
-                "014089a8a0c53bed"); // str_tag
+        try {
+            runTestDecrypt(64, // init_tag_length,
+                    "8a68f0860f05db6d688e38c3dd931b7e1c476df9ea835fd5", // str_key_bytes,
+                    "99", // str_init_vec,
+                    "03ca877225df6b1ff0079f0ec88b13b097fc15ca35354fab55656437feb3f0df", // str_plain_text,
+                    "e7073b10fec236065adf88962444de109b9eea3b2ec60b2d337fe9105d3958060440670b8d77f5493f23343b121d32c3ee3fbb7ead8dbcb4ac0c3e4d240d103f9d11875ae9e47546a92e329f58628ab951d2372f7e3941ec15be", // str_added_auth_data,
+                    "6741d4a89a14c3ce88643f706e44a7bce3298e8f8adac05188264603717b1bd5", // str_cipher_text,
+                    "014089a8a0c53bed"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test18() throws Exception {
-        runTestDecrypt(32, // init_tag_length,
-                "d0f31becae6c6f526b686b468c14bafcbdab4aaf3f6a7892", // str_key_bytes,
-                "fee500667abd1d9d3f78479e986987c40763e0406d1a05afd7baa036131adac3453e488d00c002ddca5babbf393dc2e64305c4b1b57356f576877cd019de7c76e6d187b969a63782eaadca4e1884622207b35b70edcda2fefb1e1618ca102ef4d1a4c04ca9840de26544279e1fa368c14a26c5ca320d9dfc29c15876819c683f", // str_init_vec,
-                "b9cb82ebe010700ff9a3d45678", // str_plain_text,
-                "", // str_added_auth_data,
-                "a439f3175e645ecf05c5a9cc70", // str_cipher_text,
-                "3e5f75c9"); // str_tag
+        try {
+            runTestDecrypt(32, // init_tag_length,
+                    "d0f31becae6c6f526b686b468c14bafcbdab4aaf3f6a7892", // str_key_bytes,
+                    "fee500667abd1d9d3f78479e986987c40763e0406d1a05afd7baa036131adac3453e488d00c002ddca5babbf393dc2e64305c4b1b57356f576877cd019de7c76e6d187b969a63782eaadca4e1884622207b35b70edcda2fefb1e1618ca102ef4d1a4c04ca9840de26544279e1fa368c14a26c5ca320d9dfc29c15876819c683f", // str_init_vec,
+                    "b9cb82ebe010700ff9a3d45678", // str_plain_text,
+                    "", // str_added_auth_data,
+                    "a439f3175e645ecf05c5a9cc70", // str_cipher_text,
+                    "3e5f75c9"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test19() throws Exception {
-        runTestDecrypt(64, // init_tag_length,
-                "cc71a2842d54ebf3eaac8aeb6ac59cd30f2672b190f18c7ad5bcced5567401b7", // str_key_bytes,
-                "95e7daf83268ba04f006cfc0d5596a5dd672707dcb6b33a0edb95673317b133a8cf8fa127603eb63d79155200a0c7fc91226b02e08cff7888428e89becbead89707e3e11a3e55b0f670102e464f42964f1aa6dcfc02ba7adf6240c465e18e708d4f65d9d3b63b2f36a829ddc1adb4dcfc4861d6e949bfd211c829a4d90d490e4", // str_init_vec,
-                "04725ecfe0072b5a49a3c68beacfcdf237a900662d1767af218928b6f724c5b8d912033161ba874e8d99d8d175710d284bf310", // str_plain_text,
-                "", // str_added_auth_data,
-                "4a385c74888d214865c3fb7958384b48312f1a605dac52d77802d17dafcd487aa30627cbc1b23e2ad2e92756c0e6d91fbd1417", // str_cipher_text,
-                "e1507520c358afec"); // str_tag
+        try {
+            runTestDecrypt(64, // init_tag_length,
+                    "cc71a2842d54ebf3eaac8aeb6ac59cd30f2672b190f18c7ad5bcced5567401b7", // str_key_bytes,
+                    "95e7daf83268ba04f006cfc0d5596a5dd672707dcb6b33a0edb95673317b133a8cf8fa127603eb63d79155200a0c7fc91226b02e08cff7888428e89becbead89707e3e11a3e55b0f670102e464f42964f1aa6dcfc02ba7adf6240c465e18e708d4f65d9d3b63b2f36a829ddc1adb4dcfc4861d6e949bfd211c829a4d90d490e4", // str_init_vec,
+                    "04725ecfe0072b5a49a3c68beacfcdf237a900662d1767af218928b6f724c5b8d912033161ba874e8d99d8d175710d284bf310", // str_plain_text,
+                    "", // str_added_auth_data,
+                    "4a385c74888d214865c3fb7958384b48312f1a605dac52d77802d17dafcd487aa30627cbc1b23e2ad2e92756c0e6d91fbd1417", // str_cipher_text,
+                    "e1507520c358afec"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test20() throws Exception {
-        runTestDecrypt(64, // init_tag_length,
-                "f7b640b7d59b4938689139e1f14179a9388f84c89852e045c568930da83c7521", // str_key_bytes,
-                "ae273c5bbc4858b7836bafdc52536bdfb2d9ce5c4eb8d18f4161fee0bc2646277ec255b038bcf685d05395933a0e50a87ffda1354db09dc22ab88725e72d4f462d195a2fa738582fae43ea023d00aee55dbd8561fbfebfd191faf3d53c5b07bf5964e81c0072dc39a32c4a5f7d3318527ae7a187b95d9b5232d44439aa44dc81", // str_init_vec,
-                "2162cc5fe44a5d4ebfc026d90cedae01d5d1daeb0751820afb8cda16d0e43f4e498bfbf74c490efa88f87edb03e98619de7a39", // str_plain_text,
-                "359b76e8dd0f6f54526c37741beb49deb4460d2e20175a93c805391dabc14da4f496a5db9ce882f2ac5e6276d9a20b8a9a14142372db0c9dfbab710ae92160c1ea9aa7069276cfa16bad4bd28869dbc8a163e9560d6c478da8bc", // str_added_auth_data,
-                "1bd0594edd6a58eaf63e67e473a78aeb8bde55febaa726bc663c05f4ba11cc30cb2e2bac4a7f240263b3ab6777a980ad65f662", // str_cipher_text,
-                "45d81bc44c0a8ab4"); // str_tag
+        try {
+            runTestDecrypt(64, // init_tag_length,
+                    "f7b640b7d59b4938689139e1f14179a9388f84c89852e045c568930da83c7521", // str_key_bytes,
+                    "ae273c5bbc4858b7836bafdc52536bdfb2d9ce5c4eb8d18f4161fee0bc2646277ec255b038bcf685d05395933a0e50a87ffda1354db09dc22ab88725e72d4f462d195a2fa738582fae43ea023d00aee55dbd8561fbfebfd191faf3d53c5b07bf5964e81c0072dc39a32c4a5f7d3318527ae7a187b95d9b5232d44439aa44dc81", // str_init_vec,
+                    "2162cc5fe44a5d4ebfc026d90cedae01d5d1daeb0751820afb8cda16d0e43f4e498bfbf74c490efa88f87edb03e98619de7a39", // str_plain_text,
+                    "359b76e8dd0f6f54526c37741beb49deb4460d2e20175a93c805391dabc14da4f496a5db9ce882f2ac5e6276d9a20b8a9a14142372db0c9dfbab710ae92160c1ea9aa7069276cfa16bad4bd28869dbc8a163e9560d6c478da8bc", // str_added_auth_data,
+                    "1bd0594edd6a58eaf63e67e473a78aeb8bde55febaa726bc663c05f4ba11cc30cb2e2bac4a7f240263b3ab6777a980ad65f662", // str_cipher_text,
+                    "45d81bc44c0a8ab4"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
@@ -356,24 +346,34 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
 
     @Test
     public void testAESGCM_ExtIV_Test24() throws Exception {
-        runTestDecryptFail(64, // init_tag_length,
-                "01643b56c34eb12ab7a4f4223636201b954ec56019b4d1f0", // str_key_bytes,
-                "7f25be91cf728d011a7c165e6c51ffed58d89e493f7b0ed740018e8b2223196aadf8deab678bd3672fbea4d139c1b1d3789fcb819a462fa8ba66b855795efd2c6b898b181ec75fb9503cde3b241c597386936301680921400eb3480b7c6e81be8cda674407fe17fbffc99b87eb51021748292bec8ebaf754ce595d6b2d6082bd", // str_init_vec,
-                "", // str_plain_text,
-                "b355fa75c60005d186a435e2b2f42802", // str_added_auth_data,
-                "629d4db4520283dcdcb4019987", // str_cipher_text,
-                "266685ebed5dab3d"); // str_tag
+        try {
+            runTestDecryptFail(64, // init_tag_length,
+                    "01643b56c34eb12ab7a4f4223636201b954ec56019b4d1f0", // str_key_bytes,
+                    "7f25be91cf728d011a7c165e6c51ffed58d89e493f7b0ed740018e8b2223196aadf8deab678bd3672fbea4d139c1b1d3789fcb819a462fa8ba66b855795efd2c6b898b181ec75fb9503cde3b241c597386936301680921400eb3480b7c6e81be8cda674407fe17fbffc99b87eb51021748292bec8ebaf754ce595d6b2d6082bd", // str_init_vec,
+                    "", // str_plain_text,
+                    "b355fa75c60005d186a435e2b2f42802", // str_added_auth_data,
+                    "629d4db4520283dcdcb4019987", // str_cipher_text,
+                    "266685ebed5dab3d"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
     public void testAESGCM_ExtIV_Test25() throws Exception {
-        runTestDecryptFail(32, // init_tag_length,
-                "2bcc18d95b3137479f15dce3a0220adeea720032d64f7686", // str_key_bytes,
-                "190c0228ddb9370cc3aeb542ea0b353b3481871649a5e346792a3aae4e8153232b93db7b58db0fd583dc97dd8a169fdb55003d339842493a861afca2870a9746107cea1fd62e791c311e247647c4f0f928ed0433fb1f997464d76b46dc1f5311a6c210c5c00675d2b8d8e5b633fe67678d0b8e3292b56bf00e85e937d860a193", // str_init_vec,
-                "", // str_plain_text,
-                "38196c56b36d86ca2ccb12e7e7fd0797", // str_added_auth_data,
-                "98bdce993dbf402b7b160aee01", // str_cipher_text,
-                "348a2cfa"); // str_tag
+        try {
+            runTestDecryptFail(32, // init_tag_length,
+                    "2bcc18d95b3137479f15dce3a0220adeea720032d64f7686", // str_key_bytes,
+                    "190c0228ddb9370cc3aeb542ea0b353b3481871649a5e346792a3aae4e8153232b93db7b58db0fd583dc97dd8a169fdb55003d339842493a861afca2870a9746107cea1fd62e791c311e247647c4f0f928ed0433fb1f997464d76b46dc1f5311a6c210c5c00675d2b8d8e5b633fe67678d0b8e3292b56bf00e85e937d860a193", // str_init_vec,
+                    "", // str_plain_text,
+                    "38196c56b36d86ca2ccb12e7e7fd0797", // str_added_auth_data,
+                    "98bdce993dbf402b7b160aee01", // str_cipher_text,
+                    "348a2cfa"); // str_tag
+            fail("Expected InvalidAlgorithmParameterException not thrown");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // expected
+        }
     }
 
     @Test
@@ -417,25 +417,13 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
             return;
         }
 
-        gcm_param_spec = (AlgorithmParameterSpec) ctorGCMParameterSpec.newInstance(init_tag_length,
-                init_vec);
-
-        /* For Java 6 */
-        if (methGCMParameterSpecSetADD != null) {
-            methGCMParameterSpecSetADD.invoke(gcm_param_spec, added_auth_data, 0,
-                    added_auth_data.length);
-        }
+        gcm_param_spec = new GCMParameterSpec(init_tag_length, init_vec);
 
         SecretKeySpec key = new SecretKeySpec(key_bytes, "AES");
 
         cipher = Cipher.getInstance("AES/GCM/NoPadding", getProviderName());
         cipher.init(Cipher.ENCRYPT_MODE, key, gcm_param_spec);
-
-        /* For Java 7/8 */
-        if (methGCMParameterSpecSetADD == null) {
-            methAESGCMCipherUpdateAAD.invoke(cipher, added_auth_data);
-        }
-
+        cipher.updateAAD(added_auth_data);
         byte[] output_text = cipher.doFinal(plain_text);
 
         if (byteEqual(output_text, 0, cipher_text, 0, cipher_text.length) == false) {
@@ -477,25 +465,13 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
         System.arraycopy(tag, 0, new_cipher_text, cipher_text.length, tag.length);
         cipher_text = new_cipher_text;
 
-        gcm_param_spec = (AlgorithmParameterSpec) ctorGCMParameterSpec.newInstance(init_tag_length,
-                init_vec);
-
-        /* For Java 6 */
-        if (methGCMParameterSpecSetADD != null) {
-            methGCMParameterSpecSetADD.invoke(gcm_param_spec, added_auth_data, 0,
-                    added_auth_data.length);
-        }
+        gcm_param_spec = new GCMParameterSpec(init_tag_length, init_vec);
 
         SecretKeySpec key = new SecretKeySpec(key_bytes, "AES");
 
         cipher = Cipher.getInstance("AES/GCM/NoPadding", getProviderName());
         cipher.init(Cipher.DECRYPT_MODE, key, gcm_param_spec);
-
-        /* For Java 7/8 */
-        if (methGCMParameterSpecSetADD == null) {
-            methAESGCMCipherUpdateAAD.invoke(cipher, added_auth_data);
-        }
-
+        cipher.updateAAD(added_auth_data);
         byte[] output_text = cipher.doFinal(cipher_text);
 
         if (byteEqual(output_text, 0, plain_text, 0, plain_text.length) == false) {
@@ -531,25 +507,13 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
         cipher_text = new_cipher_text;
 
         try {
-            gcm_param_spec = (AlgorithmParameterSpec) ctorGCMParameterSpec
-                    .newInstance(init_tag_length, init_vec);
-
-            /* For Java 6 */
-            if (methGCMParameterSpecSetADD != null) {
-                methGCMParameterSpecSetADD.invoke(gcm_param_spec, added_auth_data, 0,
-                        added_auth_data.length);
-            }
+            gcm_param_spec = new GCMParameterSpec(init_tag_length, init_vec);
 
             SecretKeySpec key = new SecretKeySpec(key_bytes, "AES");
 
             cipher = Cipher.getInstance("AES/GCM/NoPadding", getProviderName());
             cipher.init(Cipher.DECRYPT_MODE, key, gcm_param_spec);
-
-            /* For Java 7/8 */
-            if (methGCMParameterSpecSetADD == null) {
-                methAESGCMCipherUpdateAAD.invoke(cipher, added_auth_data);
-            }
-
+            cipher.updateAAD(added_auth_data);
             cipher.doFinal(cipher_text);
 
             fail("Did not get expected AEADBadTagException");
