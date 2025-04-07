@@ -521,9 +521,7 @@ public class BaseTestAESGCM_ExtIV extends BaseTestJunit5 {
             if (ex.getClass().getSimpleName().equals("AEADBadTagException")) {
                 return;
             } else {
-                ex.printStackTrace();
-                //System.out.println("Unexpected exception: " + ex.getMessage());
-                fail("Did not get expected AEADBadTagException");
+                throw ex;
             }
         }
     }
