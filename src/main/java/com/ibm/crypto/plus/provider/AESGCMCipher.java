@@ -11,7 +11,6 @@ package com.ibm.crypto.plus.provider;
 import com.ibm.crypto.plus.provider.ock.GCMCipher;
 import com.ibm.crypto.plus.provider.ock.OCKContext;
 import com.ibm.crypto.plus.provider.ock.OCKException;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -546,9 +545,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         boolean skipCheck = (System.getProperty("openjceplus.gcm.tlen.skipcheck") != null);
         if (!skipCheck && ((tagLen < 96) || (tagLen > 128) || ((tagLen & 0x07) != 0))) {
-            throw new InvalidAlgorithmParameterException
-                ("Unsupported TLen value.  Must be one of " +
-                    "{128, 120, 112, 104, 96}");
+            throw new InvalidAlgorithmParameterException("Unsupported TLen value.  "
+                + "Must be one of {128, 120, 112, 104, 96}");
         }
 
         tagLenInBytes = tagLen >> 3;
