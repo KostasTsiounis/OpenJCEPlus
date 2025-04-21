@@ -76,6 +76,7 @@ public class BaseTestIsAssignableFromOrder extends BaseTestJunit5 {
             throw new RuntimeException("Should fail");
         } catch (IOException ioe) {
             // expected
+            ioe.printStackTrace();
         }
     }
 
