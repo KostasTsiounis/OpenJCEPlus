@@ -88,57 +88,79 @@ public final class OAEPParameters extends AlgorithmParametersSpi {
         mdName = "SHA-1";
         mgfSpec = MGF1ParameterSpec.SHA1;
         p = new byte[0];
-        DerValue[] datum = der.getSequence(3);
-        for (int i = 0; i < datum.length; i++) {
-            DerValue data = datum[i];
-            if (data.isContextSpecific((byte) 0x00)) {
-                // hash algid
-                mdName = AlgorithmId.parse(data.getData().getDerValue()).getName();
-            } else if (data.isContextSpecific((byte) 0x01)) {
-                // mgf algid
-                AlgorithmId val = AlgorithmId.parse(data.getData().getDerValue());
-                if (!val.getOID().equals((Object) OID_MGF1)) {
-                    throw new IOException("Only MGF1 mgf is supported");
-                }
-                byte[] encodedParams = val.getEncodedParams();
-                if (encodedParams == null) {
-                    throw new IOException("Missing MGF1 parameters");
-                }
-                AlgorithmId params = AlgorithmId.parse(new DerValue(encodedParams));
-                String mgfDigestName = params.getName();
-                if (mgfDigestName.equals("SHA-1")) {
-                    mgfSpec = MGF1ParameterSpec.SHA1;
-                } else if (mgfDigestName.equals("SHA-224")) {
-                    mgfSpec = MGF1ParameterSpec.SHA224;
-                } else if (mgfDigestName.equals("SHA-256")) {
-                    mgfSpec = MGF1ParameterSpec.SHA256;
-                } else if (mgfDigestName.equals("SHA-384")) {
-                    mgfSpec = MGF1ParameterSpec.SHA384;
-                } else if (mgfDigestName.equals("SHA-512")) {
-                    mgfSpec = MGF1ParameterSpec.SHA512;
-                } else {
-                    throw new IOException("Unrecognized message digest algorithm");
-                }
-            } else if (data.isContextSpecific((byte) 0x02)) {
-                // pSource algid
-                AlgorithmId val = AlgorithmId.parse(data.getData().getDerValue());
-                if (!val.getOID().equals((Object) OID_PSpecified)) {
-                    throw new IOException("Wrong OID for pSpecified");
-                }
-                byte[] encodedParams = val.getEncodedParams();
-                if (encodedParams == null) {
-                    throw new IOException("Missing pSpecified label");
-                }
-
-                DerInputStream dis = new DerInputStream(encodedParams);
-                p = dis.getOctetString();
-                if (dis.available() != 0) {
-                    throw new IOException("Extra data for pSpecified");
-                }
-            } else {
-                throw new IOException("Invalid encoded OAEPParameters");
+        DerValue data;
+        try {
+            data = der.getDerValue();
+        } catch (IOException ioe) {
+            return;
+        }
+        if (data.isContextSpecific((byte) 0x00)) {
+            // hash algid
+            mdName = AlgorithmId.parse(data.getData().getDerValue()).getName();
+            try {
+                data = der.getDerValue();
+            } catch (IOException ioe) {
+                return;
             }
         }
+
+        if (data.isContextSpecific((byte) 0x01)) {
+            // mgf algid
+            AlgorithmId val = AlgorithmId.parse(data.getData().getDerValue());
+            if (!val.getOID().equals((Object) OID_MGF1)) {
+                throw new IOException("Only MGF1 mgf is supported");
+            }
+            byte[] encodedParams = val.getEncodedParams();
+            if (encodedParams == null) {
+                throw new IOException("Missing MGF1 parameters");
+            }
+            AlgorithmId params = AlgorithmId.parse(new DerValue(encodedParams));
+            String mgfDigestName = params.getName();
+            if (mgfDigestName.equals("SHA-1")) {
+                mgfSpec = MGF1ParameterSpec.SHA1;
+            } else if (mgfDigestName.equals("SHA-224")) {
+                mgfSpec = MGF1ParameterSpec.SHA224;
+            } else if (mgfDigestName.equals("SHA-256")) {
+                mgfSpec = MGF1ParameterSpec.SHA256;
+            } else if (mgfDigestName.equals("SHA-384")) {
+                mgfSpec = MGF1ParameterSpec.SHA384;
+            } else if (mgfDigestName.equals("SHA-512")) {
+                mgfSpec = MGF1ParameterSpec.SHA512;
+            } else {
+                throw new IOException("Unrecognized message digest algorithm");
+            }
+
+            try {
+                data = der.getDerValue();
+            } catch (IOException ioe) {
+                return;
+            }
+        }
+
+        if (data.isContextSpecific((byte) 0x02)) {
+            // pSource algid
+            AlgorithmId val = AlgorithmId.parse(data.getData().getDerValue());
+            if (!val.getOID().equals((Object) OID_PSpecified)) {
+                throw new IOException("Wrong OID for pSpecified");
+            }
+            byte[] encodedParams = val.getEncodedParams();
+            if (encodedParams == null) {
+                throw new IOException("Missing pSpecified label");
+            }
+
+            DerInputStream dis = new DerInputStream(encodedParams);
+            p = dis.getOctetString();
+            if (dis.available() != 0) {
+                throw new IOException("Extra data for pSpecified");
+            }
+
+            if (der.available() != 0) {
+                throw new IOException("Extra unused bytes");
+            }
+            return;
+        }
+
+        throw new IOException("Invalid encoded OAEPParameters");
     }
 
     protected void engineInit(byte[] encoded, String decodingMethod) throws IOException {
