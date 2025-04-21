@@ -8,7 +8,6 @@
 package ibm.jceplus.junit.base;
 
 import ibm.security.internal.spec.CCMParameterSpec;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
@@ -33,7 +32,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.XECPrivateKeySpec;
 import java.security.spec.XECPublicKeySpec;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
