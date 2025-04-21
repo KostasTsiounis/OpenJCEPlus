@@ -8,7 +8,6 @@
 package ibm.jceplus.junit.base;
 
 import ibm.security.internal.spec.CCMParameterSpec;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
