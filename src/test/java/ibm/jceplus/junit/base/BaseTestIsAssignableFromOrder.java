@@ -8,6 +8,8 @@
 package ibm.jceplus.junit.base;
 
 import ibm.security.internal.spec.CCMParameterSpec;
+
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
@@ -32,6 +34,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.XECPrivateKeySpec;
 import java.security.spec.XECPublicKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -47,6 +50,35 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 
 public class BaseTestIsAssignableFromOrder extends BaseTestJunit5 {
+
+    @Test
+    public void testOAEPOrder() throws Exception {
+        // Do not use default fields
+        OAEPParameterSpec spec = new OAEPParameterSpec(
+                "SHA-384", "MGF1", MGF1ParameterSpec.SHA384,
+                new PSource.PSpecified(new byte[10]));
+        AlgorithmParameters alg = AlgorithmParameters.getInstance("OAEP");
+        alg.init(spec);
+        byte[] encoded = alg.getEncoded();
+
+        // Extract the fields inside encoding
+        // [0] HashAlgorithm
+        byte[] a0 = Arrays.copyOfRange(encoded, 2, encoded[3] + 4);
+        // [1] MaskGenAlgorithm + [2] PSourceAlgorithm
+        byte[] a12 = Arrays.copyOfRange(encoded, 2 + a0.length, encoded.length);
+
+        // and rearrange [1] and [2] before [0]
+        System.arraycopy(a12, 0, encoded, 2, a12.length);
+        System.arraycopy(a0, 0, encoded, 2 + a12.length, a0.length);
+
+        AlgorithmParameters alg2 = AlgorithmParameters.getInstance("OAEP");
+        try {
+            alg2.init(encoded);
+            throw new RuntimeException("Should fail");
+        } catch (IOException ioe) {
+            // expected
+        }
+    }
 
     @Test
     public void testIsAssignableFromOrder() throws Exception {

@@ -84,7 +84,7 @@ public final class OAEPParameters extends AlgorithmParametersSpi {
     }
 
     protected void engineInit(byte[] encoded) throws IOException {
-        DerInputStream der = new DerInputStream(encoded);
+        DerInputStream der = DerValue.wrap(encoded).data();
         mdName = "SHA-1";
         mgfSpec = MGF1ParameterSpec.SHA1;
         p = new byte[0];
