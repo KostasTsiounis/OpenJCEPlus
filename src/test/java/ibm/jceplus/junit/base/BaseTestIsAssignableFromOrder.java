@@ -56,7 +56,7 @@ public class BaseTestIsAssignableFromOrder extends BaseTestJunit5 {
         OAEPParameterSpec spec = new OAEPParameterSpec(
                 "SHA-384", "MGF1", MGF1ParameterSpec.SHA384,
                 new PSource.PSpecified(new byte[10]));
-        AlgorithmParameters alg = AlgorithmParameters.getInstance("OAEP");
+        AlgorithmParameters alg = AlgorithmParameters.getInstance("OAEP", getProviderName());
         alg.init(spec);
         byte[] encoded = alg.getEncoded();
 
@@ -70,7 +70,7 @@ public class BaseTestIsAssignableFromOrder extends BaseTestJunit5 {
         System.arraycopy(a12, 0, encoded, 2, a12.length);
         System.arraycopy(a0, 0, encoded, 2 + a12.length, a0.length);
 
-        AlgorithmParameters alg2 = AlgorithmParameters.getInstance("OAEP");
+        AlgorithmParameters alg2 = AlgorithmParameters.getInstance("OAEP", getProviderName());
         try {
             alg2.init(encoded);
             throw new RuntimeException("Should fail");
