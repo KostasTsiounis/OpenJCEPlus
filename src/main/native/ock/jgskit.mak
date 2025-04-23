@@ -7,15 +7,49 @@
 # this code, including the "Classpath" Exception described therein.
 ###############################################################################
 
-TOPDIR=../../..
+TOPDIR=../../../..
 
-CFLAGS= -fPIC -DMAC -Werror -pedantic -Wall -fstack-protector
-LDFLAGS= -shared -m64 -DMAC
+PLAT=x86
+CC=gcc
+CFLAGS= -fPIC
+LDFLAGS= -shared
+AIX_LIBPATH = /usr/lib:/lib
 
-ifeq (${PLATFORM},x86_64-mac)
-  ARCHFLAGS= -arch x86_64
-else ifeq (${PLATFORM},aarch64-mac)
-  ARCHFLAGS= -arch arm64
+ifeq (${PLATFORM},arm-linux64)
+  PLAT=xr
+  CFLAGS+= -DLINUX -Werror -std=gnu99 -pedantic -Wall -fstack-protector
+  LDFLAGS+= -DLINUX
+  OSINCLUDEDIR=linux
+else ifeq (${PLATFORM},ppc-aix64)
+  PLAT=ap
+  CC=xlc
+  CFLAGS= -qcpluscmt -q64 -qpic -DAIX -qhalt=w
+  LDFLAGS= -G -q64 -blibpath:${AIX_LIBPATH}
+  OSINCLUDEDIR=aix
+else ifeq (${PLATFORM},ppcle-linux64)
+  PLAT=xl
+  CFLAGS+= -DLINUX -Werror
+  LDFLAGS+= -m64
+  OSINCLUDEDIR=linux
+else ifeq (${PLATFORM},s390-linux64)
+  PLAT=xz
+  LDFLAGS+= -m64
+  CFLAGS+= -DS390_PLATFORM -DLINUX -Werror
+  OSINCLUDEDIR=linux
+else ifeq (${PLATFORM},s390-zos64)
+  CC=xlc
+  PLAT=mz
+  CFLAGS= -DS390
+  CFLAGS+= -O3 -Wc,strict,hgpr,hot
+  CFLAGS+= -Wc,XPLINK,LP64,DLL,exportall
+  LDFLAGS= -Wl,XPLINK,LP64,DLL,AMODE=64
+  ICCARCHIVE = ${GSKIT_HOME}/libjgsk8iccs_64.x
+  OSINCLUDEDIR=zos
+else ifeq (${PLATFORM},x86-linux64)
+  PLAT=xa
+  CFLAGS+= -DLINUX -Werror -std=gnu99 -pedantic -Wall -fstack-protector
+  LDFLAGS+= -m64
+  OSINCLUDEDIR=linux
 endif
 
 #Setting this flag will result non key material such as handle to OCK Objects etc being logged to the trace file.
@@ -30,8 +64,9 @@ endif
 #DEBUG_FLAGS+= -g ${DEBUG_DETAIL} ${DEBUG_DATA}
 
 BUILDTOP = ${TOPDIR}/target
-HOSTOUT = ${BUILDTOP}/jgskit-${PLATFORM}
-OPENJCEPLUS_HEADER_FILES ?= ${TOPDIR}/src/main/native
+HOSTOUT = ${BUILDTOP}/jgskit-${PLAT}-64
+
+OPENJCEPLUS_HEADER_FILES ?= ${TOPDIR}/src/main/native/ock
 JAVACLASSDIR=${BUILDTOP}/classes
 
 OBJS = \
@@ -60,23 +95,30 @@ OBJS = \
 	${HOSTOUT}/SymmetricCipher.o \
 	${HOSTOUT}/Utils.o
 
-TARGET = ${HOSTOUT}/libjgskit.dylib
+TARGET = ${HOSTOUT}/libjgskit.so
+
+GSK8ICCS64=jgsk8iccs_64
 
 all : ${TARGET}
 
+ifneq (,$(filter s390-zos64,${PLATFORM}))
+  TARGET_LIBS := ${ICCARCHIVE}
+else
+  TARGET_LIBS := -L ${GSKIT_HOME}/lib64 -l ${GSK8ICCS64}
+endif
+
 ${TARGET} : ${OBJS}
-	gcc ${LDFLAGS} ${ARCHFLAGS} -o ${TARGET} ${OBJS} -L ${GSKIT_HOME}/lib64 -l jgsk8iccs
+	${CC} ${LDFLAGS} -o ${TARGET} ${OBJS} ${TARGET_LIBS}
 
 ${HOSTOUT}/%.o : %.c
-	test -d ${@D} || mkdir -p ${@D} 2>/dev/null
-	gcc \
-		${ARCHFLAGS} \
+	test -d ${@D} || mkdir -p ${@D}
+	${CC} \
 		${CFLAGS} \
 		${DEBUG_FLAGS} \
 		-c \
 		-I${GSKIT_HOME}/inc \
 		-I${JAVA_HOME}/include \
-		-I${JAVA_HOME}/include/darwin \
+		-I${JAVA_HOME}/include/${OSINCLUDEDIR} \
 		-I${OPENJCEPLUS_HEADER_FILES} \
 		-o $@ \
 		$<
@@ -97,7 +139,7 @@ headers :
 		--add-exports java.base/sun.security.util=openjceplus \
 		--add-exports java.base/sun.security.util=ALL-UNNAMED \
 		-d ${JAVACLASSDIR} \
-		-h ${TOPDIR}/src/main/native/ \
+		-h ${TOPDIR}/src/main/native/ock/ \
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/base/FastJNIBuffer.java \
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/NativeOCKImplementation.java
 
@@ -105,7 +147,7 @@ endif # ! EXTERNAL_HEADERS
 
 clean :
 	rm -f ${HOSTOUT}/*.o
-	rm -f ${HOSTOUT}/*.dylib
+	rm -f ${HOSTOUT}/*.so
 	rm -f com_ibm_crypto_plus_provider_base_FastJNIBuffer.h
 	rm -f com_ibm_crypto_plus_provider_ock_NativeOCKImplementation.h
 
