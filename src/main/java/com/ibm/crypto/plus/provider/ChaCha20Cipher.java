@@ -76,7 +76,6 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
-            resetVarsAfterException();
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
@@ -98,18 +97,14 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
-
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
             NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
             NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
-            sbeInLastFinalEncrypt = encrypting;
             throw sbe;
         } catch (Exception e) {
-
-            resetVarsAfterException();
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
@@ -256,7 +251,6 @@ public final class ChaCha20Cipher extends CipherSpi implements ChaCha20Constants
             this.initialized = true;
         } catch (Exception e) {
             this.initialized = false;
-            this.initCalledInEncSeq = false;
             throw NativeOCKAdapter.providerException("Failed to init cipher", e);
         }
 

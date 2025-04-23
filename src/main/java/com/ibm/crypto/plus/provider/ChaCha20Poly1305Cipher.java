@@ -100,7 +100,7 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
                 throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
             }
         } catch (Exception e) {
-            resetVarsAfterException();
+            resetVars();
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
@@ -132,7 +132,6 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
             NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
-            sbeInLastFinalEncrypt = encrypting;
             throw sbe;
         } catch (IllegalArgumentException ock_iae) {
             IllegalArgumentException iae = new IllegalArgumentException(ock_iae.getMessage());
@@ -145,7 +144,6 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
                 throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
             }
         } catch (Exception e) {
-            resetVarsAfterException();
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
         } finally {
             resetVars();
