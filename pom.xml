@@ -373,7 +373,7 @@
                     <excludes>**/module-info.java</excludes>
                     <sourceDirectories>
                         <sourceDirectory>src</sourceDirectory>
-                        <sourceDirectory>src/native</sourceDirectory>
+                        <sourceDirectory>src/native/ock</sourceDirectory>
                     </sourceDirectories>
                 </configuration>
                 <executions>
