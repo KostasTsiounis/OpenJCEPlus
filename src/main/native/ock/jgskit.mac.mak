@@ -7,7 +7,7 @@
 # this code, including the "Classpath" Exception described therein.
 ###############################################################################
 
-TOPDIR=../../..
+TOPDIR=../../../..
 
 CFLAGS= -fPIC -DMAC -Werror -pedantic -Wall -fstack-protector
 LDFLAGS= -shared -m64 -DMAC
@@ -31,7 +31,7 @@ endif
 
 BUILDTOP = ${TOPDIR}/target
 HOSTOUT = ${BUILDTOP}/jgskit-${PLATFORM}
-OPENJCEPLUS_HEADER_FILES ?= ${TOPDIR}/src/main/native
+OPENJCEPLUS_HEADER_FILES ?= ${TOPDIR}/src/main/native/ock
 JAVACLASSDIR=${BUILDTOP}/classes
 
 OBJS = \
@@ -100,7 +100,7 @@ headers :
 		--add-exports java.base/sun.security.util=openjceplus \
 		--add-exports java.base/sun.security.util=ALL-UNNAMED \
 		-d ${JAVACLASSDIR} \
-		-h ${TOPDIR}/src/main/native/ \
+		-h ${TOPDIR}/src/main/native/ock/ \
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/base/FastJNIBuffer.java \
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/NativeOCKImplementation.java
 
