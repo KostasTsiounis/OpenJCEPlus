@@ -21,7 +21,18 @@ if [ -z "$GSKIT_HOME" ];
   exit;
 fi
 
+if [ -z "$OSSL_HOME" ]; 
+  then 
+  echo "Error: OSSL_HOME is not defined or is empty";
+  exit;
+fi
+
 cd src/main/native/ock
+
+make -f jgskit.mac.mak clean
+make -f jgskit.mac.mak
+
+cd ../ossl
 
 make -f jgskit.mac.mak clean
 make -f jgskit.mac.mak
