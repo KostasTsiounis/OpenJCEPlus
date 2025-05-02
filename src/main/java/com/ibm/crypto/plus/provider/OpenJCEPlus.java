@@ -12,7 +12,6 @@ import com.ibm.crypto.plus.provider.base.NativeInterface;
 import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
 import com.ibm.crypto.plus.provider.base.OCKContext;
 import java.lang.reflect.Constructor;
-import java.security.AccessController;
 import java.security.InvalidParameterException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
