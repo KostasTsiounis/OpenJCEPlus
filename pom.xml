@@ -158,6 +158,7 @@
                 <build.native.file>${basedir}/buildNativeMac.sh</build.native.file>
                 <build.platform.value>aarch64-mac</build.platform.value>
                 <build.target.jgskitlib.dir>${project.basedir}/target/jgskit-aarch64-mac/</build.target.jgskitlib.dir>
+                <build.target.ossllib.dir>${project.basedir}/target/ossl-aarch64-mac/</build.target.ossllib.dir>
             </properties>
           </profile>
           <profile>
@@ -254,6 +255,7 @@
                     <trimStackTrace>false</trimStackTrace>
                     <systemPropertyVariables>
                       <jgskit.library.path>${build.target.jgskitlib.dir}</jgskit.library.path>
+                      <ossllib.library.path>${build.target.ossllib.dir}</ossllib.library.path>
                     </systemPropertyVariables>
                     <includes>
                       <include>
