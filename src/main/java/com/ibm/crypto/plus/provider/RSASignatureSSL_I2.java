@@ -30,8 +30,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.SignatureRSASSL;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
@@ -39,6 +37,10 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.SignatureRSASSL;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 // ------------------------------------------------------------------------------
 // NOTE:
@@ -171,7 +173,7 @@ public final class RSASignatureSSL_I2 extends SignatureSpi {
             return signature;
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
+            NativeAdapter.setExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

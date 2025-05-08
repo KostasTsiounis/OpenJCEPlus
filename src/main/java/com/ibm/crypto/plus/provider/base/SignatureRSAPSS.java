@@ -12,6 +12,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 
+
+
 public final class SignatureRSAPSS {
 
     public enum InitOp {
@@ -19,7 +21,7 @@ public final class SignatureRSAPSS {
     };
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long rsaPssId = 0;
     private AsymmetricKey key = null;
     private boolean initialized = false;
@@ -34,13 +36,13 @@ public final class SignatureRSAPSS {
 
 
     public static SignatureRSAPSS getInstance(boolean isFIPS, String digestAlgo, int saltlen,
-            int trailerField, String mgfAlgo, String mgf1SpecAlgo) throws OCKException {
+            int trailerField, String mgfAlgo, String mgf1SpecAlgo) throws NativeException {
         return new SignatureRSAPSS(isFIPS, digestAlgo, saltlen, trailerField, mgfAlgo,
                 mgf1SpecAlgo);
     }
 
     private SignatureRSAPSS(boolean isFIPS, String digestAlgo, int saltlen, int trailerField,
-            String mgfAlgo, String mgf1SpecAlgo) throws OCKException {
+            String mgfAlgo, String mgf1SpecAlgo) throws NativeException {
 
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
@@ -59,7 +61,7 @@ public final class SignatureRSAPSS {
                 this.nativeImpl.RSAPSS_releaseContext(rsaPssId);
                 rsaPssId = 0;
             }
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             throw new InvalidParameterException("Unable to set the digestAlgoOCK: releaseContext");
         }
 
@@ -159,14 +161,14 @@ public final class SignatureRSAPSS {
                             this.key.getPKeyId(), this.saltlen);
                 }
             }
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             ret = 1;
         }
 
         return (this.rsaPssId != 0 && ret == 0) ? 0 : 1;
     }
 
-    public synchronized void update(byte[] input, int offset, int length) throws OCKException {
+    public synchronized void update(byte[] input, int offset, int length) throws NativeException {
 
         this.nativeImpl.RSAPSS_digestUpdate(this.rsaPssId, input, offset,
                 length);
@@ -174,7 +176,7 @@ public final class SignatureRSAPSS {
     }
 
     public synchronized void initialize(AsymmetricKey key, InitOp initOp, boolean convert)
-            throws InvalidKeyException, OCKException {
+            throws InvalidKeyException, NativeException {
         if (key == null) {
             throw new IllegalArgumentException("key is null");
         }
@@ -197,13 +199,13 @@ public final class SignatureRSAPSS {
                         this.key.getPKeyId(), this.saltlen);
             }
         } else {
-            throw new OCKException("RSS-PSS context was not created correctly");
+            throw new NativeException("RSS-PSS context was not created correctly");
         }
         this.initialized = true;
     }
 
 
-    public synchronized byte[] signFinal() throws OCKException {
+    public synchronized byte[] signFinal() throws NativeException {
         if (!this.initialized) {
             throw new IllegalStateException("SignatureRSAPSS not initialized");
         }
@@ -215,17 +217,17 @@ public final class SignatureRSAPSS {
                 this.nativeImpl.RSAPSS_signFinal(this.rsaPssId, signature,
                         signature.length);
                 return signature;
-            } catch (OCKException e) {
-                // Try to reset if OCKException is thrown
+            } catch (NativeException e) {
+                // Try to reset if NativeException is thrown
                 this.nativeImpl.RSAPSS_resetDigest(this.rsaPssId);
                 throw e;
             }
         } else {
-            throw new OCKException("RSS-PSS context was not created correctly");
+            throw new NativeException("RSS-PSS context was not created correctly");
         }
     }
 
-    public synchronized boolean verifyFinal(byte[] sigBytes) throws OCKException {
+    public synchronized boolean verifyFinal(byte[] sigBytes) throws NativeException {
 
 
         // create key length function and check sigbytes against key length?
@@ -241,14 +243,14 @@ public final class SignatureRSAPSS {
             try {
                 verified = this.nativeImpl.RSAPSS_verifyFinal(
                         this.rsaPssId, sigBytes, sigBytes.length);
-            } catch (OCKException e) {
-                // Try to reset if OCKException is thrown
+            } catch (NativeException e) {
+                // Try to reset if NativeException is thrown
                 this.nativeImpl.RSAPSS_resetDigest(this.rsaPssId);
                 throw e;
             }
             return verified;
         } else {
-            throw new OCKException("RSS-PSS context was not created correctly");
+            throw new NativeException("RSS-PSS context was not created correctly");
         }
     }
 

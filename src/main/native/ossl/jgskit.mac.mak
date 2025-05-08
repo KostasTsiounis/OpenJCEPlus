@@ -36,6 +36,7 @@ JAVACLASSDIR=${BUILDTOP}/classes
 
 OBJS = \
 	${HOSTOUT}/Digest.o \
+	${HOSTOUT}/Utils.o \
 
 TARGET = ${HOSTOUT}/libossl.dylib
 

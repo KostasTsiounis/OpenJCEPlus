@@ -80,7 +80,7 @@ public final class CCMCipher {
         //        int tls_support_result=1;
         //        try {
         //            tls_support_result = NativeInterface.get_CCM_TLSEnabled();
-        //        } catch (OCKException e) {
+        //        } catch (NativeException e) {
         //            tls_support_result = 1;
         //        }
         //Java Thread Local Storage is always enabled.
@@ -101,7 +101,7 @@ public final class CCMCipher {
 
     public static int doCCMFinal_Decrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
-            byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
+            byte[] aad) throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
 
         //final String methodName="doCCMFinal_Decrypt ";
@@ -189,7 +189,7 @@ public final class CCMCipher {
 
         int aadLen = authenticationData.length;
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
 
         if (CCMHardwareFunctionPtr == 0) {
             CCMHardwareFunctionPtr = nativeImpl
@@ -222,7 +222,7 @@ public final class CCMCipher {
             }
 
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
         } else {
             //OCKDebug.Msg (debPrefix, methodName, "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
@@ -242,7 +242,7 @@ public final class CCMCipher {
 
 
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             } else {
                 // Copy contents of tempOutput to output at outputOffset for len bytes
                 // len is at least output.length + outputOffset
@@ -257,7 +257,7 @@ public final class CCMCipher {
 
     public static int doCCMFinal_Encrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
-            byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
+            byte[] aad) throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException {
 
         //final String methodName = "doCCMFinal_Encrypt ";
@@ -333,7 +333,7 @@ public final class CCMCipher {
 
         int aadLen = authenticationData.length;
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         if (CCMHardwareFunctionPtr == 0)
             CCMHardwareFunctionPtr = nativeImpl
                     .do_CCM_checkHardwareCCMSupport();
@@ -364,7 +364,7 @@ public final class CCMCipher {
                 outputBuffer.get(0, output, outputOffset, len);
             }
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
 
         } else {
@@ -382,7 +382,7 @@ public final class CCMCipher {
                     tempOutput.length, tagLen);
 
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             } else {
                 // Copy contents of tempOutput to output at outputOffset for len bytes
                 // len is at least output.length + outputOffset
@@ -441,7 +441,7 @@ public final class CCMCipher {
     }
 
 
-    public static void doCCM_cleanup(boolean isFIPS) throws OCKException {
+    public static void doCCM_cleanup(boolean isFIPS) throws NativeException {
         NativeInterfaceFactory.getImpl(isFIPS).do_CCM_delete();
     }
 
@@ -470,7 +470,7 @@ public final class CCMCipher {
     static int useHardwareCCM(boolean isEncrypt, int inputLen, int ivLen, int keyLen, int aadLen,
             int tagLen, byte[] key, byte[] input, int inputOffset, byte[] output, int outputOffset,
             FastJNIBuffer parameters)
-            throws OCKException, IllegalStateException, ShortBufferException,
+            throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
 
         int rc = 0;
@@ -490,7 +490,7 @@ public final class CCMCipher {
         putLongtoByteArray(inputLen * 8, addedParams, TPCLOffset); // Add TPCL
         parameters.put(paramBlockOffset, addedParams, 0, addedParams.length);
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(false);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(false);
         if (isEncrypt) { // encrypt
             rc = nativeImpl.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
                     inputLen, 0, aadLen, tagLen, parameters.pointer(), input, inputOffset, output,

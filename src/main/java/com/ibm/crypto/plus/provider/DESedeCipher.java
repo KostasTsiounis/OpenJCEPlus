@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.Padding;
-import com.ibm.crypto.plus.provider.base.SymmetricCipher;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -21,6 +18,7 @@ import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherSpi;
@@ -28,6 +26,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.Padding;
+import com.ibm.crypto.plus.provider.base.SymmetricCipher;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 
 public final class DESedeCipher extends CipherSpi implements DESConstants {
 
@@ -69,11 +72,11 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
+            NativeAdapter.setExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
+            NativeAdapter.setExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -90,15 +93,15 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             return symmetricCipher.doFinal(input, inputOffset, inputLen, output, outputOffset);
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
+            NativeAdapter.setExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
+            NativeAdapter.setExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            NativeAdapter.setExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -320,7 +323,7 @@ public final class DESedeCipher extends CipherSpi implements DESConstants {
             return symmetricCipher.update(input, inputOffset, inputLen, output, outputOffset);
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            NativeAdapter.setExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);

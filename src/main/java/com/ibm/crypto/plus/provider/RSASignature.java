@@ -9,8 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import com.ibm.crypto.plus.provider.base.Signature;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
@@ -37,7 +37,7 @@ abstract class RSASignature extends SignatureSpi {
             this.ockDigestAlgo = ockDigestAlgo;
             this.signature = Signature.getInstance(provider.isFIPS(), ockDigestAlgo);
         } catch (Exception e) {
-            throw NativeOCKAdapter.providerException("Failed to initialize RSA signature", e);
+            throw NativeAdapter.providerException("Failed to initialize RSA signature", e);
         }
     }
 
@@ -86,7 +86,7 @@ abstract class RSASignature extends SignatureSpi {
         try {
             this.signature.initialize(rsaPublic.getOCKKey(), false);
         } catch (Exception e) {
-            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
+            throw NativeAdapter.providerException("Failure in engineInitVerify", e);
         }
     }
 
@@ -153,7 +153,7 @@ abstract class RSASignature extends SignatureSpi {
                 this.signature.initialize(((RSAPrivateKey) rsaPrivate).getOCKKey(), true);
             }
         } catch (Exception e) {
-            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
+            throw NativeAdapter.providerException("Failure in engineInitSign", e);
         }
     }
 
@@ -169,7 +169,7 @@ abstract class RSASignature extends SignatureSpi {
             this.signature.update(b, off, len);
         } catch (Exception e) {
             SignatureException se = new SignatureException("Failure in engineUpdate");
-            NativeOCKAdapter.setOCKExceptionCause(se, e);
+            NativeAdapter.setExceptionCause(se, e);
             throw se;
         }
     }
@@ -195,7 +195,7 @@ abstract class RSASignature extends SignatureSpi {
             return this.signature.sign();
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
+            NativeAdapter.setExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

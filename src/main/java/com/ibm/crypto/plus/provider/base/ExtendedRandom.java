@@ -8,14 +8,16 @@
 
 package com.ibm.crypto.plus.provider.base;
 
+
+
 public final class ExtendedRandom {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     long ockPRNGContextId;
 
     public static ExtendedRandom getInstance(boolean isFIPS, String algName)
-            throws OCKException {
+            throws NativeException {
 
         if ((algName == null) || algName.isEmpty()) {
             throw new IllegalArgumentException("algName is null/empty");
@@ -24,13 +26,13 @@ public final class ExtendedRandom {
         return new ExtendedRandom(isFIPS, algName);
     }
 
-    private ExtendedRandom(boolean isFIPS, String algName) throws OCKException {
+    private ExtendedRandom(boolean isFIPS, String algName) throws NativeException {
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         this.ockPRNGContextId = this.nativeImpl.EXTRAND_create(algName);
     }
 
-    public synchronized void nextBytes(byte[] bytes) throws OCKException {
+    public synchronized void nextBytes(byte[] bytes) throws NativeException {
         if (bytes == null) {
             throw new IllegalArgumentException("bytes is null");
         }
@@ -40,7 +42,7 @@ public final class ExtendedRandom {
         }
     }
 
-    public synchronized void setSeed(byte[] seed) throws OCKException {
+    public synchronized void setSeed(byte[] seed) throws NativeException {
         if (seed == null) {
             throw new IllegalArgumentException("seed is null");
         }

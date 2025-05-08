@@ -18,7 +18,7 @@ public final class DSAKey implements AsymmetricKey {
     static final byte[] unobtainedKeyBytes = new byte[0];
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long dsaKeyId;
     private long pkeyId;
     private byte[] parameters;
@@ -27,23 +27,23 @@ public final class DSAKey implements AsymmetricKey {
     private static final String badIdMsg = "DSA Key Identifier is not valid";
     private final static String debPrefix = "DSAKey";
 
-    public static DSAKey generateKeyPair(boolean isFIPS, int numBits) throws OCKException {
+    public static DSAKey generateKeyPair(boolean isFIPS, int numBits) throws NativeException {
         //final String methodName = "generateKeyPair(numBits) ";
         if (numBits < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dsaKeyId = nativeImpl.DSAKEY_generate(numBits);
         if (!validId(dsaKeyId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         //OCKDebug.Msg (debPrefix, methodName, "dsaKeyId=" + dsaKeyId);
         return new DSAKey(isFIPS, dsaKeyId, null, unobtainedKeyBytes, unobtainedKeyBytes);
     }
 
     public static byte[] generateParameters(boolean isFIPS, int numBits)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "generateParameters(numBits) ";
         byte[] paramBytes = null;
 
@@ -51,61 +51,61 @@ public final class DSAKey implements AsymmetricKey {
             throw new IllegalArgumentException("key length is invalid");
         }
         //OCKDebug.Msg (debPrefix, methodName, "numBits=" + numBits);
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         paramBytes = nativeImpl.DSAKEY_generateParameters(numBits);
         if (paramBytes == null) {
-            throw new OCKException("The generated DSA parameter bytes are incorrect.");
+            throw new NativeException("The generated DSA parameter bytes are incorrect.");
         }
         return paramBytes;
     }
 
     public static DSAKey generateKeyPair(boolean isFIPS, byte[] parameters)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "generateKeyPair";
 
         if (parameters == null || parameters.length == 0) {
             throw new IllegalArgumentException("DSA parameters are null/empty");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dsaKeyId = nativeImpl.DSAKEY_generate(parameters);
         //OCKDebug.Msg (debPrefix, methodName, "dsaKeyId=" + dsaKeyId);
         if (!validId(dsaKeyId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         return new DSAKey(isFIPS, dsaKeyId, parameters.clone(), unobtainedKeyBytes,
                 unobtainedKeyBytes);
     }
 
     public static DSAKey createPrivateKey(boolean isFIPS, byte[] privateKeyBytes)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "createPrivateKey ";
 
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dsaKeyId = nativeImpl.DSAKEY_createPrivateKey(privateKeyBytes);
         //OCKDebug.Msg (debPrefix, methodName,  "dsakKeyId=" + dsaKeyId);
         if (!validId(dsaKeyId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         return new DSAKey(isFIPS, dsaKeyId, null, privateKeyBytes.clone(), null);
     }
 
     public static DSAKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "createPublicKey";
 
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dsaKeyId = nativeImpl.DSAKEY_createPublicKey(publicKeyBytes);
         if (!validId(dsaKeyId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         //OCKDebug.Msg (debPrefix, methodName, "dsakKeyId=" + dsaKeyId);
         return new DSAKey(isFIPS, dsaKeyId, null, null, publicKeyBytes.clone());
@@ -134,7 +134,7 @@ public final class DSAKey implements AsymmetricKey {
     }
 
     @Override
-    public long getPKeyId() throws OCKException {
+    public long getPKeyId() throws NativeException {
         //final String methodName = "getPKeyId";
         if (pkeyId == 0) {
             obtainPKeyId();
@@ -143,7 +143,7 @@ public final class DSAKey implements AsymmetricKey {
         return pkeyId;
     }
 
-    public byte[] getParameters() throws OCKException {
+    public byte[] getParameters() throws NativeException {
         //final String methodName = "getParameters";
         if (parameters == null) {
             obtainParameters();
@@ -154,7 +154,7 @@ public final class DSAKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPrivateKeyBytes() throws OCKException {
+    public byte[] getPrivateKeyBytes() throws NativeException {
         //final String methodName = "getPrivateKeyBytes";
         if (privateKeyBytes == unobtainedKeyBytes) {
             obtainPrivateKeyBytes();
@@ -164,7 +164,7 @@ public final class DSAKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPublicKeyBytes() throws OCKException {
+    public byte[] getPublicKeyBytes() throws NativeException {
         //final String methodName = "getPublicKeyBytes";
         if (publicKeyBytes == unobtainedKeyBytes) {
             obtainPublicKeyBytes();
@@ -173,24 +173,24 @@ public final class DSAKey implements AsymmetricKey {
         return (publicKeyBytes == null) ? null : publicKeyBytes.clone();
     }
 
-    private synchronized void obtainPKeyId() throws OCKException {
+    private synchronized void obtainPKeyId() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPKeyId at the same time, we only want to call the native
         // code one time.
         //
         if (pkeyId == 0) {
             if (!validId(dsaKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.pkeyId = this.nativeImpl.DSAKEY_createPKey(dsaKeyId);
             if (!validId(pkeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
         }
 
     }
 
-    private synchronized void obtainParameters() throws OCKException {
+    private synchronized void obtainParameters() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getParameters at the same time, we only want to call the
         // native code one time.
@@ -198,13 +198,13 @@ public final class DSAKey implements AsymmetricKey {
         //final String methodName = "obtainParameters";
         if (parameters == null) {
             if (!validId(dsaKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.parameters = this.nativeImpl.DSAKEY_getParameters(dsaKeyId);
         }
     }
 
-    private synchronized void obtainPrivateKeyBytes() throws OCKException {
+    private synchronized void obtainPrivateKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPrivateKeyBytes at the same time, we only want to call the
         // native code one time.
@@ -212,13 +212,13 @@ public final class DSAKey implements AsymmetricKey {
         //final String methodName = "obtainPrivateKeyBytes";
         if (privateKeyBytes == unobtainedKeyBytes) {
             if (!validId(dsaKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.privateKeyBytes = this.nativeImpl.DSAKEY_getPrivateKeyBytes(dsaKeyId);
         }
     }
 
-    private synchronized void obtainPublicKeyBytes() throws OCKException {
+    private synchronized void obtainPublicKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPublicKeyBytes at the same time, we only want to call the
         // native code one time.
@@ -226,7 +226,7 @@ public final class DSAKey implements AsymmetricKey {
         //final String methodName = "obtainPublicKeyBytes";
         if (publicKeyBytes == unobtainedKeyBytes) {
             if (!validId(dsaKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.publicKeyBytes = this.nativeImpl.DSAKEY_getPublicKeyBytes(dsaKeyId);
         }

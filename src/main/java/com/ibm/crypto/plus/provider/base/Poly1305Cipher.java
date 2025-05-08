@@ -18,7 +18,7 @@ import javax.crypto.ShortBufferException;
 public final class Poly1305Cipher implements Poly1305Constants {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long ockCipherId;
     private boolean isInitialized = false;
     private boolean encrypting = true;
@@ -35,7 +35,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
     private final static String badIdMsg = "Cipher Identifier is not valid";
 
     public static Poly1305Cipher getInstance(boolean isFIPS, String cipherName,
-            Padding padding) throws OCKException {
+            Padding padding) throws NativeException {
         if (cipherName == null || cipherName.isEmpty()) {
             throw new IllegalArgumentException("cipherName is null/empty");
         }
@@ -48,23 +48,23 @@ public final class Poly1305Cipher implements Poly1305Constants {
     }
 
     private Poly1305Cipher(boolean isFIPS, String cipherName, Padding padding)
-            throws OCKException {
+            throws NativeException {
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.ockCipherId = this.nativeImpl.POLY1305CIPHER_create(cipherName);
         this.padding = padding;
     }
 
-    public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
+    public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws NativeException {
         initCipher(true, key, iv);
     }
 
-    public synchronized void initCipherDecrypt(byte[] key, byte[] iv) throws OCKException {
+    public synchronized void initCipherDecrypt(byte[] key, byte[] iv) throws NativeException {
         initCipher(false, key, iv);
         byteArrayOutputDelay = new ByteArrayOutputDelay(Poly1305_TAG_SIZE);
     }
 
-    private void initCipher(boolean isEncrypt, byte[] key, byte[] iv) throws OCKException {
+    private void initCipher(boolean isEncrypt, byte[] key, byte[] iv) throws NativeException {
         if ((key == null) || (key.length == 0)) {
             throw new IllegalArgumentException("key is null/empty");
         }
@@ -78,7 +78,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
         }
 
         if (ockCipherId == 0L) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         this.nativeImpl.POLY1305CIPHER_init(ockCipherId, isEncrypt ? 1 : 0, key, iv);
         this.nativeImpl.POLY1305CIPHER_setPadding(ockCipherId, padding.getId());
@@ -115,10 +115,10 @@ public final class Poly1305Cipher implements Poly1305Constants {
         }
     }
 
-    public synchronized int getBlockSize() throws OCKException {
+    public synchronized int getBlockSize() throws NativeException {
         if (blockSize == 0) {
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             blockSize = this.nativeImpl.POLY1305CIPHER_getBlockSize(ockCipherId);
         }
@@ -126,10 +126,10 @@ public final class Poly1305Cipher implements Poly1305Constants {
         return blockSize;
     }
 
-    public synchronized int getKeyLength() throws OCKException {
+    public synchronized int getKeyLength() throws NativeException {
         if (keyLength == 0) {
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             keyLength = this.nativeImpl.POLY1305CIPHER_getKeyLength(ockCipherId);
         }
@@ -137,10 +137,10 @@ public final class Poly1305Cipher implements Poly1305Constants {
         return keyLength;
     }
 
-    public synchronized int getIVLength() throws OCKException {
+    public synchronized int getIVLength() throws NativeException {
         if (ivLength == 0) {
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             ivLength = this.nativeImpl.POLY1305CIPHER_getIVLength(ockCipherId);
         }
@@ -149,7 +149,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
     }
 
     public synchronized int update(byte[] input, int inputOffset, int inputLen, byte[] output,
-            int outputOffset) throws IllegalStateException, ShortBufferException, OCKException {
+            int outputOffset) throws IllegalStateException, ShortBufferException, NativeException {
 
         int outLen = 0;
 
@@ -209,7 +209,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
         try {
 
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             if (encrypting) {
                 outLen = this.nativeImpl.POLY1305CIPHER_encryptUpdate(
@@ -238,7 +238,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
 
     public synchronized int doFinal(byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset) throws IllegalStateException, ShortBufferException,
-            IllegalBlockSizeException, BadPaddingException, OCKException {
+            IllegalBlockSizeException, BadPaddingException, NativeException {
 
         byte[] tag = new byte[Poly1305_TAG_SIZE];
         byte[] cipherText = null;
@@ -326,7 +326,7 @@ public final class Poly1305Cipher implements Poly1305Constants {
 
         try {
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             if (encrypting) {
                 // Cipher text length is same as plain text length...
@@ -348,9 +348,9 @@ public final class Poly1305Cipher implements Poly1305Constants {
                         ockCipherId, cipherText, inputOffset, cipherTextLen, output, outputOffset,
                         tag);
             }
-        } catch (OCKException e) {
-            System.err.println("POLY1305CIPHER_decryptFinal error: " + OCKException.errorMessage(e.getCode()));
-            if (e.getCode() == OCKException.GKR_DECRYPT_FINAL_BAD_PADDING_ERROR) {
+        } catch (NativeException e) {
+            System.err.println("POLY1305CIPHER_decryptFinal error: " + NativeException.errorMessage(e.getCode()));
+            if (e.getCode() == NativeException.GKR_DECRYPT_FINAL_BAD_PADDING_ERROR) {
                 throw new BadPaddingException("Unexpected padding");
             } else {
                 throw e;

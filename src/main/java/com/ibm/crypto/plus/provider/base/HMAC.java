@@ -10,10 +10,12 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.util.Arrays;
 
+
+
 public final class HMAC {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long hmacId = 0;
     private boolean needsReinit = false;
     private byte[] reinitKey = null;
@@ -21,24 +23,24 @@ public final class HMAC {
     private final String badIdMsg = "HMAC Identifier is not valid";
     private static final String debPrefix = "HAMC";
 
-    public static HMAC getInstance(boolean isFIPS, String digestAlgo) throws OCKException {
+    public static HMAC getInstance(boolean isFIPS, String digestAlgo) throws NativeException {
         return new HMAC(isFIPS, digestAlgo);
     }
 
-    static void throwOCKException(int errorCode) throws OCKException {
+    static void throwNativeException(int errorCode) throws NativeException {
         switch (errorCode) {
             case -1:
-                throw new OCKException("ICC_HMAC_Init failed!");
+                throw new NativeException("ICC_HMAC_Init failed!");
             case -2:
-                throw new OCKException("ICC_HMAC_Update failed!");
+                throw new NativeException("ICC_HMAC_Update failed!");
             case -3:
-                throw new OCKException("ICC_HMAC_Final failed!");
+                throw new NativeException("ICC_HMAC_Final failed!");
             default:
-                throw new OCKException("Unknow Error Code");
+                throw new NativeException("Unknow Error Code");
         }
     }
 
-    private HMAC(boolean isFIPS, String digestAlgo) throws OCKException {
+    private HMAC(boolean isFIPS, String digestAlgo) throws NativeException {
         //final String methodName = "HMAC (String)";
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
@@ -46,14 +48,14 @@ public final class HMAC {
         //OCKDebug.Msg (debPrefix, methodName,  "this.hmacId :" + this.hmacId + " digestAlgo :" + digestAlgo);
     }
 
-    public synchronized void initialize(byte[] key) throws OCKException {
+    public synchronized void initialize(byte[] key) throws NativeException {
         //final String methodName = "HMAC initialize ";
         if ((key == null) || (key.length == 0)) {
             throw new IllegalArgumentException("key is null/empty");
         }
         //OCKDebug.Msg(debPrefix, methodName, "hmacId :" + hmacId + " key :", key);
         if (!validId(hmacId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
 
         if (key != reinitKey) {
@@ -65,7 +67,7 @@ public final class HMAC {
         needsReinit = true;
     }
 
-    public int getMacLength() throws OCKException {
+    public int getMacLength() throws NativeException {
         //final String methodName = "HMAC getMacLength() ";
         if (macLength == 0) {
             obtainMacLength();
@@ -75,7 +77,7 @@ public final class HMAC {
     }
 
     public synchronized void update(byte[] input, int inputOffset, int inputLen)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "update";
         if (this.reinitKey == null) {
             throw new IllegalStateException("HMAC not initialized");
@@ -91,17 +93,17 @@ public final class HMAC {
         }
         //OCKDebug.Msg (debPrefix, methodName,  "hmacId :" + hmacId + " inputOffset :" + inputOffset + " inputLen :" + inputLen );
         if (!validId(hmacId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         int result = this.nativeImpl.HMAC_update(hmacId, reinitKey,
                 reinitKey.length, input, inputOffset, inputLen, needsReinit);
         if (result < 0) {
-            throwOCKException(result);
+            throwNativeException(result);
         }
         this.needsReinit = false;
     }
 
-    public synchronized byte[] doFinal() throws OCKException {
+    public synchronized byte[] doFinal() throws NativeException {
         //final String methodName = "doFinal";
         if (reinitKey == null) {
             throw new IllegalStateException("HMAC not initialized");
@@ -109,14 +111,14 @@ public final class HMAC {
 
         //OCKDebug.Msg (debPrefix, methodName, "hmacId :" + hmacId);
         if (!validId(hmacId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         obtainMacLength();
         byte[] hmac = new byte[macLength];
         int result = this.nativeImpl.HMAC_doFinal(hmacId, reinitKey,
                 reinitKey.length, hmac, needsReinit);
         if (result < 0) {
-            throwOCKException(result);
+            throwNativeException(result);
         }
         // Need to reset the object such that it can be re-used.
         //
@@ -125,18 +127,18 @@ public final class HMAC {
         return hmac;
     }
 
-    public synchronized void reset() throws OCKException {
+    public synchronized void reset() throws NativeException {
         needsReinit = true;
     }
 
-    private synchronized void obtainMacLength() throws OCKException {
+    private synchronized void obtainMacLength() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getMacLength at the same time, we only want to call the
         // native code one time.
         //
         if (macLength == 0) {
             if (!validId(hmacId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.macLength = this.nativeImpl.HMAC_size(hmacId);
         }

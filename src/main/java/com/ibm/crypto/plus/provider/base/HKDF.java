@@ -10,10 +10,12 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.util.Arrays;
 
+
+
 public final class HKDF {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long hkdfId = 0;
     String debPrefix = "";
 
@@ -25,11 +27,11 @@ public final class HKDF {
     private final String badIdMsg = "HKDF Identifier is not valid";
 
 
-    public static HKDF getInstance(boolean isFIPS, String digestAlgo) throws OCKException {
+    public static HKDF getInstance(boolean isFIPS, String digestAlgo) throws NativeException {
         return new HKDF(isFIPS, digestAlgo);
     }
 
-    private HKDF(boolean isFIPS, String digestAlgo) throws OCKException {
+    private HKDF(boolean isFIPS, String digestAlgo) throws NativeException {
         //final String methodName = "HKDF (isFIPS, String)";
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
@@ -39,7 +41,7 @@ public final class HKDF {
 
 
     public synchronized byte[] extract(byte[] salt, long saltLen, byte[] inKey, long inpKeyLen)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "HKDF extract(byte[] salt, long saltLen, byte[] inKey, long inpKeyLen)";
         //OCKDebug.Msg (debPrefix, methodName,  "this.hkdfId :" + this.hkdfId );
         //OCKDebug.Msg (debPrefix, methodName,  "saltLen:" + saltLen );
@@ -51,7 +53,7 @@ public final class HKDF {
     }
 
     public synchronized byte[] expand(byte[] prkBytes, long prkLen, byte[] info, long infoLen,
-            long okmLen) throws OCKException {
+            long okmLen) throws NativeException {
         //final String methodName = "HKDF expand (byte[] prkBytes, long prkLen, \r\n"
         //        + "            byte[] info, long infoLen, long okmLen)";
         //OCKDebug.Msg (debPrefix, methodName,  "this.hkdfId :" + this.hkdfId );
@@ -62,7 +64,7 @@ public final class HKDF {
     }
 
     public synchronized byte[] derive(byte[] salt, long saltLen, byte[] inKey, long inpKeyLen,
-            byte[] info, long infoLen, long okmLen) throws OCKException {
+            byte[] info, long infoLen, long okmLen) throws NativeException {
         //final String methodName = "HKDFGenetateBytes(byte[] salt, long saltLen, byte[] inKey, long inpKeyLen, byte[] info, long infoLen)";
         //OCKDebug.Msg (debPrefix, methodName,  "this.hkdfId :" + this.hkdfId );
         //OCKDebug.Msg (debPrefix, methodName,  "saltLen:" + saltLen );
@@ -75,7 +77,7 @@ public final class HKDF {
 
 
 
-    public int getMacLength() throws OCKException {
+    public int getMacLength() throws NativeException {
         //final String methodName = "HKDF getMacLength() ";
         if (macLength == 0) {
             obtainMacLength();
@@ -90,14 +92,14 @@ public final class HKDF {
         return hkdfId;
     }
 
-    private synchronized void obtainMacLength() throws OCKException {
+    private synchronized void obtainMacLength() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getMacLength at the same time, we only want to call the
         // native code one time.
         //
         if (macLength == 0) {
             if (!validId(hkdfId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.macLength = this.nativeImpl.HKDF_size(hkdfId);
         }

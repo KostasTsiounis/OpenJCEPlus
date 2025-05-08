@@ -9,7 +9,7 @@
 package com.ibm.crypto.plus.provider.base;
 
 public final class BasicRandom {
-    private NativeInterface nativeImpl;
+    private NativeAdapter nativeImpl;
 
     public static BasicRandom getInstance(boolean isFIPS) {
         return new BasicRandom(isFIPS);
@@ -19,7 +19,7 @@ public final class BasicRandom {
         this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
     }
 
-    public void nextBytes(byte[] bytes) throws OCKException {
+    public void nextBytes(byte[] bytes) throws NativeException {
         if (bytes == null) {
             throw new IllegalArgumentException("bytes is null");
         }
@@ -29,7 +29,7 @@ public final class BasicRandom {
         }
     }
 
-    public void setSeed(byte[] seed) throws OCKException {
+    public void setSeed(byte[] seed) throws NativeException {
         if (seed == null) {
             throw new IllegalArgumentException("seed is null");
         }
@@ -39,7 +39,7 @@ public final class BasicRandom {
         }
     }
 
-    public byte[] generateSeed(int numBytes) throws OCKException {
+    public byte[] generateSeed(int numBytes) throws NativeException {
         if (numBytes < 0) {
             throw new IllegalArgumentException("numBytes is negative");
         }

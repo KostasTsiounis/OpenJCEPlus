@@ -10,7 +10,7 @@
 #define _EXCEPTION_CODES_H
 
 // NOTE: These constants must match those defined in
-//       com.ibm.crypto.plus.provider.ock.OCKException
+//       com.ibm.crypto.plus.provider.ock.NativeException
 //
 #define GKR_FIPS_MODE_INVALID 0x00000001
 #define GKR_OCK_ATTACH_FAILED 0x00000002

@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
-import com.ibm.crypto.plus.provider.base.XECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -21,6 +18,11 @@ import java.security.interfaces.EdECPrivateKey;
 import java.security.spec.NamedParameterSpec;
 import java.util.Arrays;
 import java.util.Optional;
+
+import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.XECKey;
+
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
@@ -103,7 +105,7 @@ final class EdDSAPrivateKeyImpl extends PKCS8Key implements EdECPrivateKey {
         } catch (Exception exception) {
             InvalidParameterException ike = new InvalidParameterException(
                     "Failed to create XEC private key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
         checkLength(this.curve);
@@ -124,7 +126,7 @@ final class EdDSAPrivateKeyImpl extends PKCS8Key implements EdECPrivateKey {
 
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC private key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }

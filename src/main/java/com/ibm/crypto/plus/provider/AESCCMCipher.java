@@ -9,6 +9,7 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.CCMCipher;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import ibm.security.internal.spec.CCMParameterSpec;
 import java.math.BigInteger;
@@ -147,11 +148,11 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
              * but engineDoFinal(..) is declared to be able to throw it since it also
              * handles user provided output buffers
              */
-            // OCKDebug.Msg(debPrefix, methodName, "OCKException seen");
+            // OCKDebug.Msg(debPrefix, methodName, "NativeException seen");
             if (!encrypting) {
                 AEADBadTagException abte = new AEADBadTagException(
                         "Unable to perform engine doFinal; Possibly a bad tag or bad padding or illegalBlockSize");
-                NativeOCKAdapter.setOCKExceptionCause(abte, e);
+                NativeAdapter.setExceptionCause(abte, e);
                 throw abte;
             } else {
                 throw NativeOCKAdapter.providerException("unable to perform to engineDoFinal ", e);
@@ -204,11 +205,11 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
              * but engineDoFinal(..) is declared to be able to throw it since it also
              * handles user provided output buffers
              */
-            // OCKDebug.Msg(debPrefix, methodName, "OCKException seen");
+            // OCKDebug.Msg(debPrefix, methodName, "NativeException seen");
             if (!encrypting) {
                 AEADBadTagException abte = new AEADBadTagException(
                         "Uanble to perform engine doFinal; Possibly a bad tag or bad padding or illegalBlockSize");
-                NativeOCKAdapter.setOCKExceptionCause(abte, e);
+                NativeAdapter.setExceptionCause(abte, e);
                 throw abte;
             } else {
                 throw NativeOCKAdapter.providerException("unable to perform to engineDoFinal ", e);
@@ -296,27 +297,27 @@ public final class AESCCMCipher extends CipherSpi implements AESConstants, CCMCo
             }
         } catch (AEADBadTagException e) {
             AEADBadTagException abte = new AEADBadTagException(e.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(abte, e);
+            NativeAdapter.setExceptionCause(abte, e);
             requireReinit = true;
             throw abte;
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
+            NativeAdapter.setExceptionCause(bpe, ock_bpe);
             requireReinit = true;
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
+            NativeAdapter.setExceptionCause(ibse, ock_ibse);
             requireReinit = true;
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            NativeAdapter.setExceptionCause(sbe, ock_sbe);
             throw sbe;
-        } catch (com.ibm.crypto.plus.provider.base.OCKException ock_excp) {
+        } catch (com.ibm.crypto.plus.provider.base.NativeException ock_excp) {
             requireReinit = true;
             AEADBadTagException tagexcp = new AEADBadTagException(ock_excp.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(tagexcp, ock_excp);
+            NativeAdapter.setExceptionCause(tagexcp, ock_excp);
             throw tagexcp;
 
         } catch (Exception e) {

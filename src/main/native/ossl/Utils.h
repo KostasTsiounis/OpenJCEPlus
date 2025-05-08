@@ -9,8 +9,6 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-#include <jcc_a.h>
-#include <icc.h>
 #include <jni.h>
 
 #define DIGEST_INTERNAL_SUCCESS 0
@@ -48,8 +46,8 @@ int gslogMessageHex(char byte[], int offset, int length, int spaceAfter,
                     int newlineAfter, char* newlinePrefix);
 int gslogFunctionExit(const char* functionName);
 
-void ockCheckStatus(ICC_CTX* ctx);
+void ockCheckStatus();
 
-void throwNativeException(JNIEnv* env, int code, const char* msg);
+void throwOSSLException(JNIEnv* env, int code, const char* msg);
 
 #endif

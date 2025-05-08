@@ -280,7 +280,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAPSS_1signFinal(
     ockDigest = (OCKDigest *)ockRsaPss->ockDigest;
     ockPKey   = (ICC_EVP_PKEY *)ockRsaPss->ockPKey;
     if ((ockDigest == NULL) || (ockPKey == NULL)) {
-        throwOCKException(
+        throwNativeException(
             env, 0,
             "RsaPss Signature digest and private key arguments are incorrect.");
         return;
@@ -362,7 +362,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAPSS_1verifyFina
         gslogFunctionEntry(functionName);
     }
     if ((ockRsaPss == NULL) || (sigBytes == NULL) || (size < 0)) {
-        throwOCKException(
+        throwNativeException(
             env, 0, "RsaPss Signature verification arguments are incorrect.");
         return verified;
     }
@@ -448,13 +448,13 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAPSS_1digestUpda
 
     if ((ockRsaPss == NULL) || (data == NULL) || (offset < 0) ||
         (offset > dataLen)) {
-        throwOCKException(
+        throwNativeException(
             env, 0, "RsaPss Signature verification arguments are incorrect.");
         return;
     }
     ockDigest = ockRsaPss->ockDigest;
     if ((ockDigest == NULL) || (ockDigest->mdCtx == NULL)) {
-        throwOCKException(
+        throwNativeException(
             env, 0, "RsaPss Signature verification arguments are incorrect.");
         return;
     }
@@ -667,7 +667,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAPSS_1reset(
         gslogFunctionEntry(functionName);
     }
     if (ockDigest == NULL) {
-        throwOCKException(
+        throwNativeException(
             env, 0, "The specified RsaPss digest identifier is incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);

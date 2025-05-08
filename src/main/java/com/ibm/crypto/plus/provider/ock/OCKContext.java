@@ -6,7 +6,7 @@
  * this code, including the "Classpath" Exception described therein.
  */
 
-package com.ibm.crypto.plus.provider.base;
+package com.ibm.crypto.plus.provider.ock;
 
 public final class OCKContext {
     private long ockContextId;

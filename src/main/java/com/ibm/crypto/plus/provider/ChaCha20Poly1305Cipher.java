@@ -8,7 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.NativeException;
 import com.ibm.crypto.plus.provider.base.Padding;
 import com.ibm.crypto.plus.provider.base.Poly1305Cipher;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
@@ -83,21 +84,21 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
             }
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
+            NativeAdapter.setExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
+            NativeAdapter.setExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (IllegalArgumentException ock_iae) {
             IllegalArgumentException iae = new IllegalArgumentException(ock_iae.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(iae, ock_iae);
+            NativeAdapter.setExceptionCause(iae, ock_iae);
             throw iae;
-        } catch (OCKException ockException) {
+        } catch (NativeException NativeException) {
             if (!encrypting) {
                 throw new AEADBadTagException("Tag mismatch");
             } else {
-                throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
+                throw NativeOCKAdapter.providerException("Failure in engineDoFinal", NativeException);
             }
         } catch (Exception e) {
             resetVars();
@@ -123,25 +124,25 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
             return retvalue;
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(bpe, ock_bpe);
+            NativeAdapter.setExceptionCause(bpe, ock_bpe);
             throw bpe;
         } catch (IllegalBlockSizeException ock_ibse) {
             IllegalBlockSizeException ibse = new IllegalBlockSizeException(ock_ibse.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(ibse, ock_ibse);
+            NativeAdapter.setExceptionCause(ibse, ock_ibse);
             throw ibse;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            NativeAdapter.setExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (IllegalArgumentException ock_iae) {
             IllegalArgumentException iae = new IllegalArgumentException(ock_iae.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(iae, ock_iae);
+            NativeAdapter.setExceptionCause(iae, ock_iae);
             throw iae;
-        } catch (OCKException ockException) {
+        } catch (NativeException NativeException) {
             if (!encrypting) {
                 throw new AEADBadTagException("Tag mismatch");
             } else {
-                throw NativeOCKAdapter.providerException("Failure in engineDoFinal", ockException);
+                throw NativeOCKAdapter.providerException("Failure in engineDoFinal", NativeException);
             }
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoFinal", e);
@@ -439,7 +440,7 @@ public final class ChaCha20Poly1305Cipher extends CipherSpi
             return retvalue;
         } catch (ShortBufferException ock_sbe) {
             ShortBufferException sbe = new ShortBufferException(ock_sbe.getMessage());
-            NativeOCKAdapter.setOCKExceptionCause(sbe, ock_sbe);
+            NativeAdapter.setExceptionCause(sbe, ock_sbe);
             throw sbe;
         } catch (Exception e) {
             throw NativeOCKAdapter.providerException("Failure in engineDoUpdate", e);

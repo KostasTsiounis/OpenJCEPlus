@@ -13,14 +13,17 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 public final class SymmetricCipher {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long ockCipherId;
     private boolean isInitialized = false;
     private boolean encrypting = true;
@@ -55,32 +58,32 @@ public final class SymmetricCipher {
 
 
     public static SymmetricCipher getInstanceChaCha20(boolean isFIPS, Padding padding)
-            throws OCKException {
+            throws NativeException {
         String algName = "chacha20";
         return getInstance(isFIPS, algName, padding);
     }
 
     public static SymmetricCipher getInstanceChaCha20Poly1305(boolean isFIPS,
-            Padding padding) throws OCKException {
+            Padding padding) throws NativeException {
         String algName = "chacha20-poly1305";
         return getInstance(isFIPS, algName, padding);
     }
 
     public static SymmetricCipher getInstanceAES(boolean isFIPS, String mode,
-            Padding padding, int numKeyBytes) throws OCKException {
+            Padding padding, int numKeyBytes) throws NativeException {
         String algName = "AES-" + Integer.toString(numKeyBytes * 8) + "-" + mode.toUpperCase();
         return getInstance(isFIPS, algName, padding);
     }
 
     public static SymmetricCipher getInstanceDESede(boolean isFIPS, String mode,
-            Padding padding) throws OCKException {
+            Padding padding) throws NativeException {
         String modeUpperCase = mode.toUpperCase();
         String algName = modeUpperCase.equals("ECB") ? "DES-EDE3" : "DES-EDE3-" + modeUpperCase;
         return getInstance(isFIPS, algName, padding);
     }
 
     private static SymmetricCipher getInstance(boolean isFIPS, String cipherName,
-            Padding padding) throws OCKException {
+            Padding padding) throws NativeException {
         //final String methodName = "getInstance";
         if (cipherName == null || cipherName.isEmpty()) {
             throw new IllegalArgumentException("cipherName is null/empty");
@@ -94,25 +97,25 @@ public final class SymmetricCipher {
         return new SymmetricCipher(isFIPS, cipherName, padding);
     }
 
-    static void throwOCKException(int errorCode) throws BadPaddingException, OCKException {
+    static void throwNativeException(int errorCode) throws BadPaddingException, NativeException {
         switch (errorCode) {
             case -1:
-                throw new OCKException("ICC_EVP_EncryptUpdate failed!");
+                throw new NativeException("ICC_EVP_EncryptUpdate failed!");
             case -2:
-                throw new OCKException("ICC_EVP_EncryptFinal failed!");
+                throw new NativeException("ICC_EVP_EncryptFinal failed!");
             case -3:
-                throw new OCKException("ICC_EVP_DecryptUpdate failed!");
+                throw new NativeException("ICC_EVP_DecryptUpdate failed!");
             case -4:
-                throw new OCKException("ICC_EVP_DecryptFinal failed!");
+                throw new NativeException("ICC_EVP_DecryptFinal failed!");
             case -5:
                 throw new BadPaddingException("Unexpected padding");
             default:
-                throw new OCKException("Unknow Error Code");
+                throw new NativeException("Unknow Error Code");
         }
     }
 
     private SymmetricCipher(boolean isFIPS, String cipherName, Padding padding)
-            throws OCKException {
+            throws NativeException {
         // Check whether used algorithm is CBC and whether hardware supports
         boolean isHardwareSupport = !isFIPS && (checkHardwareSupport() == 1);
             
@@ -127,15 +130,15 @@ public final class SymmetricCipher {
         }
     }
 
-    public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
+    public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws NativeException {
         initCipher(true, key, iv);
     }
 
-    public synchronized void initCipherDecrypt(byte[] key, byte[] iv) throws OCKException {
+    public synchronized void initCipherDecrypt(byte[] key, byte[] iv) throws NativeException {
         initCipher(false, key, iv);
     }
 
-    private void initCipher(boolean isEncrypt, byte[] key, byte[] iv) throws OCKException {
+    private void initCipher(boolean isEncrypt, byte[] key, byte[] iv) throws NativeException {
         if ((key == null) || (key.length == 0)) {
             throw new IllegalArgumentException("key is null/empty");
         }
@@ -148,7 +151,7 @@ public final class SymmetricCipher {
                 throw new IllegalArgumentException("key is the wrong size");
             }
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.nativeImpl.CIPHER_init(ockCipherId, isEncrypt ? 1 : 0,
                     padding.getId(), key, iv);
@@ -218,15 +221,15 @@ public final class SymmetricCipher {
         }
     }
 
-    // public synchronized void clean() throws OCKException {
+    // public synchronized void clean() throws NativeException {
     // this.nativeImpl.CIPHER_clean(ockContext.getId(), ockCipherId);
     // this.bufferedCount = 0;
     // }
-    public int getOutputSize(int inputLen) throws OCKException {
+    public int getOutputSize(int inputLen) throws NativeException {
         return getOutputSize(inputLen, true);
     }
 
-    public synchronized int getOutputSize(int inputLen, boolean isFinal) throws OCKException {
+    public synchronized int getOutputSize(int inputLen, boolean isFinal) throws NativeException {
         //final String methodName = "getOutputSize";
         if (inputLen < 0) {
             return 0;
@@ -265,10 +268,10 @@ public final class SymmetricCipher {
      * buffer size needed for the OCKC library.
      * @return the necessary buffer size needed by OCK.
      */
-    private synchronized int getOutputSizeForOCK(int inputLen) throws OCKException {
+    private synchronized int getOutputSizeForOCK(int inputLen) throws NativeException {
         //final String methodName = "getOutputSize";
         if (inputLen < 0) {
-            throw new OCKException("Input length not expected to be < 0");
+            throw new NativeException("Input length not expected to be < 0");
         }
         //OCKDebug.Msg (debPrefix, methodName, "inputLen=" + inputLen + " isFinal=" + isFinal + "encrypting=" + encrypting );
         int totalLen = this.bufferedCount + inputLen;
@@ -283,11 +286,11 @@ public final class SymmetricCipher {
         return retLen;
     }
 
-    public synchronized int getBlockSize() throws OCKException {
+    public synchronized int getBlockSize() throws NativeException {
         if (blockSize == 0) {
             if (!use_z_fast_command) {
                 if (ockCipherId == 0L)
-                    throw new OCKException(badIdMsg);
+                    throw new NativeException(badIdMsg);
                 blockSize = this.nativeImpl.CIPHER_getBlockSize(ockCipherId);
             } else {
                 blockSize = 16;
@@ -296,11 +299,11 @@ public final class SymmetricCipher {
         return blockSize;
     }
 
-    public synchronized int getKeyLength() throws OCKException {
+    public synchronized int getKeyLength() throws NativeException {
         if (keyLength == 0) {
             if (!use_z_fast_command) {
                 if (ockCipherId == 0L) {
-                    throw new OCKException(badIdMsg);
+                    throw new NativeException(badIdMsg);
                 }
                 keyLength = this.nativeImpl.CIPHER_getKeyLength(ockCipherId);
             } else {
@@ -310,10 +313,10 @@ public final class SymmetricCipher {
         return keyLength;
     }
 
-    public synchronized int getIVLength() throws OCKException {
+    public synchronized int getIVLength() throws NativeException {
         if (ivLength == 0 && !use_z_fast_command) {
             if (ockCipherId == 0L)
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             ivLength = this.nativeImpl.CIPHER_getIVLength(ockCipherId);
         }
         return ivLength;
@@ -325,7 +328,7 @@ public final class SymmetricCipher {
 
     public synchronized int update(byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset)
-            throws IllegalStateException, ShortBufferException, BadPaddingException, OCKException {
+            throws IllegalStateException, ShortBufferException, BadPaddingException, NativeException {
         //final String methodName = "update";
         int outLen = 0;
         //        OCKDebug.Msg (debPrefix, methodName, "input.length=" + input.length +
@@ -379,7 +382,7 @@ public final class SymmetricCipher {
         try {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             if (encrypting) {
                 outLen = this.nativeImpl.CIPHER_encryptUpdate(ockCipherId,
@@ -389,7 +392,7 @@ public final class SymmetricCipher {
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
-                throwOCKException(outLen);
+                throwNativeException(outLen);
             }
             if (outLen > (output.length - outputOffset)) {
                 throw new ShortBufferException(
@@ -410,7 +413,7 @@ public final class SymmetricCipher {
     }
 
     public synchronized int z_update(byte[] input, int inputOffset, int inputLen, byte[] output,
-            int outputOffset) throws IllegalStateException, ShortBufferException, OCKException {
+            int outputOffset) throws IllegalStateException, ShortBufferException, NativeException {
         int outLen = 0;
 
         if (needsReinit) {
@@ -432,7 +435,7 @@ public final class SymmetricCipher {
 
     public synchronized int doFinal(byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset) throws IllegalStateException, ShortBufferException,
-            IllegalBlockSizeException, BadPaddingException, OCKException {
+            IllegalBlockSizeException, BadPaddingException, NativeException {
         //final String methodName = "doFinal";
 
         int outLen = 0;
@@ -511,7 +514,7 @@ public final class SymmetricCipher {
             //OCKDebug.Msg (debPrefix, methodName, "ockCipherId :" + ockCipherId + " inputOffset :" + inputOffset + " inputLen :" + inputLen + "encrypting :" + encrypting);
             //OCKDebug.Msg(debPrefix, methodName, "input bytes :", input);
             if (ockCipherId == 0L) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             if (encrypting) {
                 outLen = this.nativeImpl.CIPHER_encryptFinal(ockCipherId, input,
@@ -521,14 +524,14 @@ public final class SymmetricCipher {
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
-                throwOCKException(outLen);
+                throwNativeException(outLen);
             }
             if (outLen > (output.length - outputOffset)) {
                 throw new ShortBufferException(
                         "Output buffer must be (at least) " + outLen + " bytes long");
             }
             System.arraycopy(tmpBuf, 0, output, outputOffset, outLen);
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             throw e;
         } finally {
             if ((copyOfInput != null) && encrypting) {
@@ -550,7 +553,7 @@ public final class SymmetricCipher {
 
     public synchronized int z_doFinal(byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset) throws IllegalStateException, ShortBufferException,
-            IllegalBlockSizeException, BadPaddingException, OCKException {
+            IllegalBlockSizeException, BadPaddingException, NativeException {
 
         int outLen = 0;
 
