@@ -8,9 +8,8 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
-import com.ibm.crypto.plus.provider.base.OCKException;
 import com.ibm.crypto.plus.provider.base.XECKey;
+import com.ibm.crypto.plus.provider.base.NativeException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -109,7 +108,7 @@ abstract class XDHKeyAgreement extends KeyAgreementSpi {
             }
             this.secret = XECKey.computeECDHSecret(provider.isFIPS(), genCtx,
                     ockXecKeyPub.getPKeyId(), ockXecKeyPriv.getPKeyId(), secrectBufferSize);
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             //Validate the secret value for a small order point condition.
             byte orValue = (byte) 0;
             for (int i = 0; i < secret.length; i++) {

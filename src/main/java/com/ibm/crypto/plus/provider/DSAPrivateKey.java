@@ -9,7 +9,7 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.DSAKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -69,7 +69,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -91,7 +91,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -107,7 +107,7 @@ final class DSAPrivateKey extends PKCS8Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA private key",
                     exception);
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }

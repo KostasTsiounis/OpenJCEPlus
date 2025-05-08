@@ -8,7 +8,7 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
-import com.ibm.crypto.plus.provider.base.OCKException;
+import com.ibm.crypto.plus.provider.base.NativeException;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
@@ -207,7 +207,7 @@ final class NativeOCKImplementation {
 
     static public native long initializeOCK(boolean isFIPS) throws OCKException;
 
-    static public native String CTX_getValue(long ockContextId, int valueId) throws OCKException;
+    static public native String CTX_getValue(long ockContextId, int valueId) throws NativeException;
 
     static native long getByteBufferPointer(ByteBuffer b);
 
@@ -215,40 +215,40 @@ final class NativeOCKImplementation {
     // Basic random number generator functions
     // =========================================================================
 
-    static public native void RAND_nextBytes(long ockContextId, byte[] buffer) throws OCKException;
+    static public native void RAND_nextBytes(long ockContextId, byte[] buffer) throws NativeException;
 
-    static public native void RAND_setSeed(long ockContextId, byte[] seed) throws OCKException;
+    static public native void RAND_setSeed(long ockContextId, byte[] seed) throws NativeException;
 
-    static public native void RAND_generateSeed(long ockContextId, byte[] seed) throws OCKException;
+    static public native void RAND_generateSeed(long ockContextId, byte[] seed) throws NativeException;
 
     // =========================================================================
     // Extended random number generator functions
     // =========================================================================
 
-    static public native long EXTRAND_create(long ockContextId, String algName) throws OCKException;
+    static public native long EXTRAND_create(long ockContextId, String algName) throws NativeException;
 
     static public native void EXTRAND_nextBytes(long ockContextId, long ockPRNGContextId,
-            byte[] buffer) throws OCKException;
+            byte[] buffer) throws NativeException;
 
     static public native void EXTRAND_setSeed(long ockContextId, long ockPRNGContextId, byte[] seed)
-            throws OCKException;
+            throws NativeException;
 
     static public native void EXTRAND_delete(long ockContextId, long ockPRNGContextId)
-            throws OCKException;
+            throws NativeException;
 
     // =========================================================================
     // Cipher functions
     // =========================================================================
 
-    static public native long CIPHER_create(long ockContextId, String cipher) throws OCKException;
+    static public native long CIPHER_create(long ockContextId, String cipher) throws NativeException;
 
     static public native void CIPHER_init(long ockContextId, long ockCipherId, int isEncrypt,
-            int paddingId, byte[] key, byte[] iv) throws OCKException;
+            int paddingId, byte[] key, byte[] iv) throws NativeException;
 
-    static public native void CIPHER_clean(long ockContextId, long ockCipherId) throws OCKException;
+    static public native void CIPHER_clean(long ockContextId, long ockCipherId) throws NativeException;
 
     static public native void CIPHER_setPadding(long ockContextId, long ockCipherId, int paddingId)
-            throws OCKException;
+            throws NativeException;
 
     static public native int CIPHER_getBlockSize(long ockContextId, long ockCipherId);
 
@@ -260,24 +260,24 @@ final class NativeOCKImplementation {
 
     static public native int CIPHER_encryptUpdate(long ockContextId, long ockCipherId,
             byte[] plaintext, int plaintextOffset, int plaintextLen, byte[] ciphertext,
-            int ciphertextOffset, boolean needsReinit) throws OCKException;
+            int ciphertextOffset, boolean needsReinit) throws NativeException;
 
     static public native int CIPHER_decryptUpdate(long ockContextId, long ockCipherId,
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
-            int plaintextOffset, boolean needsReinit) throws OCKException;
+            int plaintextOffset, boolean needsReinit) throws NativeException;
 
     static public native int CIPHER_encryptFinal(long ockContextId, long ockCipherId, byte[] input,
             int inOffset, int inLen, byte[] ciphertext, int ciphertextOffset, boolean needsReinit)
-            throws OCKException;
+            throws NativeException;
 
     static public native int CIPHER_decryptFinal(long ockContextId, long ockCipherId,
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
-            int plaintextOffset, boolean needsReinit) throws OCKException;
+            int plaintextOffset, boolean needsReinit) throws NativeException;
 
     static public native long checkHardwareSupport(long ockContextId);
 
     static public native void CIPHER_delete(long ockContextId, long ockCipherId)
-            throws OCKException;
+            throws NativeException;
 
     static public native int z_kmc_native(byte[] input, int inputOffset, byte[] output,
             int outputOffset, long paramPointer, int inputLength, int mode);
@@ -287,16 +287,16 @@ final class NativeOCKImplementation {
     // =========================================================================
 
     static public native long POLY1305CIPHER_create(long ockContextId, String cipher)
-            throws OCKException;
+            throws NativeException;
 
     static public native void POLY1305CIPHER_init(long ockContextId, long ockCipherId,
-            int isEncrypt, byte[] key, byte[] iv) throws OCKException;
+            int isEncrypt, byte[] key, byte[] iv) throws NativeException;
 
     static public native void POLY1305CIPHER_clean(long ockContextId, long ockCipherId)
-            throws OCKException;
+            throws NativeException;
 
     static public native void POLY1305CIPHER_setPadding(long ockContextId, long ockCipherId,
-            int paddingId) throws OCKException;
+            int paddingId) throws NativeException;
 
     static public native int POLY1305CIPHER_getBlockSize(long ockContextId, long ockCipherId);
 
@@ -308,22 +308,22 @@ final class NativeOCKImplementation {
 
     static public native int POLY1305CIPHER_encryptUpdate(long ockContextId, long ockCipherId,
             byte[] plaintext, int plaintextOffset, int plaintextLen, byte[] ciphertext,
-            int ciphertextOffset) throws OCKException;
+            int ciphertextOffset) throws NativeException;
 
     static public native int POLY1305CIPHER_decryptUpdate(long ockContextId, long ockCipherId,
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
-            int plaintextOffset) throws OCKException;
+            int plaintextOffset) throws NativeException;
 
     static public native int POLY1305CIPHER_encryptFinal(long ockContextId, long ockCipherId,
             byte[] input, int inOffset, int inLen, byte[] ciphertext, int ciphertextOffset,
-            byte[] tag) throws OCKException;
+            byte[] tag) throws NativeException;
 
     static public native int POLY1305CIPHER_decryptFinal(long ockContextId, long ockCipherId,
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
-            int plaintextOffset, byte[] tag) throws OCKException;
+            int plaintextOffset, byte[] tag) throws NativeException;
 
     static public native void POLY1305CIPHER_delete(long ockContextId, long ockCipherId)
-            throws OCKException;
+            throws NativeException;
 
     // =========================================================================
     // GCM Cipher functions
@@ -334,67 +334,67 @@ final class NativeOCKImplementation {
     static public native int do_GCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen,
             int inOffset, int inLen, int ciphertextOffset, int aadLen, int tagLen,
             long parameterBuffer, byte[] input, int inputOffset, byte[] output, int outputOffset)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_encryptFastJNI(long ockContextId, long gcmCtx, int keyLen,
             int ivLen, int inOffset, int inLen, int ciphertextOffset, int aadLen, int tagLen,
-            long parameterBuffer, long inputBuffer, long outputBuffer) throws OCKException;
+            long parameterBuffer, long inputBuffer, long outputBuffer) throws NativeException;
 
     static public native int do_GCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen,
             int inOffset, int inLen, int ciphertextOffset, int aadLen, int tagLen,
             long parameterBuffer, byte[] input, int inputOffset, byte[] output, int outputOffset)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_decryptFastJNI(long ockContextId, long gcmCtx, int keyLen,
             int ivLen, int ciphertextOffset, int ciphertextLen, int plainOffset, int aadLen,
             int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_encrypt(long ockContextId, long gcmCtx, byte[] key, int keyLen,
             byte[] iv, int ivLen, byte[] input, int inOffset, int inLen, byte[] ciphertext,
             int ciphertextOffset, byte[] aad, int aadLen, byte[] tag, int tagLen)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_decrypt(long ockContextId, long gcmCtx, byte[] key, int keyLen,
             byte[] iv, int ivLen, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, byte[] aad, int aadLen, int tagLen)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_FinalForUpdateEncrypt(long ockContextId, long gcmCtx,
             byte[] key, int keyLen, byte[] iv, int ivLen, byte[] input, int inOffset, int inLen,
             byte[] ciphertext, int ciphertextOffset, byte[] aad, int aadLen, byte[] tag, int tagLen)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_FinalForUpdateDecrypt(long ockContextId, long gcmCtx,
             /* byte[] key, int keyLen,
              byte[] iv, int ivLen,*/
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
             int plaintextOffset, int plaintextlen, byte[] aad, int aadLen, int tagLen)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_UpdForUpdateEncrypt(long ockContextId, long gcmCtx,
             byte[] input, int inOffset, int inLen, byte[] ciphertext, int ciphertextOffset)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_GCM_UpdForUpdateDecrypt(long ockContextId, long gcmCtx,
             byte[] ciphertext, int cipherOffset, int cipherLen, byte[] plaintext,
-            int plaintextOffset) throws OCKException;
+            int plaintextOffset) throws NativeException;
 
     static public native int do_GCM_InitForUpdateEncrypt(long ockContextId, long gcmCtx, byte[] key,
-            int keyLen, byte[] iv, int ivLen, byte[] aad, int aadLen) throws OCKException;
+            int keyLen, byte[] iv, int ivLen, byte[] aad, int aadLen) throws NativeException;
 
     static public native int do_GCM_InitForUpdateDecrypt(long ockContextId, long gcmCtx, byte[] key,
-            int keyLen, byte[] iv, int ivLen, byte[] aad, int aadLen) throws OCKException;
+            int keyLen, byte[] iv, int ivLen, byte[] aad, int aadLen) throws NativeException;
 
 
-    static public native void do_GCM_delete(long ockContextId) throws OCKException;
+    static public native void do_GCM_delete(long ockContextId) throws NativeException;
 
     static public native void free_GCM_ctx(long ockContextId, long gcmContextId)
-            throws OCKException;
+            throws NativeException;
 
-    //static public native int get_GCM_TLSEnabled() throws OCKException;
+    //static public native int get_GCM_TLSEnabled() throws NativeException;
 
-    static public native long create_GCM_context(long ockContextId) throws OCKException;
+    static public native long create_GCM_context(long ockContextId) throws NativeException;
 
     // =========================================================================
     // CCM Cipher functions
@@ -405,30 +405,30 @@ final class NativeOCKImplementation {
     static public native int do_CCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen,
             int inOffset, int inLen, int ciphertextOffset, int aadLen, int tagLen,
             long parameterBuffer, byte[] input, int inputOffset, byte[] output, int outputOffset)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_CCM_encryptFastJNI(long ockContextId, int keyLen, int ivLen,
             int inLen, int ciphertextLen, int aadLen, int tagLen, long parameterBuffer,
-            long inputBuffer, long outputBuffer) throws OCKException;
+            long inputBuffer, long outputBuffer) throws NativeException;
 
     static public native int do_CCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen,
             int inOffset, int inLen, int ciphertextOffset, int aadLen, int tagLen,
             long parameterBuffer, byte[] input, int inputOffset, byte[] output, int outputOffset)
-            throws OCKException;
+            throws NativeException;
 
     static public native int do_CCM_decryptFastJNI(long ockContextId, int keyLen, int ivLen,
             int ciphertextLen, int plaintextLen, int aadLen, int tagLen, long parameterBuffer,
-            long inputBuffer, long outputBuffer) throws OCKException;
+            long inputBuffer, long outputBuffer) throws NativeException;
 
     static public native int do_CCM_encrypt(long ockContextId, byte[] iv, int ivLen, byte[] key,
             int keyLen, byte[] aad, int aadLen, byte[] input, int inLen, byte[] ciphertext,
-            int ciphertextLen, int tagLen) throws OCKException;
+            int ciphertextLen, int tagLen) throws NativeException;
 
     static public native int do_CCM_decrypt(long ockContextId, byte[] iv, int ivLen, byte[] key,
             int keyLen, byte[] aad, int aadLen, byte[] ciphertext, int ciphertextLength,
-            byte[] plaintext, int plaintextLength, int tagLen) throws OCKException;
+            byte[] plaintext, int plaintextLength, int tagLen) throws NativeException;
 
-    static public native void do_CCM_delete(long ockContextId) throws OCKException;
+    static public native void do_CCM_delete(long ockContextId) throws NativeException;
 
     // =========================================================================
     // RSA cipher functions
@@ -436,73 +436,73 @@ final class NativeOCKImplementation {
 
     static public native int RSACIPHER_public_encrypt(long ockContextId, long rsaKeyId,
             int rsaPaddingId, byte[] plaintext, int plaintextOffset, int plaintextLen,
-            byte[] ciphertext, int ciphertextOffset) throws OCKException;
+            byte[] ciphertext, int ciphertextOffset) throws NativeException;
 
     static public native int RSACIPHER_private_encrypt(long ockContextId, long rsaKeyId,
             int rsaPaddingId, byte[] plaintext, int plaintextOffset, int plaintextLen,
-            byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws OCKException;
+            byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws NativeException;
 
     static public native int RSACIPHER_public_decrypt(long ockContextId, long rsaKeyId,
             int rsaPaddingId, byte[] ciphertext, int ciphertextOffset, int ciphertextLen,
-            byte[] plaintext, int plaintextOffset) throws OCKException;
+            byte[] plaintext, int plaintextOffset) throws NativeException;
 
     static public native int RSACIPHER_private_decrypt(long ockContextId, long rsaKeyId,
             int rsaPaddingId, byte[] ciphertext, int ciphertextOffset, int ciphertextLen,
-            byte[] plaintext, int plaintextOffset, boolean convertKey) throws OCKException;
+            byte[] plaintext, int plaintextOffset, boolean convertKey) throws NativeException;
 
     // =========================================================================
     // DH key functions
     // =========================================================================
 
-    static public native long DHKEY_generate(long ockContextId, int numBits) throws OCKException;
+    static public native long DHKEY_generate(long ockContextId, int numBits) throws NativeException;
 
     static public native byte[] DHKEY_generateParameters(long ockContextId, int numBits);
 
     static public native long DHKEY_generate(long ockContextId, byte[] dhParameters)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DHKEY_createPrivateKey(long ockContextId, byte[] privateKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DHKEY_createPublicKey(long ockContextId, byte[] publicKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] DHKEY_getParameters(long ockContextId, long dhKeyId);
 
     static public native byte[] DHKEY_getPrivateKeyBytes(long ockContextId, long dhKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] DHKEY_getPublicKeyBytes(long ockContextId, long dhKeyId)
-            throws OCKException;
+            throws NativeException;
 
-    static public native long DHKEY_createPKey(long ockContextId, long dhKeyId) throws OCKException;
+    static public native long DHKEY_createPKey(long ockContextId, long dhKeyId) throws NativeException;
 
     static public native byte[] DHKEY_computeDHSecret(long ockContextId, long pubKeyId,
-            long privKeyId) throws OCKException;
+            long privKeyId) throws NativeException;
 
-    static public native void DHKEY_delete(long ockContextId, long dhKeyId) throws OCKException;
+    static public native void DHKEY_delete(long ockContextId, long dhKeyId) throws NativeException;
 
     // =========================================================================
     // RSA key functions
     // =========================================================================
 
     static public native long RSAKEY_generate(long ockContextId, int numBits, long e)
-            throws OCKException;
+            throws NativeException;
 
     static public native long RSAKEY_createPrivateKey(long ockContextId, byte[] privateKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native long RSAKEY_createPublicKey(long ockContextId, byte[] publicKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] RSAKEY_getPrivateKeyBytes(long ockContextId, long rsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] RSAKEY_getPublicKeyBytes(long ockContextId, long rsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native long RSAKEY_createPKey(long ockContextId, long rsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native int RSAKEY_size(long ockContextId, long rsaKeyId);
 
@@ -512,243 +512,243 @@ final class NativeOCKImplementation {
     // DSA key functions
     // =========================================================================
 
-    static public native long DSAKEY_generate(long ockContextId, int numBits) throws OCKException;
+    static public native long DSAKEY_generate(long ockContextId, int numBits) throws NativeException;
 
     static public native byte[] DSAKEY_generateParameters(long ockContextId, int numBits);
 
     static public native long DSAKEY_generate(long ockContextId, byte[] dsaParameters)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DSAKEY_createPrivateKey(long ockContextId, byte[] privateKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DSAKEY_createPublicKey(long ockContextId, byte[] publicKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] DSAKEY_getParameters(long ockContextId, long dsaKeyId);
 
     static public native byte[] DSAKEY_getPrivateKeyBytes(long ockContextId, long dsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] DSAKEY_getPublicKeyBytes(long ockContextId, long dsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DSAKEY_createPKey(long ockContextId, long dsaKeyId)
-            throws OCKException;
+            throws NativeException;
 
-    static public native void DSAKEY_delete(long ockContextId, long dsaKeyId) throws OCKException;
+    static public native void DSAKEY_delete(long ockContextId, long dsaKeyId) throws NativeException;
 
     // =========================================================================
     // PKey functions
     // =========================================================================
 
-    static public native void PKEY_delete(long ockContextId, long pkeyId) throws OCKException;
+    static public native void PKEY_delete(long ockContextId, long pkeyId) throws NativeException;
 
     // =========================================================================
     // Digest functions
     // =========================================================================
 
     static public native long DIGEST_create(long ockContextId, String digestAlgo)
-            throws OCKException;
+            throws NativeException;
 
     static public native long DIGEST_copy(long id, long digestId)
-            throws OCKException;
+            throws NativeException;
 
     static public native int DIGEST_update(long ockContextId, long digestId, byte[] input,
-            int offset, int length) throws OCKException;
+            int offset, int length) throws NativeException;
 
     static public native void DIGEST_updateFastJNI(long ockContextId, long digestId,
-            long inputBuffer, int length) throws OCKException;
+            long inputBuffer, int length) throws NativeException;
 
-    static public native byte[] DIGEST_digest(long ockContextId, long digestId) throws OCKException;
+    static public native byte[] DIGEST_digest(long ockContextId, long digestId) throws NativeException;
 
     static public native void DIGEST_digest_and_reset(long ockContextId, long digestId,
-            long outputBuffer, int length) throws OCKException;
+            long outputBuffer, int length) throws NativeException;
 
     static public native int DIGEST_digest_and_reset(long ockContextId, long digestId,
-            byte[] output) throws OCKException;
+            byte[] output) throws NativeException;
 
-    static public native int DIGEST_size(long ockContextId, long digestId) throws OCKException;
+    static public native int DIGEST_size(long ockContextId, long digestId) throws NativeException;
 
-    static public native void DIGEST_reset(long ockContextId, long digestId) throws OCKException;
+    static public native void DIGEST_reset(long ockContextId, long digestId) throws NativeException;
 
-    static public native void DIGEST_delete(long ockContextId, long digestId) throws OCKException;
+    static public native void DIGEST_delete(long ockContextId, long digestId) throws NativeException;
 
     // =========================================================================
     // Signature functions (with digest)
     // =========================================================================
 
     static public native byte[] SIGNATURE_sign(long ockContextId, long digestId, long pkeyId,
-            boolean convert) throws OCKException;
+            boolean convert) throws NativeException;
 
     static public native boolean SIGNATURE_verify(long ockContextId, long digestId, long pkeyId,
-            byte[] sigBytes) throws OCKException;
+            byte[] sigBytes) throws NativeException;
 
     static public native byte[] SIGNATUREEdDSA_signOneShot(long ockContextId, long pkeyId,
-            byte[] bytes) throws OCKException;
+            byte[] bytes) throws NativeException;
 
     static public native boolean SIGNATUREEdDSA_verifyOneShot(long ockContextId, long pkeyId,
-            byte[] sigBytes, byte[] oneShot) throws OCKException;
+            byte[] sigBytes, byte[] oneShot) throws NativeException;
 
     // =========================================================================
     // RSAPSSSignature functions
     // =========================================================================
 
     static public native int RSAPSS_signInit(long ockContextId, long rsaPssId, long pkeyId,
-            int saltlen, boolean convert) throws OCKException;
+            int saltlen, boolean convert) throws NativeException;
 
     static public native int RSAPSS_verifyInit(long ockContextId, long rsaPssId, long pkeyId,
-            int saltlen) throws OCKException;
+            int saltlen) throws NativeException;
 
     static public native int RSAPSS_getSigLen(long ockContextId, long rsaPssId);
 
     static public native void RSAPSS_signFinal(long ockContextId, long rsaPssId, byte[] signature,
-            int length) throws OCKException;
+            int length) throws NativeException;
 
     static public native boolean RSAPSS_verifyFinal(long ockContextId, long rsaPssId,
-            byte[] sigBytes, int length) throws OCKException;
+            byte[] sigBytes, int length) throws NativeException;
 
     static public native long RSAPSS_createContext(long ockContextId, String digestAlgo,
-            String mgf1SpecAlgo) throws OCKException;
+            String mgf1SpecAlgo) throws NativeException;
 
     static public native void RSAPSS_releaseContext(long ockContextId, long rsaPssId)
-            throws OCKException;
+            throws NativeException;
 
     static public native void RSAPSS_digestUpdate(long ockContextId, long rsaPssId, byte[] input,
-            int offset, int length) throws OCKException;
+            int offset, int length) throws NativeException;
 
-    static public native void RSAPSS_reset(long ockContextId, long digestId) throws OCKException;
+    static public native void RSAPSS_reset(long ockContextId, long digestId) throws NativeException;
 
     static public native void RSAPSS_resetDigest(long ockContextId, long rsaPssId)
-            throws OCKException;
+            throws NativeException;
 
     // =========================================================================
     // DSA Signature functions (pre-hashed data)
     // =========================================================================
 
     static public native byte[] DSANONE_SIGNATURE_sign(long ockContextId, byte[] digest,
-            long dsaKeyId) throws OCKException;
+            long dsaKeyId) throws NativeException;
 
     static public native boolean DSANONE_SIGNATURE_verify(long ockContextId, byte[] digest,
-            long dsaKeyId, byte[] sigBytes) throws OCKException;
+            long dsaKeyId, byte[] sigBytes) throws NativeException;
 
     // =========================================================================
     // RSASSL Signature functions (pre-hashed data)
     // =========================================================================
 
     static public native byte[] RSASSL_SIGNATURE_sign(long ockContextId, byte[] digest,
-            long rsaKeyId) throws OCKException;
+            long rsaKeyId) throws NativeException;
 
     static public native boolean RSASSL_SIGNATURE_verify(long ockContextId, byte[] digest,
-            long rsaKeyId, byte[] sigBytes, boolean convert) throws OCKException;
+            long rsaKeyId, byte[] sigBytes, boolean convert) throws NativeException;
 
     // =========================================================================
     // HMAC functions
     // =========================================================================
 
-    static public native long HMAC_create(long ockContextId, String digestAlgo) throws OCKException;
+    static public native long HMAC_create(long ockContextId, String digestAlgo) throws NativeException;
 
     static public native int HMAC_update(long ockContextId, long hmacId, byte[] key, int keyLength,
-            byte[] input, int inputOffset, int inputLength, boolean needInit) throws OCKException;
+            byte[] input, int inputOffset, int inputLength, boolean needInit) throws NativeException;
 
     static public native int HMAC_doFinal(long ockContextId, long hmacId, byte[] key, int keyLength,
-            byte[] hmac, boolean needInit) throws OCKException;
+            byte[] hmac, boolean needInit) throws NativeException;
 
-    static public native int HMAC_size(long ockContextId, long hmacId) throws OCKException;
+    static public native int HMAC_size(long ockContextId, long hmacId) throws NativeException;
 
-    static public native void HMAC_delete(long ockContextId, long hmacId) throws OCKException;
+    static public native void HMAC_delete(long ockContextId, long hmacId) throws NativeException;
 
     // =========================================================================
     // EC key functions
     // =========================================================================
 
-    static public native long ECKEY_generate(long ockContextId, int numBits) throws OCKException;
+    static public native long ECKEY_generate(long ockContextId, int numBits) throws NativeException;
 
     static public native long ECKEY_generate(long ockContextId, String curveOid)
-            throws OCKException;
+            throws NativeException;
 
     static public native long XECKEY_generate(long ockContextId, int option, long bufferPtr)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] ECKEY_generateParameters(long ockContextId, int numBits)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] ECKEY_generateParameters(long ockContextId, String curveOid)
-            throws OCKException;
+            throws NativeException;
 
     static public native long ECKEY_generate(long ockContextId, byte[] ecParameters)
-            throws OCKException;
+            throws NativeException;
 
     static public native long ECKEY_createPrivateKey(long ockContextId, byte[] privateKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native long XECKEY_createPrivateKey(long ockContextId, byte[] privateKeyBytes,
-            long bufferPtr) throws OCKException;
+            long bufferPtr) throws NativeException;
 
     static public native long ECKEY_createPublicKey(long ockContextId, byte[] publicKeyBytes,
-            byte[] parameterBytes) throws OCKException;
+            byte[] parameterBytes) throws NativeException;
 
     static public native long XECKEY_createPublicKey(long ockContextId, byte[] publicKeyBytes)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] ECKEY_getParameters(long ockContextId, long ecKeyId);
 
     static public native byte[] ECKEY_getPrivateKeyBytes(long ockContextId, long ecKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] XECKEY_getPrivateKeyBytes(long ockContextId, long xecKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] ECKEY_getPublicKeyBytes(long ockContextId, long ecKeyId)
-            throws OCKException;
+            throws NativeException;
 
     static public native byte[] XECKEY_getPublicKeyBytes(long ockContextId, long xecKeyId)
-            throws OCKException;
+            throws NativeException;
 
-    static public native long ECKEY_createPKey(long ockContextId, long ecKeyId) throws OCKException;
+    static public native long ECKEY_createPKey(long ockContextId, long ecKeyId) throws NativeException;
 
-    static public native void ECKEY_delete(long ockContextId, long ecKeyId) throws OCKException;
+    static public native void ECKEY_delete(long ockContextId, long ecKeyId) throws NativeException;
 
-    static public native void XECKEY_delete(long ockContextId, long xecKeyId) throws OCKException;
+    static public native void XECKEY_delete(long ockContextId, long xecKeyId) throws NativeException;
 
     static public native long XDHKeyAgreement_init(long ockContextId, long privId);
 
     static public native void XDHKeyAgreement_setPeer(long ockContextId, long genCtx, long pubId);
 
     static public native byte[] ECKEY_computeECDHSecret(long ockContextId, long pubEcKeyId,
-            long privEcKeyId) throws OCKException;
+            long privEcKeyId) throws NativeException;
 
     static public native byte[] XECKEY_computeECDHSecret(long ockContextId, long genCtx,
-            long pubEcKeyId, long privEcKeyId, int secrectBufferSize) throws OCKException;
+            long pubEcKeyId, long privEcKeyId, int secrectBufferSize) throws NativeException;
 
 
     static public native byte[] ECKEY_signDatawithECDSA(long ockContextId, byte[] digestBytes,
-            int digestBytesLen, long ecPrivateKeyId) throws OCKException;
+            int digestBytesLen, long ecPrivateKeyId) throws NativeException;
 
     static public native boolean ECKEY_verifyDatawithECDSA(long ockContextId, byte[] digestBytes,
             int digestBytesLen, byte[] sigBytes, int sigBytesLen, long ecPublicKeyId)
-            throws OCKException;
+            throws NativeException;
 
 
     // =========================================================================
     // HKDF functions
     // =========================================================================
 
-    static public native long HKDF_create(long ockContextId, String digestAlgo) throws OCKException;
+    static public native long HKDF_create(long ockContextId, String digestAlgo) throws NativeException;
 
     static public native byte[] HKDF_extract(long ockContextId, long hkdfId, byte[] saltBytes,
-            long saltLen, byte[] inKey, long inKeyLen) throws OCKException;
+            long saltLen, byte[] inKey, long inKeyLen) throws NativeException;
 
     static public native byte[] HKDF_expand(long ockContextId, long hkdfId, byte[] prkBytes,
-            long prkBytesLen, byte[] info, long infoLen, long okmLen) throws OCKException;
+            long prkBytesLen, byte[] info, long infoLen, long okmLen) throws NativeException;
 
     static public native byte[] HKDF_derive(long ockContextId, long hkdfId, byte[] saltBytes,
             long saltLen, byte[] inKey, long inKeyLen, byte[] info, long infoLen, long okmLen)
-            throws OCKException;
+            throws NativeException;
 
-    static public native void HKDF_delete(long ockContextId, long hkdfId) throws OCKException;
+    static public native void HKDF_delete(long ockContextId, long hkdfId) throws NativeException;
 
-    static public native int HKDF_size(long ockContextId, long hkdfId) throws OCKException;
+    static public native int HKDF_size(long ockContextId, long hkdfId) throws NativeException;
 
     // =========================================================================
     // Password based key derivation functions ( PBKDF )

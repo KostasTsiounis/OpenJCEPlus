@@ -10,29 +10,31 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.security.InvalidKeyException;
 
+
+
 /**
  * This class implements the DSA signature algorithm using a pre-computed hash.
  */
 public final class SignatureDSANONE {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private DSAKey key = null;
     private boolean initialized = false;
     private final static String debPrefix = "SignatureDSANONE";
     private final static String badIdMsg = "DSA Key Identifier is not valid";
 
 
-    public static SignatureDSANONE getInstance(boolean isFIPS) throws OCKException {
+    public static SignatureDSANONE getInstance(boolean isFIPS) throws NativeException {
         return new SignatureDSANONE(isFIPS);
     }
 
-    private SignatureDSANONE(boolean isFIPS) throws OCKException {
+    private SignatureDSANONE(boolean isFIPS) throws NativeException {
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
     }
 
-    public void initialize(DSAKey key) throws InvalidKeyException, OCKException {
+    public void initialize(DSAKey key) throws InvalidKeyException, NativeException {
         //final String methodName = "initialize";
         if (key == null) {
             throw new IllegalArgumentException("key is null");
@@ -43,7 +45,7 @@ public final class SignatureDSANONE {
         //OCKDebug.Msg (debPrefix, methodName, "this.key=",  this.key);
     }
 
-    public synchronized byte[] sign(byte[] digest) throws OCKException {
+    public synchronized byte[] sign(byte[] digest) throws NativeException {
         //final String methodName = "sign";
         if (!this.initialized) {
             throw new IllegalStateException("Signature not initialized");
@@ -55,7 +57,7 @@ public final class SignatureDSANONE {
 
         //OCKDebug.Msg(debPrefix, methodName, "this.key.DSAKeyId :" + this.key.getDSAKeyId() + " digest :", digest);
         if (!validId(this.key.getDSAKeyId())) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         byte[] signature = this.nativeImpl.DSANONE_SIGNATURE_sign(digest,
                 this.key.getDSAKeyId());
@@ -63,7 +65,7 @@ public final class SignatureDSANONE {
         return signature;
     }
 
-    public synchronized boolean verify(byte[] digest, byte[] sigBytes) throws OCKException {
+    public synchronized boolean verify(byte[] digest, byte[] sigBytes) throws NativeException {
         //final String methodName = "verify";
         // create key length function and check sigbytes against key length?
         if (!this.initialized) {
@@ -81,7 +83,7 @@ public final class SignatureDSANONE {
         //OCKDebug.Msg(debPrefix, methodName, "this.key.DSAKeyId :" + this.key.getDSAKeyId() + " digest :",   digest);
         //OCKDebug.Msg(debPrefix, methodName, "sigBytes :",  sigBytes);
         if (!validId(this.key.getDSAKeyId())) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         boolean verified = this.nativeImpl.DSANONE_SIGNATURE_verify(digest,
                 this.key.getDSAKeyId(), sigBytes);

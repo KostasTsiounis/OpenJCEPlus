@@ -8,16 +8,19 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
-import com.ibm.crypto.plus.provider.base.RSAKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.ProviderException;
 import java.security.spec.AlgorithmParameterSpec;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
+import com.ibm.crypto.plus.provider.RSAUtil.KeyType;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.RSAKey;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
@@ -77,7 +80,7 @@ final class RSAPublicKey extends X509Key
             this.rsaKey = RSAKey.createPublicKey(provider.isFIPS(), getKey().toByteArray());
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -95,7 +98,7 @@ final class RSAPublicKey extends X509Key
             this.rsaKey = RSAKey.createPublicKey(provider.isFIPS(), getKey().toByteArray());
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
         try {
@@ -152,7 +155,7 @@ final class RSAPublicKey extends X509Key
             parseKeyBits();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create RSA public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
 

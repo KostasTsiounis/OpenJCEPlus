@@ -1077,7 +1077,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSe
                                 "allocation");
                         }
 #endif
-                        throwOCKException(
+                        throwNativeException(
                             env, 0, "NULL from GetPrimitiveArrayCritical");
                     } else {
                         unsigned char *pBytes =
@@ -1170,7 +1170,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSe
                                                 "secretBytesNative allocation");
                                         }
 #endif
-                                        throwOCKException(
+                                        throwNativeException(
                                             env, 0,
                                             "NULL from "
                                             "GetPrimitiveArrayCritical");
@@ -1192,7 +1192,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1computeDHSe
                                                     lena);
                                             }
 #endif
-                                            throwOCKException(
+                                            throwNativeException(
                                                 env, 0,
                                                 "ICC_DH_compute_key failed");
                                         } else {

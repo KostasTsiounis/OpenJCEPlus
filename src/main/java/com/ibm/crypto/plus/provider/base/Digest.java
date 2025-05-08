@@ -67,7 +67,7 @@ public final class Digest implements Cloneable {
         numContexts = tmpNumContext;
     }
 
-    void getContext() throws OCKException {
+    void getContext() throws NativeException {
         if (needsInit) {
             synchronized (Digest.class) {
                 if (needsInit) {
@@ -131,7 +131,7 @@ public final class Digest implements Cloneable {
         this.needsReinit = false;
     }
 
-    void releaseContext() throws OCKException {
+    void releaseContext() throws NativeException {
 
         if (this.digestId == 0) {
             return;
@@ -166,7 +166,7 @@ public final class Digest implements Cloneable {
      */
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private int digestLength = 0;
     private final String badIdMsg = "Digest Identifier is not valid";
     private static final String debPrefix = "DIGEST";
@@ -175,7 +175,7 @@ public final class Digest implements Cloneable {
 
     private long digestId = 0;
 
-    public static Digest getInstance(boolean isFIPS, String digestAlgo) throws OCKException {
+    public static Digest getInstance(boolean isFIPS, String digestAlgo) throws NativeException {
         if (digestAlgo == null || digestAlgo.isEmpty()) {
             throw new IllegalArgumentException("digestAlgo is null/empty");
         }
@@ -183,7 +183,7 @@ public final class Digest implements Cloneable {
         return new Digest(isFIPS, digestAlgo);
     }
 
-    private Digest(boolean isFIPS, String digestAlgo) throws OCKException {
+    private Digest(boolean isFIPS, String digestAlgo) throws NativeException {
         //final String methodName = "Digest(String)";
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
@@ -195,22 +195,22 @@ public final class Digest implements Cloneable {
     private Digest() {
     }
 
-    static void throwOCKException(int errorCode) throws OCKException {
+    static void throwNativeException(int errorCode) throws NativeException {
         //final String methodName = "throwOCKExeption";
-        // OCKDebug.Msg(debPrefix, methodName, "throwOCKException errorCode =  " + errorCode);
+        // OCKDebug.Msg(debPrefix, methodName, "throwNativeException errorCode =  " + errorCode);
         switch (errorCode) {
             case -1:
-                throw new OCKException("ICC_EVP_DigestFinal failed!");
+                throw new NativeException("ICC_EVP_DigestFinal failed!");
             case -2:
-                throw new OCKException("ICC_EVP_DigestInit failed!");
+                throw new NativeException("ICC_EVP_DigestInit failed!");
             case -3:
-                throw new OCKException("ICC_EVP_DigestUpdate failed!");
+                throw new NativeException("ICC_EVP_DigestUpdate failed!");
             default:
-                throw new OCKException("Unknow Error Code");
+                throw new NativeException("Unknow Error Code");
         }
     }
 
-    public synchronized void update(byte[] input, int offset, int length) throws OCKException {
+    public synchronized void update(byte[] input, int offset, int length) throws NativeException {
         //final String methodName = "update ";
         int errorCode = 0;
 
@@ -224,22 +224,22 @@ public final class Digest implements Cloneable {
 
         //OCKDebug.Msg(debPrefix, methodName, "offset :"  + offset + " digestId :" + this.digestId + " length :" + length);
         if (!validId(this.digestId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
 
         errorCode = this.nativeImpl.DIGEST_update(this.digestId, input, offset, length);
         if (errorCode < 0) {
-            throwOCKException(errorCode);
+            throwNativeException(errorCode);
         }
         this.needsReinit = true;
     }
 
-    public synchronized byte[] digest() throws OCKException {
+    public synchronized byte[] digest() throws NativeException {
         //final String methodName = "digest()";
         int errorCode = 0;
 
         if (!validId(this.digestId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         //OCKDebug.Msg (debPrefix, methodName, "digestId :" + this.digestId);
 
@@ -250,20 +250,20 @@ public final class Digest implements Cloneable {
 
         errorCode = this.nativeImpl.DIGEST_digest_and_reset(this.digestId, digestBytes);
         if (errorCode < 0) {
-            throwOCKException(errorCode);
+            throwNativeException(errorCode);
         }
         this.needsReinit = false;
 
         return digestBytes;
     }
 
-    protected long getId() throws OCKException {
+    protected long getId() throws NativeException {
         //final String methodName = "getId()";
         //OCKDebug.Msg(debPrefix, methodName, "digestId :" + this.digestId);
         return this.digestId;
     }
 
-    public int getDigestLength() throws OCKException {
+    public int getDigestLength() throws NativeException {
         //final String methodName = "getDigestLength()";
 
         if (digestLength == 0) {
@@ -273,7 +273,7 @@ public final class Digest implements Cloneable {
         return digestLength;
     }
 
-    public synchronized void reset() throws OCKException {
+    public synchronized void reset() throws NativeException {
         //final String methodName = "reset ";
         //OCKDebug.Msg(debPrefix, methodName,  "digestId =" + this.digestId);
 
@@ -282,7 +282,7 @@ public final class Digest implements Cloneable {
         }
 
         if (!validId(this.digestId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         if (this.needsReinit) {
             this.nativeImpl.DIGEST_reset(this.digestId);
@@ -290,7 +290,7 @@ public final class Digest implements Cloneable {
         this.needsReinit = false;
     }
 
-    private synchronized void obtainDigestLength() throws OCKException {
+    private synchronized void obtainDigestLength() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getDigestLength at the same time, we only want to call the
         // native code one time.
@@ -301,7 +301,7 @@ public final class Digest implements Cloneable {
         } else {
             if (this.digestLength == 0) {
                 if (!validId(this.digestId)) {
-                    throw new OCKException(badIdMsg);
+                    throw new NativeException(badIdMsg);
                 }
                 this.digestLength = this.nativeImpl.DIGEST_size(this.digestId);
             }
@@ -351,7 +351,7 @@ public final class Digest implements Cloneable {
             if (0 == copy.digestId) {
                 throw new CloneNotSupportedException("Copy of native digest context failed.");
             }
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             StackTraceElement[] stackTraceArray = e.getStackTrace();
             String stackTrace = Stream.of(stackTraceArray)
                                       .map(t -> t.toString())

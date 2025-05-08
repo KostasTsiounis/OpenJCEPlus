@@ -9,7 +9,7 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.ECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
@@ -134,7 +134,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // + ECUtils.bytesToHex(ecKey.getPublicKeyBytes()));
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
 
@@ -180,7 +180,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // + ECUtils.bytesToHex(ecKey.getPublicKeyBytes()));
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -204,7 +204,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             parseKeyBits();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC private key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         } finally {
             if (algidOut != null) {

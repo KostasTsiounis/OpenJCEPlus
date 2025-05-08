@@ -8,8 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.ECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -21,6 +19,10 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 import java.security.spec.ECParameterSpec;
+
+import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
@@ -129,7 +131,7 @@ public final class DatawithECDSA extends SignatureSpi {
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data",
                     e);
-            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
+            NativeAdapter.setExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

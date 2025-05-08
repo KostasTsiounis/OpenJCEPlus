@@ -45,7 +45,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_SIGNATUREEdDSA_1si
         gslogFunctionEntry(functionName);
     }
     if ((pkey == NULL) || (bytes == NULL)) {
-        throwOCKException(
+        throwNativeException(
             env, 0,
             "EdDSA signature failed. The input arguments are incorrect.");
         if (debug) {
@@ -121,7 +121,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_SIGNATUREEdDSA_1si
                                      *)((*env)->GetPrimitiveArrayCritical(
                                     env, sigBytes, &isCopy));
                             if (sigBytesNative == NULL) {
-                                throwOCKException(
+                                throwNativeException(
                                     env, 0,
                                     "NULL from GetPrimitiveArrayCritical");
                             } else {

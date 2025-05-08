@@ -10,31 +10,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <jcc_a.h>
-#include <icc.h>
-#ifdef __MVS__
-#include <unistd.h>
-#endif
+
 #include "Utils.h"
 #include <string.h>
 
 static int initialized = 0;
 
 int debug = 0;  // FIXME
-
-//============================================================================
-//
-//
-void com_ibm_crypto_plus_provider_initialize(void) {
-    if (!initialized) {
-#if DEBUG
-        /*if( getenv("JICC.debug") != NULL ) {*/
-        debug = 1;  // FIXME;
-        /*}*/
-#endif
-        initialized = 1;
-    }
-}
 
 //============================================================================
 //
@@ -133,14 +115,14 @@ int gslogFunctionExit(const char *functionName) {
 //============================================================================
 //
 //
-void ockCheckStatus(ICC_CTX *ctx) {
+void osslCheckStatus() {
     if (debug) {
         unsigned long errCode;
 
-        while ((errCode = ICC_ERR_get_error(ctx)) == 1) {
+        while ((errCode = ERR_get_error(ctx)) == 1) {
             char *err;
             // gslogMessage("Generating error message");
-            err = ICC_ERR_error_string(ctx, errCode, NULL);
+            err = ERR_error_string(ctx, errCode, NULL);
             gslogMessage("%s", err);
         }
     }
@@ -149,8 +131,8 @@ void ockCheckStatus(ICC_CTX *ctx) {
 //============================================================================
 //
 //
-void throwNativeException(JNIEnv *env, int code, const char *msg) {
-#define EXCEPTION_CLASS "com/ibm/crypto/plus/provider/ock/NativeException"
+void throwOSSLException(JNIEnv *env, int code, const char *msg) {
+#define EXCEPTION_CLASS "com/ibm/crypto/plus/provider/ossl/OSSLException"
     static const char *exceptionClass = EXCEPTION_CLASS;
 #ifdef __MVS__
 #pragma convert("ISO8859-1")

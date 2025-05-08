@@ -123,7 +123,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
                 gslogMessage("DETAIL_EC FAILURE ICC_EC_KEY_new_by_curve_name");
             }
 #endif
-            throwOCKException(
+            throwNativeException(
                 env, 0,
                 "ICC_EC_Generate_key(ICC_EC_KEY_new_by_curve_name) failed");
         } else {
@@ -143,7 +143,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
                         "DETAIL_EC FAILURE ICC_EC_KEY_generate_key rc=%d", rc);
                 }
 #endif
-                throwOCKException(
+                throwNativeException(
                     env, 0, "ICC_EC_Generate_key (ICC_EC_KEY_generate) failed");
             } else {
                 ockECGroup = ICC_EC_KEY_get0_group(ockCtx, ockECKey);
@@ -229,7 +229,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
         gslogFunctionEntry(functionName);
     }
     if (soid == NULL) {
-        throwOCKException(
+        throwNativeException(
             env, 0,
             "ECKey generate the specified input parameters are incorrect.");
         if (debug) {
@@ -281,7 +281,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
                 }
 #endif
 
-                throwOCKException(
+                throwNativeException(
                     env, 0,
                     "ICC_EC_Generate_key(ICC_EC_KEY_new_by_curve_name) failed");
             } else {
@@ -304,7 +304,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
                     }
 #endif
 
-                    throwOCKException(
+                    throwNativeException(
                         env, 0,
                         "ICC_EC_Generate_key (ICC_EC_KEY_generate) failed");
                 } else {
@@ -476,7 +476,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1generate(
     }
 
     if ((unsigned char *)bufferPtr == NULL) {
-        throwOCKException(
+        throwNativeException(
             env, 0,
             "XECKEY generate The specified input parameters are not correct.");
         if (debug) {
@@ -676,7 +676,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generatePar
                             gslogMessage("DETAIL_EC FAILURE parmBytesNative");
                         }
 #endif
-                        throwOCKException(
+                        throwNativeException(
                             env, 0, "NULL from GetPrimitiveArrayCritical");
                     } else {
                         pBytes = (unsigned char *)parmBytesNative;
@@ -779,7 +779,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generatePar
         }
 #endif
 
-        throwOCKException(
+        throwNativeException(
             env, 0, "ICC_EC_Generate_Parameters (GetStringUTFChars) failed");
     } else {
 #ifdef DEBUG_EC_DETAIL
@@ -800,7 +800,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generatePar
                 gslogMessage("DETAIL_EC FAILURE nid %d", nid);
             }
 #endif
-            throwOCKException(
+            throwNativeException(
                 env, 0, "ICC_EC_Generate_Parameters(ICC_OBJ_txt2nid) failed");
         } else {
             ockECKey = ICC_EC_KEY_new_by_curve_name(ockCtx, nid);
@@ -855,7 +855,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generatePar
                                     "DETAIL_EC FAILURE parmBytesNative");
                             }
 #endif
-                            throwOCKException(
+                            throwNativeException(
                                 env, 0, "NULL from GetPrimitiveArrayCritical");
                         } else {
                             unsigned char *pBytes =
@@ -882,8 +882,8 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generatePar
                                 }
 #endif
                                 //(*env)->ReleaseStringUTFChars (env, soid,
-                                // nativeSoid);
-                                throwOCKException(
+                                //nativeSoid);
+                                throwNativeException(
                                     env, 0, "ICC_i2d_ECParameters failed");
                             } else {
                                 retParmBytes = parmBytes;
@@ -1026,7 +1026,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1generate__J
                             rc);
                     }
 #endif
-                    throwOCKException(
+                    throwNativeException(
                         env, 0,
                         "ICC_EC_Generate_key (ICC_EC_KEY_generate) failed");
                 } else {
@@ -2276,7 +2276,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECD
                 rc = ICC_EVP_PKEY_derive(ockCtx, gen_ctx, secretBytesNative,
                                          &secret_key_len);
                 if (ICC_OSSL_SUCCESS != rc) {
-                    throwOCKException(
+                    throwNativeException(
                         env, 0, "ICC_EVP_PKEY_derive failed to derive a key");
                 }
                 ICC_EVP_PKEY_CTX_free(ockCtx, gen_ctx);
@@ -2411,7 +2411,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1signDatawit
                         gslogMessage("DETAIL_EC FAILURE sigBytesNative");
                     }
 #endif
-                    throwOCKException(
+                    throwNativeException(
                         env, 0,
                         "NULL from GetPrimitiveArrayCritical for sigBytes");
                 } else {

@@ -10,10 +10,12 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.security.InvalidKeyException;
 
+
+
 public final class Signature {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private Digest digest = null;
     private AsymmetricKey key = null;
     private boolean initialized = false;
@@ -22,12 +24,12 @@ public final class Signature {
     private final static String debPrefix = "SIGNATURE";
 
     public static Signature getInstance(boolean isFIPS, String digestAlgo)
-            throws OCKException {
+            throws NativeException {
         return new Signature(isFIPS, digestAlgo);
     }
 
 
-    private Signature(boolean isFIPS, String digestAlgo) throws OCKException {
+    private Signature(boolean isFIPS, String digestAlgo) throws NativeException {
         //final String methodName = "Signature(String)";
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
@@ -35,7 +37,7 @@ public final class Signature {
         //OCKDebug.Msg (debPrefix, methodName, "digestAlgo :" + digestAlgo);
     }
 
-    public void update(byte[] input, int offset, int length) throws OCKException {
+    public void update(byte[] input, int offset, int length) throws NativeException {
         if ((input == null) || (length < 0) || (offset < 0) || ((offset + length) > input.length)) {
             throw new IllegalArgumentException("Bad input parameters to Signature update");
         }
@@ -44,7 +46,7 @@ public final class Signature {
     }
 
     public void initialize(AsymmetricKey key, boolean rsaPlain)
-            throws InvalidKeyException, OCKException {
+            throws InvalidKeyException, NativeException {
         //final String methodName = "initialize";
         if (key == null) {
             throw new IllegalArgumentException("key is null");
@@ -59,7 +61,7 @@ public final class Signature {
         //OCKDebug.Msg (debPrefix, methodName,  "this.key=" + key);
     }
 
-    public synchronized byte[] sign() throws OCKException {
+    public synchronized byte[] sign() throws NativeException {
 
         if (!this.initialized) {
             throw new IllegalStateException("Signature not initialized");
@@ -68,7 +70,7 @@ public final class Signature {
         //OCKDebug.Msg (debPrefix, "sign", "digestId :" + digest.getId() + " pkeyId :" + this.key.getPKeyId());
         if ((this.digest == null) || !validId(this.digest.getId())
                 || !validId(this.key.getPKeyId())) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
 
         byte[] signature = null;
@@ -76,7 +78,7 @@ public final class Signature {
             signature = this.nativeImpl.SIGNATURE_sign(digest.getId(),
                     this.key.getPKeyId(), this.convertKey);
         } finally {
-            // Try to reset even if OCKException is thrown
+            // Try to reset even if NativeException is thrown
             this.digest.reset();
         }
 
@@ -84,7 +86,7 @@ public final class Signature {
         return signature;
     }
 
-    public synchronized boolean verify(byte[] sigBytes) throws OCKException {
+    public synchronized boolean verify(byte[] sigBytes) throws NativeException {
         //final String methodName = "verify";
         // create key length function and check sigbytes against key length?
         if (!this.initialized) {
@@ -97,7 +99,7 @@ public final class Signature {
         //OCKDebug.Msg (debPrefix, methodName,  "digestId :" + digest.getId() + " pkeyId :" + this.key.getPKeyId());
         //OCKDebug.Msg (debPrefix, methodName,  " sigBytes :",  sigBytes);
         if ((this.digest == null) || digest.getId() == 0L || this.key.getPKeyId() == 0L) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
 
         boolean verified = false;
@@ -105,7 +107,7 @@ public final class Signature {
             verified = this.nativeImpl.SIGNATURE_verify(digest.getId(),
                     this.key.getPKeyId(), sigBytes);
         } finally {
-            // Try to reset even if OCKException is thrown
+            // Try to reset even if NativeException is thrown
             this.digest.reset();
         }
 

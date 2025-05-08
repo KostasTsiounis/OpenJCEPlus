@@ -8,8 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.ECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.security.AlgorithmParameters;
 import java.security.InvalidKeyException;
@@ -17,8 +15,13 @@ import java.security.InvalidParameterException;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.InvalidParameterSpecException;
+
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
+
+import com.ibm.crypto.plus.provider.base.ECKey;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+
 import sun.security.util.BitArray;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
@@ -70,7 +73,7 @@ final class ECPublicKey extends X509Key
                     parameterBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -94,7 +97,7 @@ final class ECPublicKey extends X509Key
                     parameterBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -118,7 +121,7 @@ final class ECPublicKey extends X509Key
 
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create EC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         } finally {
             if (algidOut != null) {

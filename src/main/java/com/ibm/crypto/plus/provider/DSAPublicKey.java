@@ -9,7 +9,7 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.DSAKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -70,7 +70,7 @@ final class DSAPublicKey extends X509Key
             this.dsaKey = DSAKey.createPublicKey(provider.isFIPS(), publicKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -91,7 +91,7 @@ final class DSAPublicKey extends X509Key
             this.dsaKey = DSAKey.createPublicKey(provider.isFIPS(), publicKeyBytes);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -109,7 +109,7 @@ final class DSAPublicKey extends X509Key
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create DSA public key",
                     exception);
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }

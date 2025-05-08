@@ -1,17 +1,10 @@
-/*
- * Copyright IBM Corp. 2023
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms provided by IBM in the LICENSE file that accompanied
- * this code, including the "Classpath" Exception described therein.
- */
+package com.ibm.crypto.plus.provider.ossl;
 
-package com.ibm.crypto.plus.provider.base;
-
+import com.ibm.crypto.plus.provider.base.NativeException;
 import java.util.Hashtable;
 import java.util.Map;
 
-public final class OCKException extends java.lang.Exception {
+public final class OSSLException extends NativeException {
 
     /**
      * 
@@ -36,18 +29,12 @@ public final class OCKException extends java.lang.Exception {
         return map;
     }
 
-    public OCKException(String s) {
+    public OSSLException(String s) {
         super(s);
         this.code = GKR_UNSPECIFIED;
     }
 
-    public OCKException(String s, Throwable cause) {
-        super(s, cause);
-        this.code = GKR_UNSPECIFIED;
-    }
-
-
-    public OCKException(int code) {
+    public OSSLException(int code) {
         super(errorMessage(code));
         this.code = code;
     }

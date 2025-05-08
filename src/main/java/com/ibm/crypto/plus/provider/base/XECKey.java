@@ -10,13 +10,15 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.util.Arrays;
 
+
+
 public final class XECKey implements AsymmetricKey {
     // The following is a special byte[] instance to indicate that the
     // private/public key bytes are available but not yet obtained.
     //
     static final byte[] unobtainedKeyBytes = new byte[0];
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long xecKeyId;
     private byte[] privateKeyBytes;
     private byte[] publicKeyBytes;
@@ -43,15 +45,15 @@ public final class XECKey implements AsymmetricKey {
 
 
     public static XECKey generateKeyPair(boolean isFIPS, int curveNum, int pub_size)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "generateKeyPair(NamedParameterSpec.CURVE) ";
         FastJNIBuffer buffer = XECKey.buffer.get();
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long xecKeyId = nativeImpl.XECKEY_generate(curveNum,
                 buffer.pointer());
         if (!validId(xecKeyId))
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
 
         byte[] publicKeyBytes = new byte[pub_size];
         buffer.get(0, publicKeyBytes, 0, pub_size);
@@ -60,13 +62,13 @@ public final class XECKey implements AsymmetricKey {
     }
 
     public static byte[] computeECDHSecret(boolean isFIPS, long genCtx, long pubId,
-            long privId, int secrectBufferSize) throws OCKException {
+            long privId, int secrectBufferSize) throws NativeException {
         if (pubId == 0)
             throw new IllegalArgumentException("The public key parameter is not valid");
         if (privId == 0)
             throw new IllegalArgumentException("The private key parameter is not valid");
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         byte[] sharedSecretBytes = nativeImpl.XECKEY_computeECDHSecret(
                 genCtx, pubId, privId, secrectBufferSize);
         //OCKDebug.Msg (debPrefix, methodName,  "pubId :" + pubId + " privId :" + privId + " sharedSecretBytes :", sharedSecretBytes);
@@ -79,20 +81,20 @@ public final class XECKey implements AsymmetricKey {
         return (id != 0L);
     }
 
-    private synchronized void obtainPrivateKeyBytes() throws OCKException {
+    private synchronized void obtainPrivateKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPrivateKeyBytes at the same time, we only want to call the
         // native code one time.
         //
         if (privateKeyBytes == unobtainedKeyBytes) {
             if (!validId(xecKeyId))
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             this.privateKeyBytes = this.nativeImpl.XECKEY_getPrivateKeyBytes(xecKeyId); // Returns DER encoded bytes
         }
     }
 
     @Override
-    public byte[] getPrivateKeyBytes() throws OCKException {
+    public byte[] getPrivateKeyBytes() throws NativeException {
         //final String methodName = "getPrivateKeyBytes()";
         if (privateKeyBytes == unobtainedKeyBytes)
             obtainPrivateKeyBytes();
@@ -100,10 +102,10 @@ public final class XECKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPublicKeyBytes() throws OCKException {
+    public byte[] getPublicKeyBytes() throws NativeException {
         //final String methodName = "getPublickeyBytes()";
         if (publicKeyBytes == unobtainedKeyBytes) {
-            throw new OCKException(
+            throw new NativeException(
                     "Public key should always be loaded on creation. Reaching this state means this object was initialized without a public key...");
         }
         return (publicKeyBytes == null) ? null : publicKeyBytes.clone();
@@ -128,18 +130,18 @@ public final class XECKey implements AsymmetricKey {
     }
 
     public synchronized static XECKey createPrivateKey(boolean isFIPS,
-            byte[] privateKeyBytes, int priv_size) throws OCKException {
+            byte[] privateKeyBytes, int priv_size) throws NativeException {
         //final String methodName = "createPrivateKey";
         if (privateKeyBytes == null)
             throw new IllegalArgumentException("key bytes is null");
 
         FastJNIBuffer buffer = XECKey.buffer.get();
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long xecKeyId = nativeImpl.XECKEY_createPrivateKey(privateKeyBytes,
                 buffer.pointer());
         if (!validId(xecKeyId))
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
 
         // buffer now contains public key
         byte[] publicKeyBytes = new byte[priv_size];
@@ -149,12 +151,12 @@ public final class XECKey implements AsymmetricKey {
     }
 
     public static XECKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "createPublicKey";
         if (publicKeyBytes == null)
             throw new IllegalArgumentException("key bytes is null");
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long xecKeyId = nativeImpl.XECKEY_createPublicKey(publicKeyBytes);
         return new XECKey(isFIPS, xecKeyId, null, publicKeyBytes.clone());
     }
@@ -164,7 +166,7 @@ public final class XECKey implements AsymmetricKey {
     }
 
     @Override
-    public long getPKeyId() throws OCKException {
+    public long getPKeyId() throws NativeException {
         return xecKeyId;
     }
 }

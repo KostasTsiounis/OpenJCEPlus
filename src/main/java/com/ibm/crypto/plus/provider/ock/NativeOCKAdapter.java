@@ -8,9 +8,9 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
-import com.ibm.crypto.plus.provider.base.NativeInterface;
-import com.ibm.crypto.plus.provider.base.OCKContext;
-import com.ibm.crypto.plus.provider.base.OCKException;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.NativeException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 import java.security.ProviderException;
 import sun.security.util.Debug;
 
-public abstract class NativeOCKAdapter implements NativeInterface {
+public abstract class NativeOCKAdapter extends NativeAdapter {
     // These code values must match those defined in Context.h.
     //
     private static final int VALUE_ID_FIPS_APPROVED_MODE = 0;
@@ -80,7 +80,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
             }
 
             this.ockInitialized = true;
-        } catch (OCKException e) {
+        } catch (NativeException e) {
             throw providerException("Failed to initialize OpenJCEPlus provider", e);
         } catch (Throwable t) {
             ProviderException exceptionToThrow = providerException(
@@ -140,7 +140,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public String getLibraryVersion() throws OCKException {
+    public String getLibraryVersion() throws NativeException {
         if (ockVersion == unobtainedValue) {
             obtainOCKVersion();
         }
@@ -148,7 +148,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public String getLibraryInstallPath() throws OCKException {
+    public String getLibraryInstallPath() throws NativeException {
         if (ockInstallPath == unobtainedValue) {
             obtainOCKInstallPath();
         }
@@ -156,7 +156,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
 
-    private synchronized void obtainOCKVersion() throws OCKException {
+    private synchronized void obtainOCKVersion() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to get the value at the same time, we only want to call the native
         // code one time.
@@ -166,7 +166,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         }
     }
 
-    private synchronized void obtainOCKInstallPath() throws OCKException {
+    private synchronized void obtainOCKInstallPath() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to get the value at the same time, we only want to call the native
         // code one time.
@@ -176,20 +176,8 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         }
     }
 
-    static public ProviderException providerException(String message, Throwable ockException) {
-        ProviderException providerException = new ProviderException(message, ockException);
-        setOCKExceptionCause(providerException, ockException);
-        return providerException;
-    }
-
-    static public void setOCKExceptionCause(Exception exception, Throwable ockException) {
-        if (debug != null) {
-            exception.initCause(ockException);
-        }
-    }
-
     @Override
-    public void validateLibraryLocation() throws ProviderException, OCKException {
+    public void validateLibraryLocation() throws ProviderException, NativeException {
         if (NativeOCKImplementation.requirePreloadOCK == false) {
             // If we are not requiring OCK to be pre-loaded, then it does not need to be
             // loaded from the JRE location
@@ -223,7 +211,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public void validateLibraryVersion() throws ProviderException, OCKException {
+    public void validateLibraryVersion() throws ProviderException, NativeException {
         if (NativeOCKImplementation.requirePreloadOCK == false) {
             // If we are not requiring OCK to be pre-loaded, then it does not need to be
             // a specific version
@@ -286,12 +274,12 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public long initializeOCK(boolean isFIPS) throws OCKException {
+    public long initializeOCK(boolean isFIPS) throws NativeException {
         return NativeOCKImplementation.initializeOCK(isFIPS);
     }
 
     @Override
-    public String CTX_getValue(int valueId) throws OCKException {
+    public String CTX_getValue(int valueId) throws NativeException {
         return NativeOCKImplementation.CTX_getValue(ockContext.getId(), valueId);
     }
 
@@ -301,57 +289,57 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public void RAND_nextBytes(byte[] buffer) throws OCKException {
+    public void RAND_nextBytes(byte[] buffer) throws NativeException {
         NativeOCKImplementation.RAND_nextBytes(ockContext.getId(), buffer);
     }
 
     @Override
-    public void RAND_setSeed(byte[] seed) throws OCKException {
+    public void RAND_setSeed(byte[] seed) throws NativeException {
         NativeOCKImplementation.RAND_setSeed(ockContext.getId(), seed);
     }
 
     @Override
-    public void RAND_generateSeed(byte[] seed) throws OCKException {
+    public void RAND_generateSeed(byte[] seed) throws NativeException {
         NativeOCKImplementation.RAND_generateSeed(ockContext.getId(), seed);
     }
 
     @Override
-    public long EXTRAND_create(String algName) throws OCKException {
+    public long EXTRAND_create(String algName) throws NativeException {
         return NativeOCKImplementation.EXTRAND_create(ockContext.getId(), algName);
     }
 
     @Override
-    public void EXTRAND_nextBytes(long ockPRNGContextId, byte[] buffer) throws OCKException {
+    public void EXTRAND_nextBytes(long ockPRNGContextId, byte[] buffer) throws NativeException {
         NativeOCKImplementation.EXTRAND_nextBytes(ockContext.getId(), ockPRNGContextId, buffer);
     }
 
     @Override
-    public void EXTRAND_setSeed(long ockPRNGContextId, byte[] seed) throws OCKException {
+    public void EXTRAND_setSeed(long ockPRNGContextId, byte[] seed) throws NativeException {
         NativeOCKImplementation.EXTRAND_setSeed(ockContext.getId(), ockPRNGContextId, seed);
     }
 
     @Override
-    public void EXTRAND_delete(long ockPRNGContextId) throws OCKException {
+    public void EXTRAND_delete(long ockPRNGContextId) throws NativeException {
         NativeOCKImplementation.EXTRAND_delete(ockContext.getId(), ockPRNGContextId);
     }
 
     @Override
-    public long CIPHER_create(String cipher) throws OCKException {
+    public long CIPHER_create(String cipher) throws NativeException {
         return NativeOCKImplementation.CIPHER_create(ockContext.getId(), cipher);
     }
 
     @Override
-    public void CIPHER_init(long ockCipherId, int isEncrypt, int paddingId, byte[] key, byte[] iv) throws OCKException {
+    public void CIPHER_init(long ockCipherId, int isEncrypt, int paddingId, byte[] key, byte[] iv) throws NativeException {
         NativeOCKImplementation.CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt, paddingId, key, iv);
     }
 
     @Override
-    public void CIPHER_clean(long ockCipherId) throws OCKException {
+    public void CIPHER_clean(long ockCipherId) throws NativeException {
         NativeOCKImplementation.CIPHER_clean(ockContext.getId(), ockCipherId);
     }
 
     @Override
-    public void CIPHER_setPadding(long ockCipherId, int paddingId) throws OCKException {
+    public void CIPHER_setPadding(long ockCipherId, int paddingId) throws NativeException {
         NativeOCKImplementation.CIPHER_setPadding(ockContext.getId(), ockCipherId, paddingId);
     }
 
@@ -377,28 +365,28 @@ public abstract class NativeOCKAdapter implements NativeInterface {
 
     @Override
     public int CIPHER_encryptUpdate(long ockCipherId, byte[] plaintext, int plaintextOffset, int plaintextLen,
-            byte[] ciphertext, int ciphertextOffset, boolean needsReinit) throws OCKException {
+            byte[] ciphertext, int ciphertextOffset, boolean needsReinit) throws NativeException {
         return NativeOCKImplementation.CIPHER_encryptUpdate(ockContext.getId(), ockCipherId,
             plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, needsReinit);
     }
 
     @Override
     public int CIPHER_decryptUpdate(long ockCipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
-            byte[] plaintext, int plaintextOffset, boolean needsReinit) throws OCKException {
+            byte[] plaintext, int plaintextOffset, boolean needsReinit) throws NativeException {
         return NativeOCKImplementation.CIPHER_decryptUpdate(ockContext.getId(), ockCipherId,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
     }
 
     @Override
     public int CIPHER_encryptFinal(long ockCipherId, byte[] input, int inOffset, int inLen, byte[] ciphertext,
-            int ciphertextOffset, boolean needsReinit) throws OCKException {
+            int ciphertextOffset, boolean needsReinit) throws NativeException {
         return NativeOCKImplementation.CIPHER_encryptFinal(ockContext.getId(), ockCipherId,
             input, inOffset, inLen, ciphertext, ciphertextOffset, needsReinit);
     }
 
     @Override
     public int CIPHER_decryptFinal(long ockCipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
-            byte[] plaintext, int plaintextOffset, boolean needsReinit) throws OCKException {
+            byte[] plaintext, int plaintextOffset, boolean needsReinit) throws NativeException {
         return NativeOCKImplementation.CIPHER_decryptFinal(ockContext.getId(), ockCipherId,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
     }
@@ -409,7 +397,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public void CIPHER_delete(long ockCipherId) throws OCKException {
+    public void CIPHER_delete(long ockCipherId) throws NativeException {
         NativeOCKImplementation.CIPHER_delete(ockContext.getId(), ockCipherId);
     }
 
@@ -420,22 +408,22 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public long POLY1305CIPHER_create(String cipher) throws OCKException {
+    public long POLY1305CIPHER_create(String cipher) throws NativeException {
         return NativeOCKImplementation.POLY1305CIPHER_create(ockContext.getId(), cipher);
     }
 
     @Override
-    public void POLY1305CIPHER_init(long ockCipherId, int isEncrypt, byte[] key, byte[] iv) throws OCKException {
+    public void POLY1305CIPHER_init(long ockCipherId, int isEncrypt, byte[] key, byte[] iv) throws NativeException {
         NativeOCKImplementation.POLY1305CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt, key, iv);
     }
 
     @Override
-    public void POLY1305CIPHER_clean(long ockCipherId) throws OCKException {
+    public void POLY1305CIPHER_clean(long ockCipherId) throws NativeException {
         NativeOCKImplementation.POLY1305CIPHER_clean(ockContext.getId(), ockCipherId);
     }
 
     @Override
-    public void POLY1305CIPHER_setPadding(long ockCipherId, int paddingId) throws OCKException {
+    public void POLY1305CIPHER_setPadding(long ockCipherId, int paddingId) throws NativeException {
         NativeOCKImplementation.POLY1305CIPHER_setPadding(ockContext.getId(), ockCipherId, paddingId);
     }
 
@@ -461,34 +449,34 @@ public abstract class NativeOCKAdapter implements NativeInterface {
 
     @Override
     public int POLY1305CIPHER_encryptUpdate(long ockCipherId, byte[] plaintext, int plaintextOffset, int plaintextLen,
-            byte[] ciphertext, int ciphertextOffset) throws OCKException {
+            byte[] ciphertext, int ciphertextOffset) throws NativeException {
         return NativeOCKImplementation.POLY1305CIPHER_encryptUpdate(ockContext.getId(), ockCipherId,
             plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
     }
 
     @Override
     public int POLY1305CIPHER_decryptUpdate(long ockCipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
-            byte[] plaintext, int plaintextOffset) throws OCKException {
+            byte[] plaintext, int plaintextOffset) throws NativeException {
         return NativeOCKImplementation.POLY1305CIPHER_decryptUpdate(ockContext.getId(), ockCipherId,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
     }
 
     @Override
     public int POLY1305CIPHER_encryptFinal(long ockCipherId, byte[] input, int inOffset, int inLen, byte[] ciphertext,
-            int ciphertextOffset, byte[] tag) throws OCKException {
+            int ciphertextOffset, byte[] tag) throws NativeException {
         return NativeOCKImplementation.POLY1305CIPHER_encryptFinal(ockContext.getId(), ockCipherId,
             input, inOffset, inLen, ciphertext, ciphertextOffset, tag);
     }
 
     @Override
     public int POLY1305CIPHER_decryptFinal(long ockCipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
-            byte[] plaintext, int plaintextOffset, byte[] tag) throws OCKException {
+            byte[] plaintext, int plaintextOffset, byte[] tag) throws NativeException {
         return NativeOCKImplementation.POLY1305CIPHER_decryptFinal(ockContext.getId(), ockCipherId,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, tag);
     }
 
     @Override
-    public void POLY1305CIPHER_delete(long ockCipherId) throws OCKException {
+    public void POLY1305CIPHER_delete(long ockCipherId) throws NativeException {
         NativeOCKImplementation.POLY1305CIPHER_delete(ockContext.getId(), ockCipherId);
     }
 
@@ -500,7 +488,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
-            byte[] output, int outputOffset) throws OCKException {
+            byte[] output, int outputOffset) throws NativeException {
         return NativeOCKImplementation.do_GCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen,
             inOffset, inLen, ciphertextOffset, aadLen, tagLen, parameterBuffer,
             input, inputOffset, output, outputOffset);
@@ -508,7 +496,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
 
     @Override
     public int do_GCM_encryptFastJNI(long gcmCtx, int keyLen, int ivLen, int inOffset, int inLen, int ciphertextOffset,
-            int aadLen, int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer) throws OCKException {
+            int aadLen, int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer) throws NativeException {
         return NativeOCKImplementation.do_GCM_encryptFastJNI(ockContext.getId(), gcmCtx, keyLen, ivLen, inOffset, inLen,
             ciphertextOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
     }
@@ -516,7 +504,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
-            byte[] output, int outputOffset) throws OCKException {
+            byte[] output, int outputOffset) throws NativeException {
         return NativeOCKImplementation.do_GCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
             ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
     }
@@ -524,7 +512,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_decryptFastJNI(long gcmCtx, int keyLen, int ivLen, int ciphertextOffset, int ciphertextLen,
             int plainOffset, int aadLen, int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.do_GCM_decryptFastJNI(ockContext.getId(), gcmCtx, keyLen, ivLen,
             ciphertextOffset, ciphertextLen, plainOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
     }
@@ -532,7 +520,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_encrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] input, int inOffset,
             int inLen, byte[] ciphertext, int ciphertextOffset, byte[] aad, int aadLen, byte[] tag, int tagLen)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.do_GCM_encrypt(ockContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
             input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
     }
@@ -540,7 +528,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_decrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] ciphertext,
             int cipherOffset, int cipherLen, byte[] plaintext, int plaintextOffset, byte[] aad, int aadLen, int tagLen)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.do_GCM_decrypt(ockContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, aad, aadLen, tagLen);
     }
@@ -548,7 +536,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_FinalForUpdateEncrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] input,
             int inOffset, int inLen, byte[] ciphertext, int ciphertextOffset, byte[] aad, int aadLen, byte[] tag,
-            int tagLen) throws OCKException {
+            int tagLen) throws NativeException {
         return NativeOCKImplementation.do_GCM_FinalForUpdateEncrypt(ockContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
             input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
     }
@@ -556,51 +544,51 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_GCM_FinalForUpdateDecrypt(long gcmCtx, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, int plaintextlen, byte[] aad, int aadLen, int tagLen)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.do_GCM_FinalForUpdateDecrypt(ockContext.getId(), gcmCtx,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, plaintextlen, aad, aadLen, tagLen);
     }
 
     @Override
     public int do_GCM_UpdForUpdateEncrypt(long gcmCtx, byte[] input, int inOffset, int inLen, byte[] ciphertext,
-            int ciphertextOffset) throws OCKException {
+            int ciphertextOffset) throws NativeException {
         return NativeOCKImplementation.do_GCM_UpdForUpdateEncrypt(ockContext.getId(), gcmCtx,
             input, inOffset, inLen, ciphertext, ciphertextOffset);
     }
 
     @Override
     public int do_GCM_UpdForUpdateDecrypt(long gcmCtx, byte[] ciphertext, int cipherOffset, int cipherLen,
-            byte[] plaintext, int plaintextOffset) throws OCKException {
+            byte[] plaintext, int plaintextOffset) throws NativeException {
         return NativeOCKImplementation.do_GCM_UpdForUpdateDecrypt(ockContext.getId(), gcmCtx,
             ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
     }
 
     @Override
     public int do_GCM_InitForUpdateEncrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] aad,
-            int aadLen) throws OCKException {
+            int aadLen) throws NativeException {
         return NativeOCKImplementation.do_GCM_InitForUpdateEncrypt(ockContext.getId(), gcmCtx,
             key, keyLen, iv, ivLen, aad, aadLen);
     }
 
     @Override
     public int do_GCM_InitForUpdateDecrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] aad,
-            int aadLen) throws OCKException {
+            int aadLen) throws NativeException {
         return NativeOCKImplementation.do_GCM_InitForUpdateDecrypt(ockContext.getId(), gcmCtx,
             key, keyLen, iv, ivLen, aad, aadLen);
     }
 
     @Override
-    public void do_GCM_delete() throws OCKException {
+    public void do_GCM_delete() throws NativeException {
         NativeOCKImplementation.do_GCM_delete(ockContext.getId());
     }
 
     @Override
-    public void free_GCM_ctx(long gcmContextId) throws OCKException {
+    public void free_GCM_ctx(long gcmContextId) throws NativeException {
         NativeOCKImplementation.free_GCM_ctx(ockContext.getId(), gcmContextId);
     }
 
     @Override
-    public long create_GCM_context() throws OCKException {
+    public long create_GCM_context() throws NativeException {
         return NativeOCKImplementation.create_GCM_context(ockContext.getId());
     }
 
@@ -612,14 +600,14 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_CCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
-            byte[] output, int outputOffset) throws OCKException {
+            byte[] output, int outputOffset) throws NativeException {
         return NativeOCKImplementation.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
             ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
     }
 
     @Override
     public int do_CCM_encryptFastJNI(int keyLen, int ivLen, int inLen, int ciphertextLen, int aadLen, int tagLen,
-            long parameterBuffer, long inputBuffer, long outputBuffer) throws OCKException {
+            long parameterBuffer, long inputBuffer, long outputBuffer) throws NativeException {
         return NativeOCKImplementation.do_CCM_encryptFastJNI(ockContext.getId(), keyLen, ivLen, inLen,
             ciphertextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
     }
@@ -627,67 +615,67 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public int do_CCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
-            byte[] output, int outputOffset) throws OCKException {
+            byte[] output, int outputOffset) throws NativeException {
         return NativeOCKImplementation.do_CCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
             ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
     }
 
     @Override
     public int do_CCM_decryptFastJNI(int keyLen, int ivLen, int ciphertextLen, int plaintextLen, int aadLen, int tagLen,
-            long parameterBuffer, long inputBuffer, long outputBuffer) throws OCKException {
+            long parameterBuffer, long inputBuffer, long outputBuffer) throws NativeException {
         return NativeOCKImplementation.do_CCM_decryptFastJNI(ockContext.getId(), keyLen, ivLen, ciphertextLen,
             plaintextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
     }
 
     @Override
     public int do_CCM_encrypt(byte[] iv, int ivLen, byte[] key, int keyLen, byte[] aad, int aadLen, byte[] input,
-            int inLen, byte[] ciphertext, int ciphertextLen, int tagLen) throws OCKException {
+            int inLen, byte[] ciphertext, int ciphertextLen, int tagLen) throws NativeException {
         return NativeOCKImplementation.do_CCM_encrypt(ockContext.getId(), iv, ivLen, key, keyLen,
             aad, aadLen, input, inLen, ciphertext, ciphertextLen, tagLen);
     }
 
     @Override
     public int do_CCM_decrypt(byte[] iv, int ivLen, byte[] key, int keyLen, byte[] aad, int aadLen, byte[] ciphertext,
-            int ciphertextLength, byte[] plaintext, int plaintextLength, int tagLen) throws OCKException {
+            int ciphertextLength, byte[] plaintext, int plaintextLength, int tagLen) throws NativeException {
         return NativeOCKImplementation.do_CCM_decrypt(ockContext.getId(), iv, ivLen, key, keyLen,
             aad, aadLen, ciphertext, ciphertextLength, plaintext, plaintextLength, tagLen);
     }
 
     @Override
-    public void do_CCM_delete() throws OCKException {
+    public void do_CCM_delete() throws NativeException {
         NativeOCKImplementation.do_CCM_delete(ockContext.getId());
     }
 
     @Override
     public int RSACIPHER_public_encrypt(long rsaKeyId, int rsaPaddingId, byte[] plaintext, int plaintextOffset,
-            int plaintextLen, byte[] ciphertext, int ciphertextOffset) throws OCKException {
+            int plaintextLen, byte[] ciphertext, int ciphertextOffset) throws NativeException {
         return NativeOCKImplementation.RSACIPHER_public_encrypt(ockContext.getId(), rsaKeyId, rsaPaddingId,
             plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
     }
 
     @Override
     public int RSACIPHER_private_encrypt(long rsaKeyId, int rsaPaddingId, byte[] plaintext, int plaintextOffset,
-            int plaintextLen, byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws OCKException {
+            int plaintextLen, byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws NativeException {
         return NativeOCKImplementation.RSACIPHER_private_encrypt(ockContext.getId(), rsaKeyId, rsaPaddingId,
             plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, convertKey);
     }
 
     @Override
     public int RSACIPHER_public_decrypt(long rsaKeyId, int rsaPaddingId, byte[] ciphertext, int ciphertextOffset,
-            int ciphertextLen, byte[] plaintext, int plaintextOffset) throws OCKException {
+            int ciphertextLen, byte[] plaintext, int plaintextOffset) throws NativeException {
         return NativeOCKImplementation.RSACIPHER_public_decrypt(ockContext.getId(), rsaKeyId, rsaPaddingId,
             ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset);
     }
 
     @Override
     public int RSACIPHER_private_decrypt(long rsaKeyId, int rsaPaddingId, byte[] ciphertext, int ciphertextOffset,
-            int ciphertextLen, byte[] plaintext, int plaintextOffset, boolean convertKey) throws OCKException {
+            int ciphertextLen, byte[] plaintext, int plaintextOffset, boolean convertKey) throws NativeException {
         return NativeOCKImplementation.RSACIPHER_private_decrypt(ockContext.getId(), rsaKeyId, rsaPaddingId,
             ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset, convertKey);
     }
 
     @Override
-    public long DHKEY_generate(int numBits) throws OCKException {
+    public long DHKEY_generate(int numBits) throws NativeException {
         return NativeOCKImplementation.DHKEY_generate(ockContext.getId(), numBits);
     }
 
@@ -697,17 +685,17 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public long DHKEY_generate(byte[] dhParameters) throws OCKException {
+    public long DHKEY_generate(byte[] dhParameters) throws NativeException {
         return NativeOCKImplementation.DHKEY_generate(ockContext.getId(), dhParameters);
     }
 
     @Override
-    public long DHKEY_createPrivateKey(byte[] privateKeyBytes) throws OCKException {
+    public long DHKEY_createPrivateKey(byte[] privateKeyBytes) throws NativeException {
         return NativeOCKImplementation.DHKEY_createPrivateKey(ockContext.getId(), privateKeyBytes);
     }
 
     @Override
-    public long DHKEY_createPublicKey(byte[] publicKeyBytes) throws OCKException {
+    public long DHKEY_createPublicKey(byte[] publicKeyBytes) throws NativeException {
         return NativeOCKImplementation.DHKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
     }
 
@@ -717,57 +705,57 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public byte[] DHKEY_getPrivateKeyBytes(long dhKeyId) throws OCKException {
+    public byte[] DHKEY_getPrivateKeyBytes(long dhKeyId) throws NativeException {
         return NativeOCKImplementation.DHKEY_getPrivateKeyBytes(ockContext.getId(), dhKeyId);
     }
 
     @Override
-    public byte[] DHKEY_getPublicKeyBytes(long dhKeyId) throws OCKException {
+    public byte[] DHKEY_getPublicKeyBytes(long dhKeyId) throws NativeException {
         return NativeOCKImplementation.DHKEY_getPublicKeyBytes(ockContext.getId(), dhKeyId);
     }
 
     @Override
-    public long DHKEY_createPKey(long dhKeyId) throws OCKException {
+    public long DHKEY_createPKey(long dhKeyId) throws NativeException {
         return NativeOCKImplementation.DHKEY_createPKey(ockContext.getId(), dhKeyId);
     }
 
     @Override
-    public byte[] DHKEY_computeDHSecret(long pubKeyId, long privKeyId) throws OCKException {
+    public byte[] DHKEY_computeDHSecret(long pubKeyId, long privKeyId) throws NativeException {
         return NativeOCKImplementation.DHKEY_computeDHSecret(ockContext.getId(), pubKeyId, privKeyId);
     }
 
     @Override
-    public void DHKEY_delete(long dhKeyId) throws OCKException {
+    public void DHKEY_delete(long dhKeyId) throws NativeException {
         NativeOCKImplementation.DHKEY_delete(ockContext.getId(), dhKeyId);
     }
 
     @Override
-    public long RSAKEY_generate(int numBits, long e) throws OCKException {
+    public long RSAKEY_generate(int numBits, long e) throws NativeException {
         return NativeOCKImplementation.RSAKEY_generate(ockContext.getId(), numBits, e);
     }
 
     @Override
-    public long RSAKEY_createPrivateKey(byte[] privateKeyBytes) throws OCKException {
+    public long RSAKEY_createPrivateKey(byte[] privateKeyBytes) throws NativeException {
         return NativeOCKImplementation.RSAKEY_createPrivateKey(ockContext.getId(), privateKeyBytes);
     }
 
     @Override
-    public long RSAKEY_createPublicKey(byte[] publicKeyBytes) throws OCKException {
+    public long RSAKEY_createPublicKey(byte[] publicKeyBytes) throws NativeException {
         return NativeOCKImplementation.RSAKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
     }
 
     @Override
-    public byte[] RSAKEY_getPrivateKeyBytes(long rsaKeyId) throws OCKException {
+    public byte[] RSAKEY_getPrivateKeyBytes(long rsaKeyId) throws NativeException {
         return NativeOCKImplementation.RSAKEY_getPrivateKeyBytes(ockContext.getId(), rsaKeyId);
     }
 
     @Override
-    public byte[] RSAKEY_getPublicKeyBytes(long rsaKeyId) throws OCKException {
+    public byte[] RSAKEY_getPublicKeyBytes(long rsaKeyId) throws NativeException {
         return NativeOCKImplementation.RSAKEY_getPublicKeyBytes(ockContext.getId(), rsaKeyId);
     }
 
     @Override
-    public long RSAKEY_createPKey(long rsaKeyId) throws OCKException {
+    public long RSAKEY_createPKey(long rsaKeyId) throws NativeException {
         return NativeOCKImplementation.RSAKEY_createPKey(ockContext.getId(), rsaKeyId);
     }
 
@@ -782,7 +770,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public long DSAKEY_generate(int numBits) throws OCKException {
+    public long DSAKEY_generate(int numBits) throws NativeException {
         return NativeOCKImplementation.DSAKEY_generate(ockContext.getId(), numBits);
     }
 
@@ -792,17 +780,17 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public long DSAKEY_generate(byte[] dsaParameters) throws OCKException {
+    public long DSAKEY_generate(byte[] dsaParameters) throws NativeException {
         return NativeOCKImplementation.DSAKEY_generate(ockContext.getId(), dsaParameters);
     }
 
     @Override
-    public long DSAKEY_createPrivateKey(byte[] privateKeyBytes) throws OCKException {
+    public long DSAKEY_createPrivateKey(byte[] privateKeyBytes) throws NativeException {
         return NativeOCKImplementation.DSAKEY_createPrivateKey(ockContext.getId(), privateKeyBytes);
     }
 
     @Override
-    public long DSAKEY_createPublicKey(byte[] publicKeyBytes) throws OCKException {
+    public long DSAKEY_createPublicKey(byte[] publicKeyBytes) throws NativeException {
         return NativeOCKImplementation.DSAKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
     }
 
@@ -812,107 +800,107 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public byte[] DSAKEY_getPrivateKeyBytes(long dsaKeyId) throws OCKException {
+    public byte[] DSAKEY_getPrivateKeyBytes(long dsaKeyId) throws NativeException {
         return NativeOCKImplementation.DSAKEY_getPrivateKeyBytes(ockContext.getId(), dsaKeyId);
     }
 
     @Override
-    public byte[] DSAKEY_getPublicKeyBytes(long dsaKeyId) throws OCKException {
+    public byte[] DSAKEY_getPublicKeyBytes(long dsaKeyId) throws NativeException {
         return NativeOCKImplementation.DSAKEY_getPublicKeyBytes(ockContext.getId(), dsaKeyId);
     }
 
     @Override
-    public long DSAKEY_createPKey(long dsaKeyId) throws OCKException {
+    public long DSAKEY_createPKey(long dsaKeyId) throws NativeException {
         return NativeOCKImplementation.DSAKEY_createPKey(ockContext.getId(), dsaKeyId);
     }
 
     @Override
-    public void DSAKEY_delete(long dsaKeyId) throws OCKException {
+    public void DSAKEY_delete(long dsaKeyId) throws NativeException {
         NativeOCKImplementation.DSAKEY_delete(ockContext.getId(), dsaKeyId);
     }
 
     @Override
-    public void PKEY_delete(long pkeyId) throws OCKException {
+    public void PKEY_delete(long pkeyId) throws NativeException {
         NativeOCKImplementation.PKEY_delete(ockContext.getId(), pkeyId);
     }
 
     @Override
-    public long DIGEST_create(String digestAlgo) throws OCKException {
+    public long DIGEST_create(String digestAlgo) throws NativeException {
         return NativeOCKImplementation.DIGEST_create(ockContext.getId(), digestAlgo);
     }
 
     @Override
-    public long DIGEST_copy(long digestId) throws OCKException {
+    public long DIGEST_copy(long digestId) throws NativeException {
         return NativeOCKImplementation.DIGEST_copy(ockContext.getId(), digestId);
     }
 
     @Override
-    public int DIGEST_update(long digestId, byte[] input, int offset, int length) throws OCKException {
+    public int DIGEST_update(long digestId, byte[] input, int offset, int length) throws NativeException {
         return NativeOCKImplementation.DIGEST_update(ockContext.getId(), digestId, input, offset, length);
     }
 
     @Override
-    public void DIGEST_updateFastJNI(long digestId, long inputBuffer, int length) throws OCKException {
+    public void DIGEST_updateFastJNI(long digestId, long inputBuffer, int length) throws NativeException {
         NativeOCKImplementation.DIGEST_updateFastJNI(ockContext.getId(), digestId, inputBuffer, length);
     }
 
     @Override
-    public byte[] DIGEST_digest(long digestId) throws OCKException {
+    public byte[] DIGEST_digest(long digestId) throws NativeException {
         return NativeOCKImplementation.DIGEST_digest(ockContext.getId(), digestId);
     }
 
     @Override
-    public void DIGEST_digest_and_reset(long digestId, long outputBuffer, int length) throws OCKException {
+    public void DIGEST_digest_and_reset(long digestId, long outputBuffer, int length) throws NativeException {
         NativeOCKImplementation.DIGEST_digest_and_reset(ockContext.getId(), digestId, outputBuffer, length);
     }
 
     @Override
-    public int DIGEST_digest_and_reset(long digestId, byte[] output) throws OCKException {
+    public int DIGEST_digest_and_reset(long digestId, byte[] output) throws NativeException {
         return NativeOCKImplementation.DIGEST_digest_and_reset(ockContext.getId(), digestId, output);
     }
 
     @Override
-    public int DIGEST_size(long digestId) throws OCKException {
+    public int DIGEST_size(long digestId) throws NativeException {
         return NativeOCKImplementation.DIGEST_size(ockContext.getId(), digestId);
     }
 
     @Override
-    public void DIGEST_reset(long digestId) throws OCKException {
+    public void DIGEST_reset(long digestId) throws NativeException {
         NativeOCKImplementation.DIGEST_reset(ockContext.getId(), digestId);
     }
 
     @Override
-    public void DIGEST_delete(long digestId) throws OCKException {
+    public void DIGEST_delete(long digestId) throws NativeException {
         NativeOCKImplementation.DIGEST_delete(ockContext.getId(), digestId);
     }
 
     @Override
-    public byte[] SIGNATURE_sign(long digestId, long pkeyId, boolean convert) throws OCKException {
+    public byte[] SIGNATURE_sign(long digestId, long pkeyId, boolean convert) throws NativeException {
         return NativeOCKImplementation.SIGNATURE_sign(ockContext.getId(), digestId, pkeyId, convert);
     }
 
     @Override
-    public boolean SIGNATURE_verify(long digestId, long pkeyId, byte[] sigBytes) throws OCKException {
+    public boolean SIGNATURE_verify(long digestId, long pkeyId, byte[] sigBytes) throws NativeException {
         return NativeOCKImplementation.SIGNATURE_verify(ockContext.getId(), digestId, pkeyId, sigBytes);
     }
 
     @Override
-    public byte[] SIGNATUREEdDSA_signOneShot(long pkeyId, byte[] bytes) throws OCKException {
+    public byte[] SIGNATUREEdDSA_signOneShot(long pkeyId, byte[] bytes) throws NativeException {
         return NativeOCKImplementation.SIGNATUREEdDSA_signOneShot(ockContext.getId(), pkeyId, bytes);
     }
 
     @Override
-    public boolean SIGNATUREEdDSA_verifyOneShot(long pkeyId, byte[] sigBytes, byte[] oneShot) throws OCKException {
+    public boolean SIGNATUREEdDSA_verifyOneShot(long pkeyId, byte[] sigBytes, byte[] oneShot) throws NativeException {
         return NativeOCKImplementation.SIGNATUREEdDSA_verifyOneShot(ockContext.getId(), pkeyId, sigBytes, oneShot);
     }
 
     @Override
-    public int RSAPSS_signInit(long rsaPssId, long pkeyId, int saltlen, boolean convert) throws OCKException {
+    public int RSAPSS_signInit(long rsaPssId, long pkeyId, int saltlen, boolean convert) throws NativeException {
         return NativeOCKImplementation.RSAPSS_signInit(ockContext.getId(), rsaPssId, pkeyId, saltlen, convert);
     }
 
     @Override
-    public int RSAPSS_verifyInit(long rsaPssId, long pkeyId, int saltlen) throws OCKException {
+    public int RSAPSS_verifyInit(long rsaPssId, long pkeyId, int saltlen) throws NativeException {
         return NativeOCKImplementation.RSAPSS_verifyInit(ockContext.getId(), rsaPssId, pkeyId, saltlen);
     }
 
@@ -922,135 +910,135 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public void RSAPSS_signFinal(long rsaPssId, byte[] signature, int length) throws OCKException {
+    public void RSAPSS_signFinal(long rsaPssId, byte[] signature, int length) throws NativeException {
         NativeOCKImplementation.RSAPSS_signFinal(ockContext.getId(), rsaPssId, signature, length);
     }
 
     @Override
-    public boolean RSAPSS_verifyFinal(long rsaPssId, byte[] sigBytes, int length) throws OCKException {
+    public boolean RSAPSS_verifyFinal(long rsaPssId, byte[] sigBytes, int length) throws NativeException {
         return NativeOCKImplementation.RSAPSS_verifyFinal(ockContext.getId(), rsaPssId, sigBytes, length);
     }
 
     @Override
-    public long RSAPSS_createContext(String digestAlgo, String mgf1SpecAlgo) throws OCKException {
+    public long RSAPSS_createContext(String digestAlgo, String mgf1SpecAlgo) throws NativeException {
         return NativeOCKImplementation.RSAPSS_createContext(ockContext.getId(), digestAlgo, mgf1SpecAlgo);
     }
 
     @Override
-    public void RSAPSS_releaseContext(long rsaPssId) throws OCKException {
+    public void RSAPSS_releaseContext(long rsaPssId) throws NativeException {
         NativeOCKImplementation.RSAPSS_releaseContext(ockContext.getId(), rsaPssId);
     }
 
     @Override
-    public void RSAPSS_digestUpdate(long rsaPssId, byte[] input, int offset, int length) throws OCKException {
+    public void RSAPSS_digestUpdate(long rsaPssId, byte[] input, int offset, int length) throws NativeException {
         NativeOCKImplementation.RSAPSS_digestUpdate(ockContext.getId(), rsaPssId, input, offset, length);
     }
 
     @Override
-    public void RSAPSS_reset(long digestId) throws OCKException {
+    public void RSAPSS_reset(long digestId) throws NativeException {
         NativeOCKImplementation.RSAPSS_reset(ockContext.getId(), digestId);
     }
 
     @Override
-    public void RSAPSS_resetDigest(long rsaPssId) throws OCKException {
+    public void RSAPSS_resetDigest(long rsaPssId) throws NativeException {
         NativeOCKImplementation.RSAPSS_resetDigest(ockContext.getId(), rsaPssId);
     }
 
     @Override
-    public byte[] DSANONE_SIGNATURE_sign(byte[] digest, long dsaKeyId) throws OCKException {
+    public byte[] DSANONE_SIGNATURE_sign(byte[] digest, long dsaKeyId) throws NativeException {
         return NativeOCKImplementation.DSANONE_SIGNATURE_sign(ockContext.getId(), digest, dsaKeyId);
     }
 
     @Override
-    public boolean DSANONE_SIGNATURE_verify(byte[] digest, long dsaKeyId, byte[] sigBytes) throws OCKException {
+    public boolean DSANONE_SIGNATURE_verify(byte[] digest, long dsaKeyId, byte[] sigBytes) throws NativeException {
         return NativeOCKImplementation.DSANONE_SIGNATURE_verify(ockContext.getId(), digest, dsaKeyId, sigBytes);
     }
 
     @Override
-    public byte[] RSASSL_SIGNATURE_sign(byte[] digest, long rsaKeyId) throws OCKException {
+    public byte[] RSASSL_SIGNATURE_sign(byte[] digest, long rsaKeyId) throws NativeException {
         return NativeOCKImplementation.RSASSL_SIGNATURE_sign(ockContext.getId(), digest, rsaKeyId);
     }
 
     @Override
     public boolean RSASSL_SIGNATURE_verify(byte[] digest, long rsaKeyId, byte[] sigBytes, boolean convert)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.RSASSL_SIGNATURE_verify(ockContext.getId(), digest, rsaKeyId, sigBytes, convert);
     }
 
     @Override
-    public long HMAC_create(String digestAlgo) throws OCKException {
+    public long HMAC_create(String digestAlgo) throws NativeException {
         return NativeOCKImplementation.HMAC_create(ockContext.getId(), digestAlgo);
     }
 
     @Override
     public int HMAC_update(long hmacId, byte[] key, int keyLength, byte[] input, int inputOffset, int inputLength,
-            boolean needInit) throws OCKException {
+            boolean needInit) throws NativeException {
         return NativeOCKImplementation.HMAC_update(ockContext.getId(), hmacId, key, keyLength,
             input, inputOffset, inputLength, needInit);
     }
 
     @Override
-    public int HMAC_doFinal(long hmacId, byte[] key, int keyLength, byte[] hmac, boolean needInit) throws OCKException {
+    public int HMAC_doFinal(long hmacId, byte[] key, int keyLength, byte[] hmac, boolean needInit) throws NativeException {
         return NativeOCKImplementation.HMAC_doFinal(ockContext.getId(), hmacId, key, keyLength, hmac, needInit);
     }
 
     @Override
-    public int HMAC_size(long hmacId) throws OCKException {
+    public int HMAC_size(long hmacId) throws NativeException {
         return NativeOCKImplementation.HMAC_size(ockContext.getId(), hmacId);
     }
 
     @Override
-    public void HMAC_delete(long hmacId) throws OCKException {
+    public void HMAC_delete(long hmacId) throws NativeException {
         NativeOCKImplementation.HMAC_delete(ockContext.getId(), hmacId);
     }
 
     @Override
-    public long ECKEY_generate(int numBits) throws OCKException {
+    public long ECKEY_generate(int numBits) throws NativeException {
         return NativeOCKImplementation.ECKEY_generate(ockContext.getId(), numBits);
     }
 
     @Override
-    public long ECKEY_generate(String curveOid) throws OCKException {
+    public long ECKEY_generate(String curveOid) throws NativeException {
         return NativeOCKImplementation.ECKEY_generate(ockContext.getId(), curveOid);
     }
 
     @Override
-    public long XECKEY_generate(int option, long bufferPtr) throws OCKException {
+    public long XECKEY_generate(int option, long bufferPtr) throws NativeException {
         return NativeOCKImplementation.XECKEY_generate(ockContext.getId(), option, bufferPtr);
     }
 
     @Override
-    public byte[] ECKEY_generateParameters(int numBits) throws OCKException {
+    public byte[] ECKEY_generateParameters(int numBits) throws NativeException {
         return NativeOCKImplementation.ECKEY_generateParameters(ockContext.getId(), numBits);
     }
 
     @Override
-    public byte[] ECKEY_generateParameters(String curveOid) throws OCKException {
+    public byte[] ECKEY_generateParameters(String curveOid) throws NativeException {
         return NativeOCKImplementation.ECKEY_generateParameters(ockContext.getId(), curveOid);
     }
 
     @Override
-    public long ECKEY_generate(byte[] ecParameters) throws OCKException {
+    public long ECKEY_generate(byte[] ecParameters) throws NativeException {
         return NativeOCKImplementation.ECKEY_generate(ockContext.getId(), ecParameters);
     }
 
     @Override
-    public long ECKEY_createPrivateKey(byte[] privateKeyBytes) throws OCKException {
+    public long ECKEY_createPrivateKey(byte[] privateKeyBytes) throws NativeException {
         return NativeOCKImplementation.ECKEY_createPrivateKey(ockContext.getId(), privateKeyBytes);
     }
 
     @Override
-    public long XECKEY_createPrivateKey(byte[] privateKeyBytes, long bufferPtr) throws OCKException {
+    public long XECKEY_createPrivateKey(byte[] privateKeyBytes, long bufferPtr) throws NativeException {
         return NativeOCKImplementation.XECKEY_createPrivateKey(ockContext.getId(), privateKeyBytes, bufferPtr);
     }
 
     @Override
-    public long ECKEY_createPublicKey(byte[] publicKeyBytes, byte[] parameterBytes) throws OCKException {
+    public long ECKEY_createPublicKey(byte[] publicKeyBytes, byte[] parameterBytes) throws NativeException {
         return NativeOCKImplementation.ECKEY_createPublicKey(ockContext.getId(), publicKeyBytes, parameterBytes);
     }
 
     @Override
-    public long XECKEY_createPublicKey(byte[] publicKeyBytes) throws OCKException {
+    public long XECKEY_createPublicKey(byte[] publicKeyBytes) throws NativeException {
         return NativeOCKImplementation.XECKEY_createPublicKey(ockContext.getId(), publicKeyBytes);
     }
 
@@ -1060,37 +1048,37 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public byte[] ECKEY_getPrivateKeyBytes(long ecKeyId) throws OCKException {
+    public byte[] ECKEY_getPrivateKeyBytes(long ecKeyId) throws NativeException {
         return NativeOCKImplementation.ECKEY_getPrivateKeyBytes(ockContext.getId(), ecKeyId);
     }
 
     @Override
-    public byte[] XECKEY_getPrivateKeyBytes(long xecKeyId) throws OCKException {
+    public byte[] XECKEY_getPrivateKeyBytes(long xecKeyId) throws NativeException {
         return NativeOCKImplementation.XECKEY_getPrivateKeyBytes(ockContext.getId(), xecKeyId);
     }
 
     @Override
-    public byte[] ECKEY_getPublicKeyBytes(long ecKeyId) throws OCKException {
+    public byte[] ECKEY_getPublicKeyBytes(long ecKeyId) throws NativeException {
         return NativeOCKImplementation.ECKEY_getPublicKeyBytes(ockContext.getId(), ecKeyId);
     }
 
     @Override
-    public byte[] XECKEY_getPublicKeyBytes(long xecKeyId) throws OCKException {
+    public byte[] XECKEY_getPublicKeyBytes(long xecKeyId) throws NativeException {
         return NativeOCKImplementation.XECKEY_getPublicKeyBytes(ockContext.getId(), xecKeyId);
     }
 
     @Override
-    public long ECKEY_createPKey(long ecKeyId) throws OCKException {
+    public long ECKEY_createPKey(long ecKeyId) throws NativeException {
         return NativeOCKImplementation.ECKEY_createPKey(ockContext.getId(), ecKeyId);
     }
 
     @Override
-    public void ECKEY_delete(long ecKeyId) throws OCKException {
+    public void ECKEY_delete(long ecKeyId) throws NativeException {
         NativeOCKImplementation.ECKEY_delete(ockContext.getId(), ecKeyId);
     }
 
     @Override
-    public void XECKEY_delete(long xecKeyId) throws OCKException {
+    public void XECKEY_delete(long xecKeyId) throws NativeException {
         NativeOCKImplementation.XECKEY_delete(ockContext.getId(), xecKeyId);
     }
 
@@ -1105,66 +1093,66 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public byte[] ECKEY_computeECDHSecret(long pubEcKeyId, long privEcKeyId) throws OCKException {
+    public byte[] ECKEY_computeECDHSecret(long pubEcKeyId, long privEcKeyId) throws NativeException {
         return NativeOCKImplementation.ECKEY_computeECDHSecret(ockContext.getId(), pubEcKeyId, privEcKeyId);
     }
 
     @Override
     public byte[] XECKEY_computeECDHSecret(long genCtx, long pubEcKeyId, long privEcKeyId, int secrectBufferSize)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.XECKEY_computeECDHSecret(ockContext.getId(), genCtx, pubEcKeyId, privEcKeyId, secrectBufferSize);
     }
 
     @Override
     public byte[] ECKEY_signDatawithECDSA(byte[] digestBytes, int digestBytesLen, long ecPrivateKeyId)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.ECKEY_signDatawithECDSA(ockContext.getId(), digestBytes, digestBytesLen, ecPrivateKeyId);
     }
 
     @Override
     public boolean ECKEY_verifyDatawithECDSA(byte[] digestBytes, int digestBytesLen, byte[] sigBytes, int sigBytesLen,
-            long ecPublicKeyId) throws OCKException {
+            long ecPublicKeyId) throws NativeException {
         return NativeOCKImplementation.ECKEY_verifyDatawithECDSA(ockContext.getId(), digestBytes, digestBytesLen,
             sigBytes, sigBytesLen, ecPublicKeyId);
     }
 
     @Override
-    public long HKDF_create(String digestAlgo) throws OCKException {
+    public long HKDF_create(String digestAlgo) throws NativeException {
         return NativeOCKImplementation.HKDF_create(ockContext.getId(), digestAlgo);
     }
 
     @Override
     public byte[] HKDF_extract(long hkdfId, byte[] saltBytes, long saltLen, byte[] inKey, long inKeyLen)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.HKDF_extract(ockContext.getId(), hkdfId, saltBytes, saltLen, inKey, inKeyLen);
     }
 
     @Override
     public byte[] HKDF_expand(long hkdfId, byte[] prkBytes, long prkBytesLen, byte[] info, long infoLen, long okmLen)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.HKDF_expand(ockContext.getId(), hkdfId, prkBytes, prkBytesLen, info, infoLen, okmLen);
     }
 
     @Override
     public byte[] HKDF_derive(long hkdfId, byte[] saltBytes, long saltLen, byte[] inKey, long inKeyLen, byte[] info,
-            long infoLen, long okmLen) throws OCKException {
+            long infoLen, long okmLen) throws NativeException {
         return NativeOCKImplementation.HKDF_derive(ockContext.getId(), hkdfId,
             saltBytes, saltLen, inKey, inKeyLen, info, infoLen, okmLen);
     }
 
     @Override
-    public void HKDF_delete(long hkdfId) throws OCKException {
+    public void HKDF_delete(long hkdfId) throws NativeException {
         NativeOCKImplementation.HKDF_delete(ockContext.getId(), hkdfId);
     }
 
     @Override
-    public int HKDF_size(long hkdfId) throws OCKException {
+    public int HKDF_size(long hkdfId) throws NativeException {
         return NativeOCKImplementation.HKDF_size(ockContext.getId(), hkdfId);
     }
 
     @Override
     public byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt, int iterations, int keyLength)
-            throws OCKException {
+            throws NativeException {
         return NativeOCKImplementation.PBKDF2_derive(ockContext.getId(), hashAlgorithm, password, salt, iterations, keyLength);
     }
 

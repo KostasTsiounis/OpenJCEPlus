@@ -29,25 +29,25 @@ public final class DHKey implements AsymmetricKey {
     private static final String debPrefix = "DHKey";
 
     public static DHKey generateKeyPair(boolean isFIPS, byte[] parameters)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "generateKeyPair(byte[]) ";
 
         if (parameters == null || parameters.length == 0) {
             throw new IllegalArgumentException("DH parameters are null/empty");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dhKeyId = nativeImpl.DHKEY_generate(parameters);
         return new DHKey(isFIPS, dhKeyId, parameters.clone(), unobtainedKeyBytes,
                 unobtainedKeyBytes);
     }
 
-    public static DHKey generateKeyPair(boolean isFIPS, int numBits) throws OCKException {
+    public static DHKey generateKeyPair(boolean isFIPS, int numBits) throws NativeException {
         if (numBits < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dhKeyId = nativeImpl.DHKEY_generate(numBits);
         return new DHKey(isFIPS, dhKeyId, null, unobtainedKeyBytes, unobtainedKeyBytes);
     }
@@ -56,27 +56,27 @@ public final class DHKey implements AsymmetricKey {
         if (numBits < 0) {
             throw new IllegalArgumentException("key length is invalid");
         }
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         return nativeImpl.DHKEY_generateParameters(numBits);
     }
 
     public static DHKey createPrivateKey(boolean isFIPS, byte[] privateKeyBytes)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "DHKey createPrivateKey (byte[]) ";
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dhKeyId = nativeImpl.DHKEY_createPrivateKey(privateKeyBytes);
         return new DHKey(isFIPS, dhKeyId, null, privateKeyBytes.clone(), null);
     }
 
     public static DHKey createPublicKey(boolean isFIPS, byte[] publicKeyBytes)
-            throws OCKException {
+            throws NativeException {
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         long dhKeyId = nativeImpl.DHKEY_createPublicKey(publicKeyBytes);
         return new DHKey(isFIPS, dhKeyId, null, null, publicKeyBytes.clone());
     }
@@ -103,7 +103,7 @@ public final class DHKey implements AsymmetricKey {
     }
 
     @Override
-    public long getPKeyId() throws OCKException {
+    public long getPKeyId() throws NativeException {
         //final String methodName = "getPKeyId() :";
         if (pkeyId == 0) {
             obtainPKeyId();
@@ -112,7 +112,7 @@ public final class DHKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPrivateKeyBytes() throws OCKException {
+    public byte[] getPrivateKeyBytes() throws NativeException {
         //final String methodName = "getPrivateKeyBytes () :";
         if (privateKeyBytes == unobtainedKeyBytes) {
             obtainPrivateKeyBytes();
@@ -121,7 +121,7 @@ public final class DHKey implements AsymmetricKey {
         return (privateKeyBytes == null) ? null : privateKeyBytes.clone();
     }
 
-    public byte[] getParameters() throws OCKException {
+    public byte[] getParameters() throws NativeException {
         //final String methodName = "getParameters () :";
         if (parameters == null) {
             obtainParameters();
@@ -130,7 +130,7 @@ public final class DHKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPublicKeyBytes() throws OCKException {
+    public byte[] getPublicKeyBytes() throws NativeException {
         //final String methodName = "getPublicKeyBytes () :";
         if (publicKeyBytes == unobtainedKeyBytes) {
             obtainPublicKeyBytes();
@@ -143,7 +143,7 @@ public final class DHKey implements AsymmetricKey {
     // DHKey.computeDHSecret is not synchronized and not thread safe.
     // The method DHKey.computeDHSecret should NOT be synchronized for performance as that would create a global lock.
     public static byte[] computeDHSecret(boolean isFIPS, long pubKeyId, long privKeyId)
-            throws OCKException {
+            throws NativeException {
         //final String methodName = "computeDHSecret";
         if (pubKeyId == 0) {
             throw new IllegalArgumentException("The public key parameter is not valid");
@@ -155,58 +155,58 @@ public final class DHKey implements AsymmetricKey {
 
 
         if (!validId(pubKeyId) || !validId(privKeyId)) {
-            throw new OCKException(badIdMsg1);
+            throw new NativeException(badIdMsg1);
         }
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         byte[] sharedSecretBytes = nativeImpl.DHKEY_computeDHSecret(pubKeyId, privKeyId);
         return sharedSecretBytes;
     }
 
-    private synchronized void obtainPKeyId() throws OCKException {
+    private synchronized void obtainPKeyId() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPKeyId at the same time, we only want to call the native
         // code one time.
         if (pkeyId == 0) {
             if (!validId(dhKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             this.pkeyId = nativeImpl.DHKEY_createPKey(dhKeyId);
         }
     }
 
-    private synchronized void obtainPrivateKeyBytes() throws OCKException {
+    private synchronized void obtainPrivateKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPrivateKeyBytes at the same time, we only want to call the
         // native code one time.
         if (privateKeyBytes == unobtainedKeyBytes) {
             if (!validId(dhKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             this.privateKeyBytes = nativeImpl.DHKEY_getPrivateKeyBytes(dhKeyId);
         }
     }
 
-    private synchronized void obtainPublicKeyBytes() throws OCKException {
+    private synchronized void obtainPublicKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPublicKeyBytes at the same time, we only want to call the
         // native code one time.
         if (publicKeyBytes == unobtainedKeyBytes) {
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             this.publicKeyBytes = nativeImpl.DHKEY_getPublicKeyBytes(dhKeyId);
         }
     }
 
-    private synchronized void obtainParameters() throws OCKException {
+    private synchronized void obtainParameters() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getParameters at the same time, we only want to call the
         // native code one time.
         if (parameters == null) {
             if (!validId(dhKeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             this.parameters = nativeImpl.DHKEY_getParameters(dhKeyId);
         }
     }
@@ -219,7 +219,7 @@ public final class DHKey implements AsymmetricKey {
                 Arrays.fill(privateKeyBytes, (byte) 0x00);
             }
 
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             if (dhKeyId != 0) {
                 nativeImpl.DHKEY_delete(dhKeyId);
                 dhKeyId = 0;

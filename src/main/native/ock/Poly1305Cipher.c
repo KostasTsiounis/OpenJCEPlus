@@ -130,7 +130,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1in
     }
 
     if ((ockCipher == NULL) || (key == NULL)) {
-        throwOCKException(
+        throwNativeException(
             env, 0, "The specified Poly1305Cipher arguments are incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);
@@ -234,7 +234,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1se
         if (debug) {
             gslogFunctionExit(functionName);
         }
-        throwOCKException(
+        throwNativeException(
             env, 0, "The specified Poly1305Cipher identifier is incorrect.");
         return;
     } else if (ockCipher->cipherCtx == NULL) {
@@ -608,7 +608,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1en
 
     if (rc != ICC_OSSL_SUCCESS) {
         ockCheckStatus(ockCtx);
-        throwOCKException(
+        throwNativeException(
             env, 0, "ICC_EVP_CIPHER_CTX_ctrl(EVP_CTRL_AEAD_GET_TAG) failed!\n");
     } else {
 #ifdef DEBUG_CIPHER_DATA
@@ -835,7 +835,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_POLY1305CIPHER_1de
 
         if (rc != ICC_OSSL_SUCCESS) {
             ockCheckStatus(ockCtx);
-            throwOCKException(
+            throwNativeException(
                 env, 0,
                 "ICC_EVP_CIPHER_CTX_ctrl(EVP_CTRL_AEAD_SET_TAG) failed!\n");
         } else {

@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.NativeInterface;
-import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
-import com.ibm.crypto.plus.provider.base.OCKContext;
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 import java.security.Key;
@@ -23,7 +20,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.crypto.SecretKey;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
+
 import sun.security.util.Debug;
 
 public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
@@ -66,10 +68,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
     // User enabled debugging
     private static Debug debug = Debug.getInstance(DEBUG_VALUE);
 
-    private static boolean ockInitialized = false;
-    private static OCKContext ockContext;
-
-    private static final boolean isFIPSCertifiedPlatform;
+    private static final boolean isPlatformSupported;
     private static final Map<String, List<String>> supportedPlatforms = new HashMap<>();
     private static final String osName;
     private static final String osArch;
@@ -124,7 +123,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
         }
 
         if (debug != null) {
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(true);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(true);
             debug.println("OpenJCEPlusFIPS Build-Level: " + getDebugDate(this.getClass().getName()));
             debug.println("OpenJCEPlusFIPS library build date: " + nativeImpl.getLibraryBuildDate());
             try {

@@ -9,8 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.CurveUtil.CURVE;
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import com.ibm.crypto.plus.provider.base.XECKey;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -91,7 +91,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
             setFieldsFromXeckey();
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -133,7 +133,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
             this.xecKey = XECKey.createPublicKey(provider.isFIPS(), alteredEncoded);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }
@@ -215,7 +215,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
         } catch (Exception exception) {
             InvalidParameterException ike = new InvalidParameterException(
                     "Failed to create XEC public key");
-            NativeOCKAdapter.setOCKExceptionCause(ike, exception);
+            NativeAdapter.setExceptionCause(ike, exception);
             throw ike;
         }
     }

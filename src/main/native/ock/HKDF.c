@@ -415,7 +415,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1expand(
                                 "DETAIL_HKDF FAILURE to allocate okmNative");
                         }
 #endif
-                        throwOCKException(
+                        throwNativeException(
                             env, 0, "NULL from GetPrimitiveArrayCritical");
                     } else {
 #ifdef DEBUG_HKDF_DETAIL
@@ -491,7 +491,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1derive(
         gslogFunctionEntry(functionName);
     }
     if ((ockHKDF == NULL) || (inKey == NULL)) {
-        throwOCKException(
+        throwNativeException(
             env, 0,
             "The specified HKDF identifier or HKDF Key bytes are incorrect.");
         if (debug) {
@@ -602,7 +602,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1derive(
                                     "prkNative");
                             }
 #endif
-                            throwOCKException(
+                            throwNativeException(
                                 env, 0, "NULL from GetPrimitiveArrayCritical");
                         } else {
 #ifdef DEBUG_HKDF_DETAIL

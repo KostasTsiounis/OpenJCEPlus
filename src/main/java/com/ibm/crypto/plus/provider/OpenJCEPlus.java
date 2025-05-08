@@ -8,9 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.base.NativeInterface;
-import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
-import com.ibm.crypto.plus.provider.base.OCKContext;
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 import java.security.Key;
@@ -23,7 +20,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.crypto.SecretKey;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.NativeInterfaceFactory;
+
 import sun.security.util.Debug;
 
 public final class OpenJCEPlus extends OpenJCEPlusProvider {
@@ -71,8 +73,6 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
     // User enabled debugging
     private static Debug debug = Debug.getInstance(DEBUG_VALUE);
 
-    private static boolean ockInitialized = false;
-    private static OCKContext ockContext;
     private static Map<String, String> attrs;
 
     public OpenJCEPlus() {
@@ -90,7 +90,7 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
         }
 
         if (debug != null) {
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(false);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(false);
             debug.println("OpenJCEPlus Build-Level: " + getDebugDate(this.getClass().getName()));
             debug.println("OpenJCEPlus library build date: " + nativeImpl.getLibraryBuildDate());
             try {

@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -91,7 +92,7 @@ public final class GCMCipher {
         //        int tls_support_result;
         //        try {
         //            tls_support_result = NativeInterface.get_GCM_TLSEnabled();
-        //        } catch (OCKException e) {
+        //        } catch (NativeException e) {
         //            tls_support_result = 1;
         //        }
         //        useJavaTLS = (tls_support_result != 0);
@@ -109,7 +110,7 @@ public final class GCMCipher {
     // except ICC_CTX which is thread safe
     public static int doGCMFinal_Decrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
-            byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
+            byte[] aad) throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
         //final String methodName="doGCMFinal_Decrypt ";
         int rc = 0;
@@ -183,7 +184,7 @@ public final class GCMCipher {
 
         long gcmCtx = getGCMContext(false, key.length, isFIPS);
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         if (GCMHardwareFunctionPtr == 0)
             GCMHardwareFunctionPtr = nativeImpl
                     .do_GCM_checkHardwareGCMSupport();
@@ -214,14 +215,14 @@ public final class GCMCipher {
 
             //OCKDebug.Msg (debPrefix, methodName, "RC = " + rc);
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
         } else {
             rc = nativeImpl.do_GCM_decrypt(gcmCtx, key, key.length, iv,
                     iv.length, input, inputOffset, inputLen - tagLen, output, outputOffset,
                     authenticationData, aadLen, tagLen);
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
         }
         return len;
@@ -231,7 +232,7 @@ public final class GCMCipher {
     // except ICC_CTX which is thread safe
     public static int doGCMFinal_Encrypt(boolean isFIPS, byte[] key, byte[] iv, int tagLen,
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
-            byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
+            byte[] aad) throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException {
 
         //final String methodName = "doGCMFinal_Encrypt ";
@@ -309,7 +310,7 @@ public final class GCMCipher {
 
         long gcmCtx = getGCMContext(true, key.length, isFIPS);
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         if (GCMHardwareFunctionPtr == 0)
             GCMHardwareFunctionPtr = nativeImpl
                     .do_GCM_checkHardwareGCMSupport();
@@ -334,7 +335,7 @@ public final class GCMCipher {
                 outputBuffer.get(0, output, outputOffset, len);
             }
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
             // Copy Tag out of native data buffer
             parameters.get(keyLen + ivLen + aadLen, output, outputOffset + inputLen, tagLen);
@@ -351,7 +352,7 @@ public final class GCMCipher {
             System.arraycopy(tag, 0, output, outputOffset + inputLen, tagLen);
             outLen = inputLen + tagLen;
             if (rc != 0) {
-                throw new OCKException(ErrorCodes.get(rc));
+                throw new NativeException(ErrorCodes.get(rc));
             }
         }
         //OCKDebug.Msg(debPrefix, methodName,  "outLen=" + outLen + " output=",  output);
@@ -361,7 +362,7 @@ public final class GCMCipher {
     public static int do_GCM_FinalForUpdateDecrypt(boolean isFIPS, byte[] key, byte[] iv,
             int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset, byte[] aad)
-            throws OCKException, IllegalStateException, ShortBufferException,
+            throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
         //final String methodName="do_GCM_FinalForUpdateDecrypt ";
         int rc = 0;
@@ -423,7 +424,7 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, "length of output :" + output.length + " outputOffset :" + outputOffset);
 
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_FinalForUpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_FinalForUpdateDecrypt(gcmCtx, input,
                 inputOffset, inputLen, output, outputOffset, output.length, authenticationData,
                 aadLen, tagLen);
@@ -431,7 +432,7 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, "After calling do_GCM_FinalForUpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
         //OCKDebug.Msg (debPrefix, methodName, "Decrypted text from do_GCM_FinalForUpdateDecrypt = ",  output);
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
         
         //OCKDebug.Msg (debPrefix, methodName, "Returning length= " +  len);
@@ -442,7 +443,7 @@ public final class GCMCipher {
     public static int do_GCM_InitForUpdateDecrypt(boolean isFIPS, byte[] key, byte[] iv,
             int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset, byte[] aad)
-            throws OCKException, IllegalStateException, ShortBufferException,
+            throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
         //final String methodName="do_GCM_InitForUpdateDecrypt ";
         int rc = 0;
@@ -496,13 +497,13 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, " inputLen :" + inputLen + " aadLen :" + aadLen + " tagLen :" + tagLen);
         //OCKDebug.Msg (debPrefix, methodName, "outputOffset :" + String.valueOf(outputOffset));
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_UpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_InitForUpdateDecrypt(gcmCtx, key,
                 key.length, iv, iv.length, authenticationData, aadLen);
 
         //OCKDebug.Msg (debPrefix, methodName, "After calling do_GCM_InitForUpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
         //OCKDebug.Msg (debPrefix, methodName, "Native do_GCM_InitForUpdateDecrypt returns  output offset=" + outputOffset + " output=", output);
 
@@ -512,7 +513,7 @@ public final class GCMCipher {
     public static /*synchronized*/ int do_GCM_UpdForUpdateDecrypt(boolean isFIPS, byte[] key,
             byte[] iv, int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset, byte[] aad)
-            throws OCKException, IllegalStateException, ShortBufferException,
+            throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
         //final String methodName="do_GCM_UpdForUpdateDecrypt ";
         int rc = 0;
@@ -570,14 +571,14 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, " inputLen :" + inputLen + " tagLen :" + tagLen);
         //OCKDebug.Msg (debPrefix, methodName, "outputOffset :" + String.valueOf(outputOffset));
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_UpdForUpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_UpdForUpdateDecrypt(gcmCtx, input,
                 inputOffset, inputLen, //inputLen-tagLen,
                 output, outputOffset);
         //                //OCKDebug.Msg (debPrefix, methodName, "rc =" + rc + " After calling do_GCM_UpdForUpdateDecrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
 
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
         //              //OCKDebug.Msg (debPrefix, methodName, "Native do_GCM_UpdForUpdateDecrypt returns  output offset=" + outputOffset + " output=", output);
 
@@ -586,7 +587,7 @@ public final class GCMCipher {
 
     public static int do_GCM_FinalForUpdateEncrypt(boolean isFIPS, byte[] key, byte[] iv,
             int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
-            int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
+            int outputOffset, byte[] aad) throws NativeException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
         //final String methodName = "do_GCM_FinalForUpdateEncrypt ";
@@ -672,7 +673,7 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
         //OCKDebug.Msg (debPrefix, methodName, " inputLen :" + inputLen + " aadLen :" + aadLen + " tagLen " + tagLen);
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_FinalForUpdateEncrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()) + " input[]=", input);
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_FinalForUpdateEncrypt(gcmCtx, key,
                 key.length, iv, iv.length, input, inputOffset, inputLen, output, outputOffset,
                 authenticationData, aadLen, tag, tagLen);
@@ -683,7 +684,7 @@ public final class GCMCipher {
         outLen = inputLen + tagLen;
 
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
         //OCKDebug.Msg (debPrefix, methodName, "output from native do_GCM_FinalForUpdateEncrypt=", output);
 
@@ -696,7 +697,7 @@ public final class GCMCipher {
     // except ICC_CTX which is thread safe
     public static int do_GCM_UpdForUpdateEncrypt(boolean isFIPS, byte[] key, byte[] iv,
             int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
-            int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
+            int outputOffset, byte[] aad) throws NativeException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
         //final String methodName = "do_GCM_UpdForUpdateEncrypt ";
@@ -764,7 +765,7 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
         //OCKDebug.Msg (debPrefix, methodName, "calling native interface: inputLen :" + inputLen + " tagLen " + tagLen);
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_UpdForUpdateEncrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_UpdForUpdateEncrypt(gcmCtx, input,
                 inputOffset, inputLen, output, outputOffset);
         //OCKDebug.Msg (debPrefix, methodName, "After calling do_GCM_UpdForUpdateEncrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
@@ -773,7 +774,7 @@ public final class GCMCipher {
         outLen = inputLen;
 
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
 
         //OCKDebug.Msg(debPrefix, methodName,  "outLen=" + outLen + " output=",  output);
@@ -784,7 +785,7 @@ public final class GCMCipher {
     // except ICC_CTX which is thread safe
     public static int do_GCM_InitForUpdateEncrypt(boolean isFIPS, byte[] key, byte[] iv,
             int tagLen, byte[] input, int inputOffset, int inputLen, byte[] output,
-            int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
+            int outputOffset, byte[] aad) throws NativeException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
         //final String methodName = "do_GCM_InitForUpdateEncrypt ";
@@ -841,7 +842,7 @@ public final class GCMCipher {
         //OCKDebug.Msg (debPrefix, methodName, "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
         //OCKDebug.Msg (debPrefix, methodName, "calling native interface: inputLen :" + inputLen + " aadLen :" + aadLen + " tagLen " + tagLen);
         //OCKDebug.Msg (debPrefix, methodName, "before calling do_GCM_InitForUpdateEncrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         rc = nativeImpl.do_GCM_InitForUpdateEncrypt(gcmCtx, key,
                 key.length, iv, iv.length, authenticationData, aadLen);
         //OCKDebug.Msg (debPrefix, methodName, "After calling do_GCM_InitForUpdateEncrypt gcmUpdateOutlen ="  + String.valueOf(gcmUpdateOutlen.getValue()));
@@ -850,7 +851,7 @@ public final class GCMCipher {
         outLen = 0;
 
         if (rc != 0) {
-            throw new OCKException(ErrorCodes.get(rc));
+            throw new NativeException(ErrorCodes.get(rc));
         }
         
         //OCKDebug.Msg(debPrefix, methodName,  "outLen=" + outLen + " output=",  output);
@@ -859,7 +860,7 @@ public final class GCMCipher {
 
 
     private static long getGCMContext(boolean encrypting, int keyLength, boolean isFIPS)
-            throws OCKException {
+            throws NativeException {
         //// if it is indicated that Java based TLS storage of GCM contexts should be used
         //// we fetch the TLS copy of the gcm context. if uninitialized, create a new one
         if (useJavaTLS) {
@@ -886,7 +887,7 @@ public final class GCMCipher {
                     gcmCtxBuffer = (encrypting) ? gcmContextBufferE32FIPS : gcmContextBufferD32FIPS;
                     break;
                 default:
-                    throw new OCKException("Improper key length when trying to get GCM context");
+                    throw new NativeException("Improper key length when trying to get GCM context");
             }
             gcmCtx = gcmCtxBuffer.get();
             if (gcmCtx == null) {
@@ -944,8 +945,8 @@ public final class GCMCipher {
         return totalLen;
     }
 
-    public static void doGCM_cleanup(boolean isFIPS) throws OCKException {
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+    public static void doGCM_cleanup(boolean isFIPS) throws NativeException {
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         nativeImpl.do_GCM_delete();
     }
 
@@ -974,7 +975,7 @@ public final class GCMCipher {
     static int useHardwareGCM(boolean isEncrypt, int inputLen, int ivLen, int keyLen, int aadLen,
             int tagLen, byte[] key, byte[] input, int inputOffset, byte[] output, int outputOffset,
             FastJNIBuffer parameters)
-            throws OCKException, IllegalStateException, ShortBufferException,
+            throws NativeException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
         int rc = 0;
         // Setting offsets and inputLen
@@ -993,7 +994,7 @@ public final class GCMCipher {
         putLongtoByteArray(inputLen * 8, addedParams, TPCLOffset); // Add TPCL
         parameters.put(paramBlockOffset, addedParams, 0, addedParams.length);
 
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(false);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(false);
         if (isEncrypt) { // encrypt
             rc = nativeImpl.do_GCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, 0,
                     inputLen, 0, aadLen, tagLen, parameters.pointer(), input, inputOffset, output,
@@ -1034,9 +1035,9 @@ public final class GCMCipher {
     static class GCMContextPointer {
         long gcmCtx = 0;
         boolean isFIPS;
-        NativeInterface nativeImpl = null;
+        NativeAdapter nativeImpl = null;
 
-        GCMContextPointer(boolean isFIPS) throws OCKException {
+        GCMContextPointer(boolean isFIPS) throws NativeException {
             this.isFIPS = isFIPS;
             this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
             this.gcmCtx = this.nativeImpl.create_GCM_context();

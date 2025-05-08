@@ -9,15 +9,17 @@
 package com.ibm.crypto.plus.provider.ossl;
 
 
-import com.ibm.crypto.plus.provider.base.NativeInterface;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
+
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
+
 import sun.security.util.Debug;
 
-public abstract class NativeOSSLAdapter implements NativeInterface {
+public abstract class NativeOSSLAdapter extends NativeAdapter {
     // These code values must match those defined in Context.h.
     //
     private static final int VALUE_ID_FIPS_APPROVED_MODE = 0;
@@ -150,18 +152,6 @@ public abstract class NativeOSSLAdapter implements NativeInterface {
         //
         if (osslInstallPath == unobtainedValue) {
             osslInstallPath = CTX_getValue(VALUE_OSSL_INSTALL_PATH);
-        }
-    }
-
-    static public ProviderException providerException(String message, Throwable ockException) {
-        ProviderException providerException = new ProviderException(message, ockException);
-        setOSSLExceptionCause(providerException, ockException);
-        return providerException;
-    }
-
-    static public void setOSSLExceptionCause(Exception exception, Throwable ockException) {
-        if (debug != null) {
-            exception.initCause(ockException);
         }
     }
 

@@ -8,6 +8,7 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import com.ibm.crypto.plus.provider.base.Signature;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
 import java.io.EOFException;
@@ -78,7 +79,7 @@ abstract class DSASignature extends SignatureSpi {
             this.signature.update(b, off, len);
         } catch (Exception e) {
             SignatureException se = new SignatureException("Failure in engineUpdate");
-            NativeOCKAdapter.setOCKExceptionCause(se, e);
+            NativeAdapter.setExceptionCause(se, e);
             throw se;
         }
     }
@@ -89,7 +90,7 @@ abstract class DSASignature extends SignatureSpi {
             return this.signature.sign();
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
+            NativeAdapter.setExceptionCause(signatureException, e);
             throw signatureException;
         }
     }

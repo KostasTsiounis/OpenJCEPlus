@@ -11,26 +11,28 @@ package com.ibm.crypto.plus.provider.base;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
+
+
 public final class SignatureEdDSA {
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private AsymmetricKey key = null;
     private boolean initialized = false;
     private final String badIdMsg = "Digest Identifier or PKey Identifier is not valid";
     private final static String debPrefix = "SIGNATURE";
 
-    public static SignatureEdDSA getInstance(boolean isFIPS) throws OCKException {
+    public static SignatureEdDSA getInstance(boolean isFIPS) throws NativeException {
         return new SignatureEdDSA(isFIPS);
     }
 
-    private SignatureEdDSA(boolean isFIPS) throws OCKException {
+    private SignatureEdDSA(boolean isFIPS) throws NativeException {
         //final String methodName = "SignatureEdDSA(String)";
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
     }
 
-    public void initialize(AsymmetricKey key) throws InvalidKeyException, OCKException {
+    public void initialize(AsymmetricKey key) throws InvalidKeyException, NativeException {
         //final String methodName = "initialize";
         if (key == null) {
             throw new IllegalArgumentException("key is null");
@@ -41,19 +43,19 @@ public final class SignatureEdDSA {
         //OCKDebug.Msg (debPrefix, methodName,  "this.key=" + key);
     }
 
-    public synchronized byte[] sign(byte[] oneShotData) throws OCKException, SignatureException {
+    public synchronized byte[] sign(byte[] oneShotData) throws NativeException, SignatureException {
         if (!this.initialized) {
             throw new IllegalStateException("SignatureEdDSA not initialized");
         }
         if (!validId(this.key.getPKeyId())) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         byte[] signature = this.nativeImpl.SIGNATUREEdDSA_signOneShot(
                 this.key.getPKeyId(), oneShotData);
         return signature;
     }
 
-    public synchronized boolean verify(byte[] sigBytes, byte[] dataBytes) throws OCKException {
+    public synchronized boolean verify(byte[] sigBytes, byte[] dataBytes) throws NativeException {
         //final String methodName = "verify";
         // create key length function and check sigbytes against key length?
         if (!this.initialized) {
@@ -64,7 +66,7 @@ public final class SignatureEdDSA {
             throw new IllegalArgumentException("invalid signature");
         }
         if (this.key.getPKeyId() == 0L) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
         boolean verified = this.nativeImpl.SIGNATUREEdDSA_verifyOneShot(
                 this.key.getPKeyId(), sigBytes, dataBytes);
