@@ -414,7 +414,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
          * =======================================================================
          */
 
-        aliases = new String[] {"kda-hkdf-with-sha-224"};
+        /*aliases = new String[] {"kda-hkdf-with-sha-224"};
         putService(new OpenJCEPlusService(jce, "KeyGenerator", "kda-hkdf-with-sha224",
                 "com.ibm.crypto.plus.provider.HKDFGenerator$HKDFwithSHA224", aliases));
 
@@ -426,8 +426,18 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
                 "com.ibm.crypto.plus.provider.HKDFGenerator$HKDFwithSHA384", aliases));
         aliases = new String[] {"kda-hkdf-with-sha-512"};
         putService(new OpenJCEPlusService(jce, "KeyGenerator", "kda-hkdf-with-sha512",
-                "com.ibm.crypto.plus.provider.HKDFGenerator$HKDFwithSHA512", aliases));
+                "com.ibm.crypto.plus.provider.HKDFGenerator$HKDFwithSHA512", aliases));*/
 
+        /* =======================================================================
+         * Key Derivation engines
+         * =======================================================================
+         */
+        putService(new OpenJCEPlusService(jce, "KDF", "HKDF-SHA256",
+                "com.ibm.crypto.plus.provider.HKDFKeyDerivation$HKDFSHA256", null));
+        putService(new OpenJCEPlusService(jce, "KDF", "HKDF-SHA384",
+                "com.ibm.crypto.plus.provider.HKDFKeyDerivation$HKDFSHA384", null));
+        putService(new OpenJCEPlusService(jce, "KDF", "HKDF-SHA512",
+                "com.ibm.crypto.plus.provider.HKDFKeyDerivation$HKDFSHA512", null));
 
         /* =======================================================================
          * MessageDigest engines
