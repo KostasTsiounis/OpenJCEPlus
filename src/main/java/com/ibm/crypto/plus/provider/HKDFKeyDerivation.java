@@ -1,5 +1,5 @@
 /*
- * Copyright IBM Corp. 2023, 2024
+ * Copyright IBM Corp. 2025
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms provided by IBM in the LICENSE file that accompanied
@@ -10,29 +10,24 @@ package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.ock.HKDF;
 import com.ibm.crypto.plus.provider.ock.OCKException;
-
-import java.security.InvalidParameterException;
-import java.security.Key;
-import java.security.SecureRandom;
-import java.util.Objects;
-
-
-import javax.crypto.KDFSpi;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.ShortBufferException;
-import javax.crypto.spec.HKDFParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidParameterException;
 import java.security.InvalidKeyException;
-import javax.crypto.KDFParameters;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.crypto.KDFParameters;
+import javax.crypto.KDFSpi;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.HKDFParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * KeyGenerator implementation for the SSL/TLS master secret derivation.
