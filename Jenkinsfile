@@ -583,7 +583,7 @@ pipeline {
             Typically this will use https://github.com/IBM/OpenJCEPlus')
         string(name: 'OPENJCEPLUS_BRANCH', defaultValue: '', description: '\
             The OpenJCEPlus branch to be used. When not specified this will default to the branch scanned by this multibranch pipeline.')
-        choice(name: 'JAVA_VERSION', choices: ['23', '22', '21', '17', '11'], description: '\
+        choice(name: 'JAVA_VERSION', choices: ['24', '23', '22', '21', '17', '11'], description: '\
             Specify the Java version your branch uses to build.')
         string(name: 'JAVA_RELEASE', defaultValue: '', description: '\
             Indicate a specific Java release that you want to use to build your branch.<br> \
