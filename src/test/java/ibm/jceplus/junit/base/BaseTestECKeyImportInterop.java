@@ -114,12 +114,13 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(pubKeyBytes);
         PublicKey publicKey2 = keyFactory.generatePublic(publicKeySpec);
 
+        System.out.println("Original:\n" + BaseUtils.bytesToHex(privKeyBytes));
+        System.out.println("New with PKCS8EncodedKeySpec:\n" + BaseUtils.bytesToHex(privateKey2.getEncoded()));
+        System.out.println("New with ECPrivateKeySpec:\n" + BaseUtils.bytesToHex(privateKey3.getEncoded()));
+
         // The original and new keys are the same
         assertTrue(Arrays.equals(publicKey2.getEncoded(), pubKeyBytes));
         assertTrue(Arrays.equals(privateKey2.getEncoded(), privKeyBytes));
-
-        System.out.println("Original:\n" + BaseUtils.bytesToHex(privKeyBytes));
-        System.out.println("New:\n" + BaseUtils.bytesToHex(privateKey3.getEncoded()));
         assertTrue(Arrays.equals(privateKey3.getEncoded(), privKeyBytes));
     }
 
