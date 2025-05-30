@@ -484,8 +484,8 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         if (key != null) {
 
             // The key value is sequence of version, octet string
-            DerInputStream in = new DerInputStream(key);
-            /*DerValue derValue = in.getDerValue();
+            /*DerInputStream in = new DerInputStream(key);
+            DerValue derValue = in.getDerValue();
 
             // System.out.println("derValue.getTag=" + derValue.getTag());
             if (derValue.getTag() != DerValue.tag_Sequence) {
@@ -499,11 +499,11 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // It is checking that this version is set to one.
             if (version != 1) {
                 throw new IOException(MSG_VERSION1);
-            }*/
+            }
 
-            byte[] privData = ECParameters.trimZeroes(in.getOctetString());
+            byte[] privData = ECParameters.trimZeroes(data.getOctetString()); */
 
-            bytes.putOctetString(privData);
+            bytes.putOctetString(key);
         }
 
         byte[] ecParamEncodedBeforeTrimming = ECParameters.encodeECParameters(params);
