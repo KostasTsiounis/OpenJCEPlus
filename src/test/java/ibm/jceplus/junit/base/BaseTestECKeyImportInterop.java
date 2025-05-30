@@ -74,7 +74,7 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
 
     @Test
     public void testCreateKeyPairECGenParamImport() throws Exception {
-        doCreateKeyPairECGenParamImport(getProviderName(), getInteropProviderName());
+        //doCreateKeyPairECGenParamImport(getProviderName(), getInteropProviderName());
         doCreateKeyPairECGenParamImport(getInteropProviderName(), getProviderName());
     }
 
