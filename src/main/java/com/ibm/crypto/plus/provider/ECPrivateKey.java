@@ -112,10 +112,10 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         // PrivateKeys.
         // It is checking that this version is set to zero.
         // This section matches with what we do in FIPS70.
-        out.putInteger(1); // version 1
+        //out.putInteger(1); // version 1
         out.putOctetString(sOctets);
-        DerValue val = new DerValue(DerValue.tag_Sequence, out.toByteArray());
-        key = val.toByteArray();
+        //DerValue val = new DerValue(DerValue.tag_Sequence, out.toByteArray());
+        key = out.toByteArray();
 
         try {
             this.publicKeyBytes = null;
