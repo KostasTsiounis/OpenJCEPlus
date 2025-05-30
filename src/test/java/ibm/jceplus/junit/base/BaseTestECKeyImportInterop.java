@@ -117,6 +117,9 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
         // The original and new keys are the same
         assertTrue(Arrays.equals(publicKey2.getEncoded(), pubKeyBytes));
         assertTrue(Arrays.equals(privateKey2.getEncoded(), privKeyBytes));
+
+        System.out.println("Original:\n" + BaseUtils.bytesToHex(privKeyBytes));
+        System.out.println("New:\n" + BaseUtils.bytesToHex(privateKey3.getEncoded()));
         assertTrue(Arrays.equals(privateKey3.getEncoded(), privKeyBytes));
     }
 
