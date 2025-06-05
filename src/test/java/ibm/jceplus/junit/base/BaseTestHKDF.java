@@ -9,7 +9,7 @@ package ibm.jceplus.junit.base;
 
 import ibm.security.internal.spec.HKDFExpandParameterSpec;
 import ibm.security.internal.spec.HKDFExtractParameterSpec;
-import ibm.security.internal.spec.HKDFParameterSpec;
+import javax.crypto.spec.HKDFParameterSpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -323,20 +323,27 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
         MessageDigest md = MessageDigest.getInstance(hashAlg.replace("kda-hkdf-with-", ""),
                 providerName);
-        KeyGenerator hkdfExtract = KeyGenerator.getInstance(hashAlg, providerName);
+        //KeyGenerator hkdfExtract = KeyGenerator.getInstance(hashAlg, providerName);
         byte[] zeros = new byte[md.getDigestLength()];
 
-        hkdfExtract.init(new HKDFExtractParameterSpec(psk.getEncoded(), zeros, extractAlg));
-        SecretKey earlySecret = hkdfExtract.generateKey();
+        //hkdfExtract.init(new HKDFExtractParameterSpec(psk.getEncoded(), zeros, extractAlg));
+        //SecretKey earlySecret = hkdfExtract.generateKey();
+        KDF hkdfExtract = KDF.getInstance(hashAlg, getProviderName());
+        HKDFParameterSpec extractOnly = HKDFParameterSpec.ofExtract().addIKM(psk).addSalt(zeros).extractOnly();
+        SecretKey earlySecret = hkdfExtract.deriveKey(extractAlg, extractOnly);
         assert (earlySecret != null);
 
         byte[] label = ("tls13 res binder").getBytes();
 
         byte[] hkdfInfo = createHkdfInfo(label, new byte[0], md.getDigestLength());
-        KeyGenerator hkdfExpand = KeyGenerator.getInstance(hashAlg, providerName);
-        hkdfExpand.init(new HKDFExpandParameterSpec(earlySecret, hkdfInfo,
-                (aesKeySize / 8)/* md.getDigestLength() */, expandAlg));
-        SecretKey expandSecretKey = hkdfExpand.generateKey();
+        //KeyGenerator hkdfExpand = KeyGenerator.getInstance(hashAlg, providerName);
+        //hkdfExpand.init(new HKDFExpandParameterSpec(earlySecret, hkdfInfo,
+        //        (aesKeySize / 8)/* md.getDigestLength() */, expandAlg));
+        //SecretKey expandSecretKey = hkdfExpand.generateKey();
+        KDF hkdfExpand = KDF.getInstance(hashAlg, getProviderName());
+        HKDFParameterSpec expandOnly = HKDFParameterSpec.expandOnly(earlySecret, hkdfInfo, (aesKeySize / 8));
+        SecretKey expandSecretKey = hkdfExpand.deriveKey(expandAlg, extractOnly);
+
         assert (expandSecretKey != null);
         String strToEncrypt = "Hello string to be encrypted";
         byte[] encryptedBytes = encrypt(expandSecretKey, strToEncrypt, "AES/ECB/PKCS5Padding");
