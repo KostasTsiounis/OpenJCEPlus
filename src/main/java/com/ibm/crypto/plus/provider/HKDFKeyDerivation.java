@@ -12,6 +12,7 @@ import com.ibm.crypto.plus.provider.ock.HKDF;
 import com.ibm.crypto.plus.provider.ock.OCKException;
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
