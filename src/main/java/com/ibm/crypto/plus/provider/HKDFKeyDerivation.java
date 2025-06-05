@@ -89,7 +89,7 @@ public class HKDFKeyDerivation extends KDFSpi {
                 throw new ProviderException("Mismatch between expected and OCK provided HMAC length");
             }
         } catch (Exception ex) {
-            throw new NoSuchAlgorithmException("cannot initialize hkdf");
+            throw provider.providerException("Cannot initialize hkdf", ex);
         }
     }
 
@@ -194,10 +194,6 @@ public class HKDFKeyDerivation extends KDFSpi {
             try {
                 return hkdfObj.expand(pseudoRandomKey, (long) pseudoRandomKey.length, info,
                         (long) info.length, length);
-            } catch (InvalidKeyException ike) {
-                throw new InvalidAlgorithmParameterException(
-                        "an HKDF Expand could not be initialized with the "
-                        + "given keying material", ike);
             } catch (OCKException e) {
                 throw new IllegalStateException("Unable to expand bytes:" + e.getMessage());
             } finally {
