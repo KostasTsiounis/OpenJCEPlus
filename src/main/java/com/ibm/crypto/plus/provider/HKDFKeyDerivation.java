@@ -12,8 +12,6 @@ import com.ibm.crypto.plus.provider.ock.HKDF;
 import com.ibm.crypto.plus.provider.ock.OCKException;
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidParameterException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
@@ -23,9 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.crypto.KDFParameters;
 import javax.crypto.KDFSpi;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.HKDFParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
