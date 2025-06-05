@@ -9,7 +9,7 @@ package ibm.jceplus.junit.base;
 
 import ibm.security.internal.spec.HKDFExpandParameterSpec;
 import ibm.security.internal.spec.HKDFExtractParameterSpec;
-import javax.crypto.spec.HKDFParameterSpec;
+import ibm.security.internal.spec.HKDFParameterSpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KDF;
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -329,7 +330,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         //hkdfExtract.init(new HKDFExtractParameterSpec(psk.getEncoded(), zeros, extractAlg));
         //SecretKey earlySecret = hkdfExtract.generateKey();
         KDF hkdfExtract = KDF.getInstance(hashAlg, getProviderName());
-        HKDFParameterSpec extractOnly = HKDFParameterSpec.ofExtract().addIKM(psk).addSalt(zeros).extractOnly();
+        javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(psk).addSalt(zeros).extractOnly();
         SecretKey earlySecret = hkdfExtract.deriveKey(extractAlg, extractOnly);
         assert (earlySecret != null);
 
@@ -341,7 +342,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         //        (aesKeySize / 8)/* md.getDigestLength() */, expandAlg));
         //SecretKey expandSecretKey = hkdfExpand.generateKey();
         KDF hkdfExpand = KDF.getInstance(hashAlg, getProviderName());
-        HKDFParameterSpec expandOnly = HKDFParameterSpec.expandOnly(earlySecret, hkdfInfo, (aesKeySize / 8));
+        javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(earlySecret, hkdfInfo, (aesKeySize / 8));
         SecretKey expandSecretKey = hkdfExpand.deriveKey(expandAlg, extractOnly);
 
         assert (expandSecretKey != null);
