@@ -549,57 +549,6 @@
                 </includes>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <version>3.3.0</version>
-                  <configuration>
-                    <useModulePath>false</useModulePath>
-                    <!-- Could add -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=0.0.0.0:8787 for debug -->
-                    <argLine>
-                      @{argLine}
-                      --patch-module openjceplus="target${file.separator}classes${path.separator}target${file.separator}test-classes"
-                      --add-exports=java.base/sun.security.internal.spec=openjceplus
-                      --add-exports=java.base/sun.security.util=openjceplus
-                      --add-exports=java.base/sun.security.internal.interfaces=openjceplus
-                      --add-exports=java.base/sun.security.x509=openjceplus
-                      --add-exports=java.base/sun.security.pkcs=openjceplus
-                      --add-exports=java.base/sun.security.internal.spec=ALL-UNNAMED
-                      --add-exports=java.base/sun.security.util=ALL-UNNAMED
-                      --add-exports=java.base/sun.security.internal.interfaces=ALL-UNNAMED
-                      --add-exports=java.base/sun.security.x509=ALL-UNNAMED
-                      --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.base=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.base.memstress=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplus=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplus.memstress=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplus.multithread=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplus.integration=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplusfips=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplusfips.multithread=ALL-UNNAMED
-                      --add-exports=openjceplus/ibm.jceplus.junit.openjceplusfips.integration=ALL-UNNAMED
-                    </argLine>
-                    <trimStackTrace>false</trimStackTrace>
-                    <systemPropertyVariables>
-                      <jgskit.library.path>${build.target.jgskitlib.dir}</jgskit.library.path>
-                      <!--java.security.auth.debug>all</java.security.auth.debug-->
-                    </systemPropertyVariables>
-                    <includes>
-                      <include>
-                        **/ibm/jceplus/junit/TestIntegration.java,
-                        **/ibm/jceplus/junit/TestAll.java,
-                        **/ibm/jceplus/junit/TestMemStressAll.java,
-                        **/ibm/jceplus/junit/TestMultithread.java,
-                        **/ibm/jceplus/junit/TestMultithreadFIPS.java
-                      </include>
-                    </includes>
-                  </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
     <dependencies>
         <dependency>
