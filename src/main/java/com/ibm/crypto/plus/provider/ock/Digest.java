@@ -355,40 +355,19 @@ public final class Digest implements Cloneable {
         // correctly.
         Digest copy = new Digest();
         copy.digestLength = this.digestLength;
-        copy.algIndx = this.algIndx;
-        copy.digestAlgo = new String(this.digestAlgo);
-        copy.needsReinit = this.needsReinit;
-        copy.ockContext = this.ockContext;
-        copy.contextFromQueue = false;
-
-        // Allocate a new context for the digestId and copy all state information from our
-        // original context into the copy. 
-        try {
-            copy.digestId = NativeInterface.DIGEST_copy(
-                this.ockContext.getId(), getId());
-            if (0 == copy.digestId) {
-=======
-=======
-    public void reset() throws OCKException {
-        this.resources.reset();
-    }
-
->>>>>>> dbd928c (Add resources class to Digest 2)
-    @Override
-    synchronized public Object clone() throws CloneNotSupportedException {
-        Digest copy = (Digest) super.clone();
-        
         copy.resources = new Resources();
-        copy.resources.contextFromQueue = false;
         copy.resources.algIndx = this.resources.algIndx;
+        copy.digestAlgo = new String(this.digestAlgo);
         copy.resources.needsReinit = this.resources.needsReinit;
         copy.resources.ockContext = this.resources.ockContext;
-        
+        copy.resources.contextFromQueue = false;
+
+        // Allocate a new context for the digestId and copy all state information from our
+        // original context into the copy.
         try {
             copy.resources.digestId = NativeInterface.DIGEST_copy(
                 this.resources.ockContext.getId(), getId());
             if (copy.resources.digestId == 0) {
->>>>>>> 19e6a2d (Add resources class to Digest)
                 throw new CloneNotSupportedException("Copy of native digest context failed.");
             }
         } catch (OCKException e) {
@@ -401,6 +380,10 @@ public final class Digest implements Cloneable {
 
         OpenJCEPlusProvider.registerCleanableB(this, cleanAction(this.resources));
         return copy;
+    }
+
+    public void reset() throws OCKException {
+        this.resources.reset();
     }
 
     private static Runnable cleanAction(Resources resources) {
