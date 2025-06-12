@@ -308,7 +308,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         hkdfDerive.init(hkdfDeriveSpec);
         SecretKey calcOkm = hkdfDerive.generateKey();*/
 
-        javax.crypto.spec.HKDFParameterSpec derive = HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (long) (256 / 8));
+        javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (long) (256 / 8));
         KDF hkdfDerive = KDF.getInstance("HKDF-SHA512", getProviderName());
         SecretKey calcOkm = hkdfDerive.deriveKey("AES", hkdfDerive);
         
