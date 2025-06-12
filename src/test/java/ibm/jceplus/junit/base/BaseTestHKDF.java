@@ -308,9 +308,9 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         hkdfDerive.init(hkdfDeriveSpec);
         SecretKey calcOkm = hkdfDerive.generateKey();*/
 
-        javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (long) (256 / 8));
+        javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (256 / 8));
         KDF hkdfDerive = KDF.getInstance("HKDF-SHA512", getProviderName());
-        SecretKey calcOkm = hkdfDerive.deriveKey("AES", hkdfDerive);
+        SecretKey calcOkm = hkdfDerive.deriveKey("AES", derive);
         
 
         String strToEncrypt = "Hello string to be encrypted";
@@ -349,7 +349,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         //SecretKey expandSecretKey = hkdfExpand.generateKey();
         KDF hkdfExpand = KDF.getInstance(hashAlg, getProviderName());
         javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(earlySecret, hkdfInfo, (aesKeySize / 8));
-        SecretKey expandSecretKey = hkdfExpand.deriveKey(expandAlg, extractOnly);
+        SecretKey expandSecretKey = hkdfExpand.deriveKey(expandAlg, expandOnly);
 
         assert (expandSecretKey != null);
         String strToEncrypt = "Hello string to be encrypted";
