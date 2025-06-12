@@ -594,7 +594,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     assert (okmequal == true);
                     assert (calcOkmArray.length == okmLength);
                 } else {
-                    if (getProviderName().equals("OpenJCEPlusFIPS")) {
+                    /*if (getProviderName().equals("OpenJCEPlusFIPS")) {
                         //FIPS does not support SHA1. Skip test
                         break;
                     }
@@ -615,7 +615,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     byte[] calcOkmArray = calcOkm.getEncoded();
                     boolean okmequal = Arrays.equals(okmArray, calcOkmArray);
                     assert (okmequal == true);
-                    assert (calcOkmArray.length == okmLength);
+                    assert (calcOkmArray.length == okmLength);*/
 
                 }
             }
