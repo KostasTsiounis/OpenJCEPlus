@@ -33,6 +33,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -485,7 +487,8 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     SecretKey calcOkm = hkdfExpand.generateKey();*/
 
                     KDF hkdfExpand = KDF.getInstance("HKDF-SHA256", getProviderName());
-                    javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(prkArray, infoArray, okmLength);
+                    SecretKey prk = new SecretKeySpec(prkArray, "AES");
+                    javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(prk, infoArray, okmLength);
                     SecretKey calcOkm = hkdfExpand.deriveKey("TlsEarlySecret", expandOnly);
 
                     byte[] calcOkmArray = calcOkm.getEncoded();
@@ -556,7 +559,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                 byte[] infoArray = hexStringToByteArray(HKDF_KA[i][3]);
                 byte[] prkArray = hexStringToByteArray(HKDF_KA[i][4]);
                 byte[] okmArray = hexStringToByteArray(HKDF_KA[i][5]);
-                long okmLength = Long.parseLong(HKDF_KA[i][6]);
+                int okmLength = Integer.parseInt(HKDF_KA[i][6]);
                 assert (ikmArray != null);
                 assert (saltArray != null);
                 assert (infoArray != null);
