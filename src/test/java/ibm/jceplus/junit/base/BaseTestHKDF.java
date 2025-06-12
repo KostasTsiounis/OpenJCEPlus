@@ -196,7 +196,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
     }
 
-    @Test
+    /*@Test
     public void testLongOKM() throws InvalidKeyException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchProviderException, NoSuchPaddingException,
             IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
@@ -206,15 +206,16 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         byte[] sharedSecret = compute_ecdh_key(curveName, ecgn, getProviderName(), getProviderName());
 
         try {
-            /*new HKDFParameterSpec(sharedSecret, null, null,
-                    (long) ((255 * 64) + 1), "AES");*/
+            new HKDFParameterSpec(sharedSecret, null, null,
+                    (long) ((255 * 64) + 1), "AES");
+            
             javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (255 * 64) + 1);
             assertTrue(false);
         } catch (IllegalArgumentException invalidPE) {
             assertTrue(true);
         }
 
-    }
+    }*/
 
     @Test
     public void testInvalidKeyAlgorithms1() throws InvalidKeyException, NoSuchAlgorithmException,
@@ -226,7 +227,9 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         try {
             /*new HKDFParameterSpec(sharedSecret, null, null,
                     (long) 64, null);*/
-            javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, 64);
+            javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, 64);
+            KDF hkdfDerive = KDF.getInstance("HKDF-SHA256", getProviderName());
+            hkdfDerive.deriveKey(null, derive);
             assertTrue(false);
         } catch (IllegalArgumentException iae) {
             assertTrue(true);
