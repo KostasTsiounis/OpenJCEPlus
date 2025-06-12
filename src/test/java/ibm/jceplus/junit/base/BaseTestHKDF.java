@@ -7,9 +7,9 @@
  */
 package ibm.jceplus.junit.base;
 
-import ibm.security.internal.spec.HKDFExpandParameterSpec;
-import ibm.security.internal.spec.HKDFExtractParameterSpec;
-import ibm.security.internal.spec.HKDFParameterSpec;
+//import ibm.security.internal.spec.HKDFExpandParameterSpec;
+//import ibm.security.internal.spec.HKDFExtractParameterSpec;
+//import ibm.security.internal.spec.HKDFParameterSpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -34,7 +34,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -207,8 +206,9 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         byte[] sharedSecret = compute_ecdh_key(curveName, ecgn, getProviderName(), getProviderName());
 
         try {
-            new HKDFParameterSpec(sharedSecret, null, null,
-                    (long) ((255 * 64) + 1), "AES");
+            /*new HKDFParameterSpec(sharedSecret, null, null,
+                    (long) ((255 * 64) + 1), "AES");*/
+            javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (255 * 64) + 1);
             assertTrue(false);
         } catch (IllegalArgumentException invalidPE) {
             assertTrue(true);
@@ -224,8 +224,9 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         byte[] sharedSecret = new byte[64];
 
         try {
-            new HKDFParameterSpec(sharedSecret, null, null,
-                    (long) 64, null);
+            /*new HKDFParameterSpec(sharedSecret, null, null,
+                    (long) 64, null);*/
+            javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, 64);
             assertTrue(false);
         } catch (IllegalArgumentException iae) {
             assertTrue(true);
@@ -249,7 +250,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
             javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (255 * 40));
             KDF hkdfDerive = KDF.getInstance("HKDF-SHA256", getProviderName());
-            SecretKey calcOkm = hkdfDerive.deriveKey("AES", derive);
+            hkdfDerive.deriveKey("AES", derive);
             assertTrue(false);
         } catch (InvalidAlgorithmParameterException iae) {
             assertTrue(true);
@@ -500,6 +501,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     assert (okmequal == true);
                     assert (calcOkmArray.length == okmLength);
                 } else {
+                    assertTrue(true);
                     /*if (getProviderName().equals("OpenJCEPlusFIPS")) {
                         //FIPS does not support SHA1. Skip test
                         break;
@@ -594,6 +596,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     assert (okmequal == true);
                     assert (calcOkmArray.length == okmLength);
                 } else {
+                    assertTrue(true);
                     /*if (getProviderName().equals("OpenJCEPlusFIPS")) {
                         //FIPS does not support SHA1. Skip test
                         break;
