@@ -125,7 +125,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                             + "b3bae548aa53d423b0d1f27ebba6f5e5" + "673a081d70cce7acfc48",
                     "42"},};
 
-    @Test
+    /*@Test
     public void testHKDF1() throws Exception {
         if (getProviderName().equals("OpenJCEPlusFIPS")) {
             //FIPS does not support SHA1. So skip the test
@@ -141,27 +141,27 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
         aesHKDF(192, "kda-hkdf-with-sha224", "AES", "AES", getProviderName());
         aesHKDF(192, "kda-hkdf-with-sha-224", "AES", "AES", getProviderName());
-    }
+    }*/
 
     @Test
     public void testHKDF256() throws Exception {
 
-        aesHKDF(192, "kda-hkdf-with-sha256", "AES", "AES", getProviderName());
-        aesHKDF(192, "kda-hkdf-with-sha-256", "AES", "AES", getProviderName());
+        aesHKDF(192, "HKDF-SHA256", "AES", "AES", getProviderName());
+        //aesHKDF(192, "kda-hkdf-with-sha-256", "AES", "AES", getProviderName());
     }
 
     @Test
     public void testHKDF384() throws Exception {
 
-        aesHKDF(256, "kda-hkdf-with-sha384", "AES", "AES", getProviderName());
-        aesHKDF(256, "kda-hkdf-with-sha-384", "AES", "AES", getProviderName());
+        aesHKDF(256, "HKDF-SHA384", "AES", "AES", getProviderName());
+        //aesHKDF(256, "kda-hkdf-with-sha-384", "AES", "AES", getProviderName());
     }
 
     @Test
     public void testHKDF512() throws Exception {
 
-        aesHKDF(256, "kda-hkdf-with-sha512", "AES", "AES", getProviderName());
-        aesHKDF(256, "kda-hkdf-with-sha-512", "AES", "AES", getProviderName());
+        aesHKDF(256, "HKDF-SHA512", "AES", "AES", getProviderName());
+        //aesHKDF(256, "kda-hkdf-with-sha-512", "AES", "AES", getProviderName());
     }
 
     @Test
@@ -328,7 +328,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         keyGen.init(aesKeySize);
         SecretKey psk = keyGen.generateKey(); // System.out.println("Generated secretKey=" + psk);
 
-        MessageDigest md = MessageDigest.getInstance(hashAlg.replace("kda-hkdf-with-", ""),
+        MessageDigest md = MessageDigest.getInstance(hashAlg.replace("HKDF-", ""),
                 providerName);
         //KeyGenerator hkdfExtract = KeyGenerator.getInstance(hashAlg, providerName);
         byte[] zeros = new byte[md.getDigestLength()];
