@@ -463,9 +463,8 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     // System.out.println("HKDF digest algorithm " +
                     // hkdfExtract.getDigestAlgorithm());
 
-                    javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray);
-                    if (!HKDF_KA[i][2].equals("")) {
-                        extractOnly = extractOnly.addSalt(saltArray);
+                    if (HKDF_KA[i][2].equals("")) {
+                        saltArray = new byte[0];
                     }
                     /*HKDFExtractParameterSpec extractSpec = new HKDFExtractParameterSpec(ikmArray,
                             saltArray, "TlsEarlySecret");
@@ -473,7 +472,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
                     SecretKey calcPrk = hkdfExtract.generateKey();*/
 
-                    extractOnly = extractOnly.extractOnly();
+                    javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray).addSalt(saltArray).extractOnly();
                     SecretKey calcPrk = hkdfExtract.deriveKey("TlsEarlySecret", extractOnly);
 
                     byte[] calcPrkArray = calcPrk.getEncoded();
@@ -574,17 +573,15 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                     // System.out.println("HKDF digest algorithm " +
                     // hkdfExtract.getDigestAlgorithm());
 
-                    javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray);
-                    if (!HKDF_KA[i][2].equals("")) {
-                        derive = derive.addSalt(saltArray);
+                    if (HKDF_KA[i][2].equals("")) {
+                        saltArray = new byte[0];
                     }
-
                     /*HKDFParameterSpec hkdfDeriveSpec = new HKDFParameterSpec(ikmArray, saltArray,
                             infoArray, okmLength, "TlsEarlySecret");
                     hkdfDerive.init(hkdfDeriveSpec);
                     SecretKey calcOkm = hkdfDerive.generateKey();*/
 
-                    derive = derive.thenExpand(infoArray, okmLength);
+                    javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray).addSalt(saltArray).thenExpand(infoArray, okmLength);
                     KDF hkdfDerive = KDF.getInstance("HKDF-SHA256", getProviderName());
                     SecretKey calcOkm = hkdfDerive.deriveKey("TlsEarlySecret", derive);
 
