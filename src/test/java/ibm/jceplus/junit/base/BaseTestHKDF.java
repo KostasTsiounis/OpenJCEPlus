@@ -302,11 +302,17 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         ECGenParameterSpec ecgn = new ECGenParameterSpec(curveName);
         byte[] sharedSecret = compute_ecdh_key(curveName, ecgn, getProviderName(), getProviderName());
 
-        HKDFParameterSpec hkdfDeriveSpec = new HKDFParameterSpec(sharedSecret, null, null,
+        /*HKDFParameterSpec hkdfDeriveSpec = new HKDFParameterSpec(sharedSecret, null, null,
                 (long) (256 / 8), "AES");
         KeyGenerator hkdfDerive = KeyGenerator.getInstance("kda-hkdf-with-sha512", getProviderName());
         hkdfDerive.init(hkdfDeriveSpec);
-        SecretKey calcOkm = hkdfDerive.generateKey();
+        SecretKey calcOkm = hkdfDerive.generateKey();*/
+
+        javax.crypto.spec.HKDFParameterSpec derive = HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (long) (256 / 8));
+        KDF hkdfDerive = KDF.getInstance("HKDF-SHA512", getProviderName());
+        SecretKey calcOkm = hkdfDerive.deriveKey("AES", hkdfDerive);
+        
+
         String strToEncrypt = "Hello string to be encrypted";
         byte[] encryptedBytes = encrypt(calcOkm, strToEncrypt, "AES/ECB/PKCS5Padding");
         String plainStr = decrypt(calcOkm, encryptedBytes, "AES/ECB/PKCS5Padding");
