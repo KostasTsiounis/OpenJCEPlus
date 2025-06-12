@@ -241,11 +241,15 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         byte[] sharedSecret = new byte[64];
 
         try {
-            HKDFParameterSpec hkdfDeriveSpec = new HKDFParameterSpec(sharedSecret, null, null,
+            /*HKDFParameterSpec hkdfDeriveSpec = new HKDFParameterSpec(sharedSecret, null, null,
                     (long) ((255 * 40)), "AES");
             KeyGenerator hkdfDerive = KeyGenerator.getInstance("HKDF-SHA256",
                     getProviderName());
-            hkdfDerive.init(hkdfDeriveSpec);
+            hkdfDerive.init(hkdfDeriveSpec);*/
+
+            javax.crypto.spec.HKDFParameterSpec derive = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(sharedSecret).thenExpand(null, (255 * 40));
+            KDF hkdfDerive = KDF.getInstance("HKDF-SHA256", getProviderName());
+            SecretKey calcOkm = hkdfDerive.deriveKey("AES", derive);
             assertTrue(false);
         } catch (InvalidAlgorithmParameterException iae) {
             assertTrue(true);
