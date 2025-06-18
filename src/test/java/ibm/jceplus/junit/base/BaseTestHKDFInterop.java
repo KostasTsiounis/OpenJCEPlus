@@ -25,11 +25,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KDF;
 import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
+//import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import org.bouncycastle.crypto.digests.SHA1Digest;
+//import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
@@ -167,7 +167,6 @@ public class BaseTestHKDFInterop extends BaseTestJunit5Interop {
                 javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray).addSalt(saltArray).extractOnly();
                 SecretKey calcPrk = hkdfExtract.deriveKey("TlsEarlySecret", extractOnly);
                 byte[] calcPrkArray = calcPrk.getEncoded();
-                boolean prkequal = Arrays.equals(prkArray, calcPrkArray);
                 assertArrayEquals(prkArray, calcPrkArray, "Calculated key doesn't match hardcoded one");
 
                 KDF hkdfExpand = KDF.getInstance("HKDF-SHA256", getProviderName());
