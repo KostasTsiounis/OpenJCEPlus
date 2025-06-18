@@ -7,9 +7,9 @@
  */
 package ibm.jceplus.junit.base;
 
-import ibm.security.internal.spec.HKDFExpandParameterSpec;
-import ibm.security.internal.spec.HKDFExtractParameterSpec;
-import ibm.security.internal.spec.HKDFParameterSpec;
+//import ibm.security.internal.spec.HKDFExpandParameterSpec;
+//import ibm.security.internal.spec.HKDFExtractParameterSpec;
+//import ibm.security.internal.spec.HKDFParameterSpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -23,6 +23,7 @@ import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KDF;
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
