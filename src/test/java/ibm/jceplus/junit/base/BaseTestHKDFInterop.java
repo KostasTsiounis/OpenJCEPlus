@@ -171,7 +171,7 @@ public class BaseTestHKDFInterop extends BaseTestJunit5Interop {
                 assertArrayEquals(prkArray, calcPrkArray, "Calculated key doesn't match hardcoded one");
 
                 KDF hkdfExpand = KDF.getInstance("HKDF-SHA256", getProviderName());
-                javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(prkArray, infoArray, okmLength);
+                javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(calcPrk, infoArray, okmLength);
                 SecretKey calcOkm = hkdfExpand.deriveKey("TlsEarlySecret", expandOnly);
                 byte[] calcOkmArray = calcOkm.getEncoded();
 
@@ -251,7 +251,7 @@ public class BaseTestHKDFInterop extends BaseTestJunit5Interop {
                 byte[] infoArray = hexStringToByteArray(HKDF_KA[i][3]);
                 byte[] prkArray = hexStringToByteArray(HKDF_KA[i][4]);
                 byte[] okmArray = hexStringToByteArray(HKDF_KA[i][5]);
-                long okmLength = Long.parseLong(HKDF_KA[i][6]);
+                int okmLength = Integer.parseInt(HKDF_KA[i][6]);
                 assert (ikmArray != null);
                 assert (saltArray != null);
                 assert (infoArray != null);
