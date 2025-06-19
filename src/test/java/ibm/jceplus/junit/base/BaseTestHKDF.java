@@ -231,7 +231,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
             KDF hkdfDerive = KDF.getInstance("HKDF-SHA256", getProviderName());
             hkdfDerive.deriveKey(null, derive);
             assertTrue(false);
-        } catch (IllegalArgumentException iae) {
+        } catch (NullPointerException npe) {
             assertTrue(true);
         }
 
@@ -358,7 +358,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         KDF hkdfExtract = KDF.getInstance(hashAlg, getProviderName());
         javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(psk).addSalt(zeros).extractOnly();
         SecretKey earlySecret = hkdfExtract.deriveKey(extractAlg, extractOnly);
-        assert (earlySecret != null);
+        assertTrue(earlySecret != null);
 
         byte[] label = ("tls13 res binder").getBytes();
 
@@ -370,8 +370,8 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         KDF hkdfExpand = KDF.getInstance(hashAlg, getProviderName());
         javax.crypto.spec.HKDFParameterSpec expandOnly = javax.crypto.spec.HKDFParameterSpec.expandOnly(earlySecret, hkdfInfo, (aesKeySize / 8));
         SecretKey expandSecretKey = hkdfExpand.deriveKey(expandAlg, expandOnly);
+        assertTrue(expandSecretKey != null);
 
-        assert (expandSecretKey != null);
         String strToEncrypt = "Hello string to be encrypted";
         byte[] encryptedBytes = encrypt(expandSecretKey, strToEncrypt, "AES/ECB/PKCS5Padding");
         String plainStr = decrypt(expandSecretKey, encryptedBytes, "AES/ECB/PKCS5Padding");
