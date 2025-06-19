@@ -107,6 +107,10 @@ public class BaseTestHKDFInterop extends BaseTestJunit5Interop {
             javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(ikmArray).addSalt(saltArray).extractOnly();
             SecretKey calcPrk = hkdfExtract.deriveKey("TlsEarlySecret", extractOnly);
             byte[] calcPrkArray = calcPrk.getEncoded();
+            if (!Arrays.equals(prkArray, calcPrkArray)) {
+                System.out.println("Expected: " + BaseUtils.bytesToHex(prkArray));
+                System.out.println("Calculated: " + BaseUtils.bytesToHex(calcPrkArray));
+            }
             assertArrayEquals(prkArray, calcPrkArray, "Calculated key doesn't match hardcoded one");
 
             KDF hkdfExpand = KDF.getInstance("HKDF-SHA256", getProviderName());
