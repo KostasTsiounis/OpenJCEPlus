@@ -97,7 +97,7 @@ public class BaseTestMemStressHKDF extends BaseTestJunit5 {
         keyGen.init(aesKeySize);
         SecretKey psk = keyGen.generateKey(); // System.out.println("Generated secretKey=" + psk);
 
-        MessageDigest md = MessageDigest.getInstance(hashAlg.replace("HDKF-", ""),
+        MessageDigest md = MessageDigest.getInstance(hashAlg.replace("HKDF-", ""),
                 getProviderName());
 
         byte[] zeros = new byte[md.getDigestLength()];
