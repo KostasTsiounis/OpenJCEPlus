@@ -26,6 +26,8 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
 
     static final String DEBUG_VALUE = "jceplus";
 
+    static final boolean allowLegacyHKDF = Boolean.getBoolean("openjceplus.allowLegacyHKDF");
+
     //    private static boolean verifiedSelfIntegrity = false;
     private static final boolean verifiedSelfIntegrity = true;
 
