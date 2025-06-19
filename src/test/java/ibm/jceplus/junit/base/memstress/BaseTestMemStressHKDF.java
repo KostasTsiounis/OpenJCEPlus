@@ -100,21 +100,6 @@ public class BaseTestMemStressHKDF extends BaseTestJunit5 {
         MessageDigest md = MessageDigest.getInstance(hashAlg.replace("HDKF-", ""),
                 getProviderName());
 
-        /*KeyGenerator hkdfExtract = KeyGenerator.getInstance(hashAlg, getProviderName());
-        byte[] zeros = new byte[md.getDigestLength()];
-
-        hkdfExtract.init(new HKDFExtractParameterSpec(psk.getEncoded(), zeros, extractAlg));
-        SecretKey earlySecret = hkdfExtract.generateKey();
-        assert (earlySecret != null);
-
-        byte[] label = ("tls13 res binder").getBytes();
-
-        byte[] hkdfInfo = createHkdfInfo(label, new byte[0], md.getDigestLength());
-        KeyGenerator hkdfExpand = KeyGenerator.getInstance(hashAlg, getProviderName());
-        hkdfExpand.init(new HKDFExpandParameterSpec(earlySecret, hkdfInfo,
-                (aesKeySize / 8)/* md.getDigestLength() , expandAlg));
-        SecretKey expandSecretKey = hkdfExpand.generateKey();*/
-
         byte[] zeros = new byte[md.getDigestLength()];
         KDF hkdfExtract = KDF.getInstance(hashAlg, getProviderName());
         javax.crypto.spec.HKDFParameterSpec extractOnly = javax.crypto.spec.HKDFParameterSpec.ofExtract().addIKM(psk).addSalt(zeros).extractOnly();
@@ -132,7 +117,6 @@ public class BaseTestMemStressHKDF extends BaseTestJunit5 {
         byte[] encryptedBytes = encrypt(expandSecretKey, strToEncrypt, "AES/ECB/PKCS5Padding");
         String plainStr = decrypt(expandSecretKey, encryptedBytes, "AES/ECB/PKCS5Padding");
         assertTrue(plainStr.equals(strToEncrypt));
-
     }
 
 
@@ -168,7 +152,6 @@ public class BaseTestMemStressHKDF extends BaseTestJunit5 {
         }
         cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
         return new String(cipher.doFinal(encryptedBytes));
-
     }
 
     private static byte[] createHkdfInfo(byte[] label, byte[] context, int length)
@@ -183,11 +166,6 @@ public class BaseTestMemStressHKDF extends BaseTestJunit5 {
             // unlikely
             throw new RuntimeException("Unexpected exception", ioe);
         }
-
         return info;
-
     }
-
-
-
 }
