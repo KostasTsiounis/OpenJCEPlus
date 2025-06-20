@@ -299,11 +299,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
     @Test
     public void testThroughProvider() throws Exception {
         try {
-            // HKDF hkdf = HKDF.getInstance("kda-hkdf-with-sha256", providerName);
-
             for (int i = 0; i < HKDF_KA.length; i++) {
-
-                String digestAlgo = HKDF_KA[i][0];
                 byte[] ikmArray = hexStringToByteArray(HKDF_KA[i][1]);
                 byte[] saltArray = hexStringToByteArray(HKDF_KA[i][2]);
                 byte[] infoArray = hexStringToByteArray(HKDF_KA[i][3]);
@@ -353,10 +349,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
     @Test
     public void testDerive() throws Exception {
         try {
-
             for (int i = 0; i < HKDF_KA.length; i++) {
-
-                String digestAlgo = HKDF_KA[i][0];
                 byte[] ikmArray = hexStringToByteArray(HKDF_KA[i][1]);
                 byte[] saltArray = hexStringToByteArray(HKDF_KA[i][2]);
                 byte[] infoArray = hexStringToByteArray(HKDF_KA[i][3]);
@@ -380,7 +373,6 @@ public class BaseTestHKDF extends BaseTestJunit5 {
                 SecretKey calcOkm = hkdfDerive.deriveKey("TlsEarlySecret", derive);
 
                 byte[] calcOkmArray = calcOkm.getEncoded();
-                boolean okmequal = Arrays.equals(okmArray, calcOkmArray);
                 assertArrayEquals(okmArray, calcOkmArray, "Calculated okm doesn't match hardcoded one");
                 assertTrue(calcOkmArray.length == okmLength);
             }
