@@ -51,7 +51,11 @@ public final class PQCKey implements AsymmetricKey {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
+<<<<<<< HEAD
         String NoDashAlg = algName.replace('-', '_');
+=======
+        String NoDashAlg = algName.replace('-','_');
+>>>>>>> 7649ecb (Update new PQC algorithms)
         NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         keyId = nativeImpl.MLKEY_createPrivateKey( NoDashAlg, privateKeyBytes);
 
@@ -66,7 +70,11 @@ public final class PQCKey implements AsymmetricKey {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
+<<<<<<< HEAD
         String NoDashAlg = algName.replace('-', '_');
+=======
+        String NoDashAlg = algName.replace('-','_');
+>>>>>>> 7649ecb (Update new PQC algorithms)
         NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         keyId = nativeImpl.MLKEY_createPublicKey(NoDashAlg, publicKeyBytes);
 

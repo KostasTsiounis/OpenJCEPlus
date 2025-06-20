@@ -60,8 +60,13 @@ final class PQCPrivateKey extends PKCS8Key {
         try {  
             try {
                 pkOct = new DerValue(DerValue.tag_OctetString, key);
+<<<<<<< HEAD
 
                 this.pqcKey = PQCKey.createPrivateKey(provider.isFIPS(),
+=======
+     
+                this.pqcKey = PQCKey.createPrivateKey(provider.isFIPS(), 
+>>>>>>> 7649ecb (Update new PQC algorithms)
                                    this.name, pkOct.toByteArray());
                 this.privKeyMaterial = pkOct.toByteArray();
             } finally {
