@@ -10,7 +10,6 @@ package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.PQCKey;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;

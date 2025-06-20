@@ -10,7 +10,6 @@ package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.PQCSignature;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
-
 import java.io.ByteArrayOutputStream;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
