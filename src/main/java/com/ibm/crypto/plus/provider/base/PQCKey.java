@@ -6,7 +6,7 @@
  * this code, including the "Classpath" Exception described therein.
  */
 
-package com.ibm.crypto.plus.provider.ock;
+package com.ibm.crypto.plus.provider.base;
 
 import java.util.Arrays;
 
@@ -17,23 +17,22 @@ public final class PQCKey implements AsymmetricKey {
     //
     static final byte[] unobtainedKeyBytes = new byte[0];
 
-    private OCKContext ockContext;
+    private boolean isFIPS;
+    private NativeInterface nativeImpl = null;
     private long pkeyId;
-    private String algName; 
+    private String algName;
     private byte[] privateKeyBytes;
     private byte[] publicKeyBytes;
     private final static String badIdMsg = "Key Identifier is not valid";
 
-    public static PQCKey generateKeyPair(OCKContext ockContext, String algName)
+    public static PQCKey generateKeyPair(boolean isFIPS, String algName)
             throws OCKException {
         long keyId = 0;        
         // final String methodName = "generateKeyPair ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
         try {
             String NoDashAlg = algName.replace('-','_');
-            keyId = NativeInterface.MLKEY_generate(ockContext.getId(), NoDashAlg);
+            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            keyId = nativeImpl.MLKEY_generate(NoDashAlg);
 
             if (keyId == 0) {   
                 throw new OCKException("OCKPQCKey.generateKeyPair: MLKEY_generate failed");
@@ -41,49 +40,44 @@ public final class PQCKey implements AsymmetricKey {
         } catch (Exception e) {
             throw new OCKException("OCKPQCKey.generateKeyPair: Exception " + e.getCause());
         }
-        return new PQCKey(ockContext, keyId, unobtainedKeyBytes, unobtainedKeyBytes, algName);
+        return new PQCKey(isFIPS, keyId, unobtainedKeyBytes, unobtainedKeyBytes, algName);
     }
 
-    public static PQCKey createPrivateKey(OCKContext ockContext, String algName, byte[] privateKeyBytes)
+    public static PQCKey createPrivateKey(boolean isFIPS, String algName, byte[] privateKeyBytes)
             throws OCKException {
         // final String methodName = "createPrivateKey ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
         String NoDashAlg = algName.replace('-','_');
-        keyId = NativeInterface.MLKEY_createPrivateKey(ockContext.getId(), NoDashAlg,
-                privateKeyBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        keyId = nativeImpl.MLKEY_createPrivateKey( NoDashAlg, privateKeyBytes);
 
-        return new PQCKey(ockContext, keyId, privateKeyBytes.clone(), null, algName);
+        return new PQCKey(isFIPS, keyId, privateKeyBytes.clone(), null, algName);
     }
 
-    public static PQCKey createPublicKey(OCKContext ockContext,  String algName, byte[] publicKeyBytes)
+    public static PQCKey createPublicKey(boolean isFIPS,  String algName, byte[] publicKeyBytes)
             throws OCKException {
         // final String methodName = "createPublicKey ";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
 
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
         String NoDashAlg = algName.replace('-','_');
-        keyId = NativeInterface.MLKEY_createPublicKey(ockContext.getId(), NoDashAlg,
-            publicKeyBytes);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        keyId = nativeImpl.MLKEY_createPublicKey(NoDashAlg, publicKeyBytes);
 
         // OCKDebug.Msg (debPrefix, methodName, "mlkemKeyId :" + mlkemKeyId);
-        return new PQCKey(ockContext, keyId, null, publicKeyBytes.clone(), algName);
+        return new PQCKey(isFIPS, keyId, null, publicKeyBytes.clone(), algName);
     }
 
-    private PQCKey(OCKContext ockContext, long keyId, byte[] privateKeyBytes,
+    private PQCKey(boolean isFIPS, long keyId, byte[] privateKeyBytes,
             byte[] publicKeyBytes, String algName) throws OCKException {
-        this.ockContext = ockContext;
+        this.isFIPS = isFIPS;
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.pkeyId = keyId;
         this.algName = algName;
 
@@ -92,14 +86,12 @@ public final class PQCKey implements AsymmetricKey {
         }
 
         if (privateKeyBytes == unobtainedKeyBytes) {
-            this.privateKeyBytes = NativeInterface.MLKEY_getPrivateKeyBytes(ockContext.getId(),
-            keyId);
+            this.privateKeyBytes = nativeImpl.MLKEY_getPrivateKeyBytes(keyId);
         } else {
             this.privateKeyBytes = privateKeyBytes;
         }
         if (publicKeyBytes == unobtainedKeyBytes) {
-            this.publicKeyBytes = NativeInterface.MLKEY_getPublicKeyBytes(ockContext.getId(),
-            keyId);
+            this.publicKeyBytes = nativeImpl.MLKEY_getPublicKeyBytes(keyId);
         } else {
             this.publicKeyBytes = publicKeyBytes;
         }
@@ -144,8 +136,7 @@ public final class PQCKey implements AsymmetricKey {
             }
         
             System.out.println("getPrivKeyBytes - pkeyId :" + pkeyId);
-            this.privateKeyBytes = NativeInterface.MLKEY_getPrivateKeyBytes(ockContext.getId(),
-            pkeyId);
+            this.privateKeyBytes = nativeImpl.MLKEY_getPrivateKeyBytes(pkeyId);
         }
     }
 
@@ -158,8 +149,7 @@ public final class PQCKey implements AsymmetricKey {
             if (!validId(pkeyId)) {
                 throw new OCKException(badIdMsg);
             }
-            this.publicKeyBytes = NativeInterface.MLKEY_getPublicKeyBytes(ockContext.getId(),
-            pkeyId);
+            this.publicKeyBytes = nativeImpl.MLKEY_getPublicKeyBytes(pkeyId);
         }
     }
 
@@ -174,7 +164,7 @@ public final class PQCKey implements AsymmetricKey {
             }
 
             if (pkeyId != 0) {
-                NativeInterface.MLKEY_delete(ockContext.getId(), pkeyId);
+                nativeImpl.MLKEY_delete(pkeyId);
                 pkeyId = 0;
             }
         } finally {

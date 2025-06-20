@@ -6,7 +6,7 @@
  * this code, including the "Classpath" Exception described therein.
  */
 
-package com.ibm.crypto.plus.provider.ock;
+package com.ibm.crypto.plus.provider.base;
 
 public final class OJPKEM {
     /*
@@ -14,16 +14,16 @@ public final class OJPKEM {
      * Key Encapsulation interface to OCK.
      */
 
-    public static void KEM_encapsulate(OCKContext ockContext, long ockPKeyId, byte[] encapsulatedKey,
+    public static void KEM_encapsulate(boolean isFIPS, long ockPKeyId, byte[] encapsulatedKey,
             byte[] keyMaterial) throws OCKException {
-        NativeInterface.KEM_encapsulate(ockContext.getId(), ockPKeyId, encapsulatedKey, keyMaterial);
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        nativeImpl.KEM_encapsulate(ockPKeyId, encapsulatedKey, keyMaterial);
     }
 
-    public static byte[] KEM_decapsulate(OCKContext ockContext, long ockPKeyId, byte[] encapsulatedKey)
+    public static byte[] KEM_decapsulate(boolean isFIPS, long ockPKeyId, byte[] encapsulatedKey)
             throws OCKException {
-        byte[] keyMaterial = 
-            NativeInterface.KEM_decapsulate(ockContext.getId(), ockPKeyId, encapsulatedKey);
-
+        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        byte[] keyMaterial = nativeImpl.KEM_decapsulate(ockPKeyId, encapsulatedKey);
         return keyMaterial;
     }
 

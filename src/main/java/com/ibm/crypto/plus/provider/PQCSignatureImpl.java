@@ -8,7 +8,7 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.PQCSignature;
+import com.ibm.crypto.plus.provider.base.PQCSignature;
 import java.io.ByteArrayOutputStream;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -34,7 +34,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
     PQCSignatureImpl(OpenJCEPlusProvider provider) {
         try {
             this.provider = provider;
-            this.signature = PQCSignature.getInstance(provider.getOCKContext());
+            this.signature = PQCSignature.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw provider.providerException("Failed to initialize EdDSA signature", e);
         }
@@ -43,7 +43,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
     PQCSignatureImpl(OpenJCEPlusProvider provider, String Alg) {
         try {
             this.provider = provider;
-            this.signature = PQCSignature.getInstance(provider.getOCKContext());
+            this.signature = PQCSignature.getInstance(provider.isFIPS());
         } catch (Exception e) {
             throw provider.providerException("Failed to initialize EdDSA signature", e);
         }

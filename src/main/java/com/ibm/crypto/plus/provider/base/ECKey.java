@@ -67,7 +67,7 @@ public final class ECKey implements AsymmetricKey {
             byte[] privateKeyBytes, byte[] publicKeyBytes) {
         //final String methodName = "ECKey(long, byte[], byte[], byte[]) ";
         this.isFIPS = isFIPS;
-        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.ecKeyId = ecKeyId;
         this.pkeyId = 0;
         this.parameterBytes = parameterBytes;
