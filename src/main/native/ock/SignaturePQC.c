@@ -18,12 +18,12 @@
 #include <stdint.h>
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    SIGNATURE_sign
  * Signature: (JJ[B)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_PQC_1SIGNATURE_1sign(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_PQC_1SIGNATURE_1sign(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray data) {
 
@@ -137,12 +137,12 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_PQC_1SIGNATURE_1sign(
 }
 
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    SIGNATURE_verify
  * Signature: (JJ[B[B)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_PQC_1SIGNATURE_1verify(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_PQC_1SIGNATURE_1verify(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray sigBytes, jbyteArray data) {
 

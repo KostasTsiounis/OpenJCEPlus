@@ -20,12 +20,12 @@
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    KEM_encapsulate
  * Signature: (JJ[B[B)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_KEM_1encapsulate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_KEM_1encapsulate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray wrappedKey, jbyteArray randomKey) {
 
@@ -103,12 +103,12 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_KEM_1encapsulate(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    MLKEY_decapsulate
  * Signature: (JJ[B)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_ock_NativeInterface_KEM_1decapsulate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_KEM_1decapsulate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong ockPKeyId,
     jbyteArray wrappedKey) {
 
