@@ -55,17 +55,10 @@ abstract class PQCKeyPairGenerator extends KeyPairGeneratorSpi {
         try {
             //System.out.println("Generating KeyPair for " + mlkemAlg);
             PQCKey mlkemKey = PQCKey.generateKeyPair(provider.isFIPS(), mlkemAlg);
-<<<<<<< HEAD
             byte[] privKeyBytes = mlkemKey.getPrivateKeyBytes();
             PQCPrivateKey privKey = new PQCPrivateKey(provider, PQCKey.createPrivateKey(provider.isFIPS(),
                                                                mlkemAlg, privKeyBytes));
             byte[] pubKeyBytes = mlkemKey.getPublicKeyBytes();
-=======
-            byte [] privKeyBytes = mlkemKey.getPrivateKeyBytes();
-            PQCPrivateKey privKey = new PQCPrivateKey(provider, PQCKey.createPrivateKey(provider.isFIPS(),
-                                                               mlkemAlg, privKeyBytes));
-            byte [] pubKeyBytes = mlkemKey.getPublicKeyBytes();
->>>>>>> 7649ecb (Update new PQC algorithms)
             PQCPublicKey pubKey = new PQCPublicKey(provider, PQCKey.createPublicKey(provider.isFIPS(),
                                                                mlkemAlg, pubKeyBytes));
             return new KeyPair(pubKey, privKey);
