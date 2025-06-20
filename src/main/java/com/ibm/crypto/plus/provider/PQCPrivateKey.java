@@ -9,6 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.PQCKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -100,7 +102,7 @@ final class PQCPrivateKey extends PKCS8Key {
             this.name = pqcKey.getAlgorithm();
             this.algid = new AlgorithmId(PQCAlgorithmId.getOID(name));
         } catch (Exception exception) {
-            throw provider.providerException("Failure in PQCPrivateKey" + exception.getMessage(), exception);
+            throw NativeOCKAdapter.providerException("Failure in PQCPrivateKey" + exception.getMessage(), exception);
         }
     }
 

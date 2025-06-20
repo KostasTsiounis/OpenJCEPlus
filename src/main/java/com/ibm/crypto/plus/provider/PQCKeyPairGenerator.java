@@ -9,6 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.PQCKey;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
@@ -62,7 +64,7 @@ abstract class PQCKeyPairGenerator extends KeyPairGeneratorSpi {
                                                                mlkemAlg, pubKeyBytes));
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
-            throw provider.providerException("Failure in generateKeyPair - " +e.getCause(), e);
+            throw NativeOCKAdapter.providerException("Failure in generateKeyPair - " +e.getCause(), e);
         }
     }
 

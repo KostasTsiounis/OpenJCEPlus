@@ -9,6 +9,8 @@
 package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.PQCSignature;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapter;
+
 import java.io.ByteArrayOutputStream;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,7 +38,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
             this.provider = provider;
             this.signature = PQCSignature.getInstance(provider.isFIPS());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize EdDSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }
     }
 
@@ -45,7 +47,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
             this.provider = provider;
             this.signature = PQCSignature.getInstance(provider.isFIPS());
         } catch (Exception e) {
-            throw provider.providerException("Failed to initialize EdDSA signature", e);
+            throw NativeOCKAdapter.providerException("Failed to initialize EdDSA signature", e);
         }
         this.alg = Alg; // Added to know difference between algorithms.
     }
@@ -96,7 +98,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
             this.signature.initialize(keyPrivate.getPQCKey());
             //this.signature.initialize(keyPrivate);
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitSign", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitSign", e);
         }
         // Set to sign mode and reset message
         this.privateKeyInit = true;
@@ -119,7 +121,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
         try {
             this.signature.initialize(keyPublic.getPQCKey());
         } catch (Exception e) {
-            throw provider.providerException("Failure in engineInitVerify", e);
+            throw NativeOCKAdapter.providerException("Failure in engineInitVerify", e);
         }
 
         // Set to verify mode and reset message
@@ -141,7 +143,7 @@ abstract class PQCSignatureImpl extends SignatureSpi {
             return sign;
         } catch (Exception e) {
             SignatureException signatureException = new SignatureException("Could not sign data");
-            provider.setOCKExceptionCause(signatureException, e);
+            NativeOCKAdapter.setOCKExceptionCause(signatureException, e);
             throw signatureException;
         }
     }
