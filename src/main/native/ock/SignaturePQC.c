@@ -137,13 +137,9 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_PQC_1SIGNATURE_1si
 }
 
 /*
-<<<<<<< HEAD
+
  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
  * Method:    PQC_SIGNATURE_verify
-=======
- * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
- * Method:    SIGNATURE_verify
->>>>>>> cc63a8a (Update new PQC algorithms 5)
  * Signature: (JJ[B[B)Z
  */
 JNIEXPORT jboolean JNICALL
