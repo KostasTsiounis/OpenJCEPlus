@@ -36,20 +36,25 @@ abstract public class BaseTestMessageDigest extends BaseTestJunit5 {
 
     @Test
     public void testUpdateCloneSameUpdate() throws Exception {
+        System.out.println("testUpdateCloneSameUpdate start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
 
+        System.out.println("testUpdateCloneSameUpdate 1");
         md.update(input_1);
 
+        System.out.println("testUpdateCloneSameUpdate 2");
         MessageDigest mdCopy = (MessageDigest) md.clone();
-
+        System.out.println("testUpdateCloneSameUpdate 3");
         byte[] digest1 = md.digest(input_2);
+        System.out.println("testUpdateCloneSameUpdate 4");
         byte[] digest2 = mdCopy.digest(input_2);
-
+        System.out.println("testUpdateCloneSameUpdate 5");
         assertArrayEquals(digest2, digest1, "Digest of original did not match clone's digest");
     }
 
     @Test
     public void testUpdateCloneDifferentUpdate() throws Exception {
+        System.out.println("testUpdateCloneDifferentUpdate start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
 
         md.update(input_1);
@@ -64,6 +69,7 @@ abstract public class BaseTestMessageDigest extends BaseTestJunit5 {
 
     @Test
     public void testCloneSameUpdate() throws Exception {
+        System.out.println("testCloneSameUpdate start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
 
         MessageDigest mdCopy = (MessageDigest) md.clone();
@@ -76,6 +82,7 @@ abstract public class BaseTestMessageDigest extends BaseTestJunit5 {
 
     @Test
     public void testCloneDifferentUpdate() throws Exception {
+        System.out.println("testCloneDifferentUpdate start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
 
         MessageDigest mdCopy = (MessageDigest) md.clone();

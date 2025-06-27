@@ -62,6 +62,7 @@ public class BaseTestSHA256 extends BaseTestMessageDigest {
 
     @Test
     public void testSHA256() throws Exception {
+        System.out.println("testSHA256 start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
 
         for (int i = 0; i < 100000; i++)
@@ -69,10 +70,12 @@ public class BaseTestSHA256 extends BaseTestMessageDigest {
         byte[] digest = md.digest();
 
         assertTrue(Arrays.equals(digest, result_1), "Digest did not match expected");
+        System.out.println("testSHA256 end");
     }
 
     @Test
     public void testSHA256_SingleBlock() throws Exception {
+        System.out.println("testSHA256_SingleBlock start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
         byte[] digest = md.digest(input_2);
 
@@ -81,6 +84,7 @@ public class BaseTestSHA256 extends BaseTestMessageDigest {
 
     @Test
     public void testSHA256_reset() throws Exception {
+        System.out.println("testSHA256_reset start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
         md.update(input_1);
         md.reset();
@@ -92,6 +96,7 @@ public class BaseTestSHA256 extends BaseTestMessageDigest {
 
     @Test
     public void testSHA256_MultiBlock() throws Exception {
+        System.out.println("testSHA256_MultiBlock start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
         byte[] digest = md.digest(input_3);
 
@@ -100,6 +105,7 @@ public class BaseTestSHA256 extends BaseTestMessageDigest {
 
     @Test
     public void testSHA256_digestLength() throws Exception {
+        System.out.println("testSHA256_digestLength start");
         MessageDigest md = MessageDigest.getInstance(getAlgorithm(), getProviderName());
         int digestLength = md.getDigestLength();
         boolean isExpectedValue = (digestLength == 32);

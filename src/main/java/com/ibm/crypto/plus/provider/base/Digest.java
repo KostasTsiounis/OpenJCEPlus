@@ -118,7 +118,9 @@ public final class Digest implements Cloneable {
 
             if (context == null) {
                 // Create new context
+                System.out.println("Digest.getContext(): Before creating context");
                 this.digestId = nativeImpl.DIGEST_create(this.digestAlgo);
+                System.out.println("Digest.getContext(): After creating context");
                 this.contextFromQueue = (runtimeContextNum[this.algIndx] < numContexts);
                 if (runtimeContextNum[this.algIndx] < numContexts) {
                     runtimeContextNum[this.algIndx]++;
@@ -185,10 +187,15 @@ public final class Digest implements Cloneable {
 
     private Digest(boolean isFIPS, String digestAlgo) throws NativeException {
         //final String methodName = "Digest(String)";
+        System.out.println("Digest constructor: beginning");
         this.isFIPS = isFIPS;
-        this.nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        System.out.println("Digest constructor: Before getting native impl");
+        this.nativeImpl = NativeInterfaceFactory.getDigestImpl(isFIPS);
+        System.out.println("Digest constructor: After getting native impl");
         this.digestAlgo = digestAlgo;
+        System.out.println("Digest constructor: Before getting context");
         getContext();
+        System.out.println("Digest constructor: After getting context");
         //OCKDebug.Msg(debPrefix, methodName,  "digestAlgo :" + digestAlgo);
     }
 

@@ -10,11 +10,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <openssl/err.h>
 
 #include "Utils.h"
 #include <string.h>
-
-static int initialized = 0;
 
 int debug = 0;  // FIXME
 
@@ -116,16 +115,15 @@ int gslogFunctionExit(const char *functionName) {
 //
 //
 void osslCheckStatus() {
-    if (debug) {
-        unsigned long errCode;
+    unsigned long errCode;
 
-        while ((errCode = ERR_get_error(ctx)) == 1) {
-            char *err;
-            // gslogMessage("Generating error message");
-            err = ERR_error_string(ctx, errCode, NULL);
-            gslogMessage("%s", err);
-        }
+    while ((errCode = ERR_get_error()) == 1) {
+        char *err;
+        // gslogMessage("Generating error message");
+        err = ERR_error_string(errCode, NULL);
+        gslogMessage("%s", err);
     }
+
 }
 
 //============================================================================

@@ -37,7 +37,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DSAKEY_1generate__
     }
 
     if (numBits <= 0) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "DSA Key generate failed. The input parameter is incorrect.");
         if (debug) {
@@ -130,7 +130,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DSAKEY_1generatePa
     }
 
     if (numBits <= 0) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "DSA Key generate failed. The input parameter is incorrect.");
         if (debug) {

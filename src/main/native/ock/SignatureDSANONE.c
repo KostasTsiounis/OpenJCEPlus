@@ -140,7 +140,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DSANONE_1SIGNATURE
                                     "sigBytesNative");
                             }
 #endif
-                            throwNativeException(
+                            throwOCKException(
                                 env, 0, "NULL from GetPrimitiveArrayCritical");
                         } else {
                             memcpy(sigBytesNative, sigBytesLocal, outLen);

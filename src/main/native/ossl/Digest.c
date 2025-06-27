@@ -14,6 +14,7 @@
 
 #include "com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation.h"
 #include "Digest.h"
+#include "Utils.h"
 #include <stdint.h>
 
 //============================================================================
@@ -25,19 +26,21 @@
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1create(
     JNIEnv *env, jclass thisObj, jstring digestAlgo) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_create";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_create";
 
     OSSLDigest  *osslDigest      = NULL;
     const char  *digestAlgoChars = NULL;
     jlong       digestId         = 0;
     int         rc               = 1;
 
+    gslogMessage("DIGEST_create started.");
+
     if (NULL == digestAlgo) {
         throwOSSLException(env, 0, "DIGEST_create: The specified digest algorithm is null");
         return 0;
     }
 
-    if (!(digestAlgoChars = (*env)->GetStringUTFChars(env, digestAlgo, NULL))) {
+    if (!(digestAlgoChars = (const char *)(*env)->GetStringUTFChars(env, digestAlgo, NULL))) {
         throwOSSLException(env, 0, "DIGEST_create: GetStringUTFChars() failed");
         goto cleanup;
     }
@@ -49,24 +52,28 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1create(
     }
 
     osslDigest->mdCtx = NULL;
-    osslDigest->md = EVP_get_digestbyname(digestAlgoChars);
+    osslDigest->md = EVP_get_digestbyname("sha256");
+    gslogMessage("DIGEST_create: md %d", osslDigest->md);
     if (NULL == osslDigest->md) {
-
-        osslCheckStatus();
+        gslogMessage("DIGEST_create: Problem with md");
+        //osslCheckStatus();
         throwOSSLException(env, 0, "DIGEST_create: EVP_get_digestbyname failed");
         goto cleanup;
     }
-    osslDigest->mdCtx = EVP_MD_CTX_create();
+    osslDigest->mdCtx = EVP_MD_CTX_new();
+    gslogMessage("DIGEST_create: mdCtx %d", osslDigest->mdCtx);
     if (NULL == osslDigest->mdCtx) {
+        gslogMessage("DIGEST_create: Problem with mdCtx");
         throwOSSLException(env, 0, "DIGEST_create: EVP_MD_CTX_create failed");
         goto cleanup;
     }
 
     rc = EVP_DigestInit_ex2(osslDigest->mdCtx, osslDigest->md, NULL);
+    gslogMessage("DIGEST_create: rc %d", rc);
     if (1 != rc) {
-
+        gslogMessage("DIGEST_create: Problem with init");
         //ockCheckStatus(ockCtx);
-        throwOSSLException(env, 0, "DIGEST_create: EVP_DigestInit_ex2 failed");*/
+        throwOSSLException(env, 0, "DIGEST_create: EVP_DigestInit_ex2 failed");
         goto cleanup;
     }
     
@@ -76,6 +83,7 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1create(
 cleanup:
     (*env)->ReleaseStringUTFChars(env, digestAlgo, digestAlgoChars);
     if (0 == digestId) {
+        gslogMessage("DIGEST_create: Shouldn't get here");
         if (NULL != osslDigest) {
             if (NULL != osslDigest->mdCtx) {
                 EVP_MD_CTX_free(osslDigest->mdCtx);
@@ -85,6 +93,8 @@ cleanup:
             osslDigest = NULL;
         }
     }
+
+    gslogMessage("DIGEST_create finished.");
 
     return digestId;
 }
@@ -98,11 +108,13 @@ cleanup:
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1copy(
     JNIEnv *env, jclass thisObj, jlong digestId) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_copy";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_copy";
 
     OSSLDigest *osslDigest     = (OSSLDigest *)((intptr_t)digestId);
     OSSLDigest *osslDigestCopy = NULL;
     jlong      digestCopyId  = 0;
+
+    gslogMessage("DIGEST_copy started.");
 
     if (NULL == osslDigest) {
         throwOSSLException(env, 0, "DIGEST_copy: The specified OSSLDigest is null");
@@ -143,21 +155,12 @@ cleanup:
         }
     }
 
+    gslogMessage("DIGEST_copy finished.");
+
     return digestCopyId;
 }
 
-JNIEXPORT int DIGEST_update_internal(OSSLDigest *osslDigest,
-    unsigned char *dataNative, int dataLen) {
-    int                rc           = 1;
-    static const char *functionName = "NativeOCKImplementation.DIGEST_update";
-    rc = EVP_DigestUpdate(osslDigest->mdCtx, dataNative, dataLen);
-    if (1 != rc) {
-        return -1;
-    }
-    return rc;
-}
-
-static int DIGEST_update_internal(OSSLDigest *osslDigest, unsigned char *dataNative, int dataLen) {
+static int DIGEST_update_internal(JNIEnv *env, OSSLDigest *osslDigest, unsigned char *dataNative, int dataLen) {
     int rc = 0;
 
     if (NULL == osslDigest) {
@@ -193,12 +196,14 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1update(
     JNIEnv *env, jclass thisObj, jlong digestId,
     jbyteArray data, jint offset, jint dataLen) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_update";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_update";
 
     OSSLDigest     *osslDigest    = (OSSLDigest *)((intptr_t)digestId);
     unsigned char  *dataNative   = NULL;
     jboolean       isCopy       = 0;
     int            returnResult = 0;
+
+    gslogMessage("DIGEST_update started.");
 
     if (NULL == data) {
         throwOSSLException(env, 0, "DIGEST_update: The specified data array is null");
@@ -216,9 +221,11 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1update(
         return 0;
     }
 
-    returnResult = DIGEST_update_internal(osslDigest, dataNative + offset, dataLen);
+    returnResult = DIGEST_update_internal(env, osslDigest, dataNative + offset, dataLen);
 
     (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, 0);
+
+    gslogMessage("DIGEST_update finished.");
 
     return (jint)returnResult;
 }
@@ -232,18 +239,21 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1updateFastJNI(
     JNIEnv *env, jclass thisObj, jlong digestId,
     jlong dataBuffer, jint dataLen) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_updateFastJNI";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_updateFastJNI";
 
     OSSLDigest      *osslDigest = (OSSLDigest *)digestId;
     unsigned char   *dataNative = (unsigned char *)dataBuffer;
-    int             rc          = 1;
+
+    gslogMessage("DIGEST_updateFastJNI started.");
 
     if (dataNative == NULL) {
         throwOSSLException(env, 0, "DIGEST_updateFastJNI: The pointer to the specified data buffer is null");
         return;
     }
 
-    rc = DIGEST_update_internal(osslDigest, dataNative, (int)dataLen);
+    DIGEST_update_internal(env, osslDigest, dataNative, (int)dataLen);
+
+    gslogMessage("DIGEST_updateFastJNI finished.");
 }
 
 //============================================================================
@@ -255,7 +265,7 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1updateFa
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1digest(
     JNIEnv *env, jclass thisObj, jlong digestId) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_digest";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_digest";
 
     OSSLDigest     *osslDigest         = (OSSLDigest *)((intptr_t)digestId);
     jbyteArray     digestBytes       = NULL;
@@ -264,6 +274,8 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1digest(
     int            digestLen         = 0;
     int            rc                = 0;
     jbyteArray     retDigestBytes    = NULL;
+
+    gslogMessage("DIGEST_digest started.");
 
     if (NULL == osslDigest) {
         throwOSSLException(env, 0, "DIGEST_digest: The specified OSSLDigest is null");
@@ -318,45 +330,51 @@ cleanup:
         (*env)->DeleteLocalRef(env, digestBytes);
     }
 
+    gslogMessage("DIGEST_digest finished.");
+
     return retDigestBytes;
 }
 
-static int 
-DIGEST_digest_and_reset_internal(OSSLDigest *osslDigest, unsigned char *digestBytesNative, unsigned int digestLen)
+static int
+DIGEST_digest_and_reset_internal(JNIEnv *env, OSSLDigest *osslDigest, unsigned char *digestBytesNative, unsigned int digestLen)
 {
+    int rc = 0;
+
     if (NULL == osslDigest) {
         throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: The specified OSSLDigest is null");
-        return;
+        return 0;
     }
 
     if (NULL == osslDigest->mdCtx) {
         throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: The specified OSSLDigest->mdCtx is null");
-        return;
+        return 0;
     }
 
     if (NULL == digestBytesNative) {
         throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: The pointer to the specified data array is null");
-        return;
+        return 0;
     }
 
     if (digestLen < 0) {
         throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: The specified data length is negative");
-        return;
+        return 0;
     }
 
     rc = EVP_DigestFinal_ex(osslDigest->mdCtx, digestBytesNative, &digestLen);
     if (1 != rc) {
         //ockCheckStatus(ockCtx);
         throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: EVP_DigestFinal_ex failed");
-        return;
+        return rc;
     }
 
     /* digest reset */
     rc = EVP_DigestInit_ex2(osslDigest->mdCtx, NULL, NULL);
     if (1 != rc) {
         //ockCheckStatus(ockCtx);
-        throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: EVP_DigestInit_ex2 failed");*/
+        throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: EVP_DigestInit_ex2 failed");
     }
+
+    return rc;
 }
 /*
  * Class:     com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation
@@ -367,14 +385,17 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1digest_1and_1reset__JJI(
     JNIEnv *env, jclass thisObj, jlong digestId,
     jlong digestBytes, jint length) {
-    static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
+    //static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
 
     OSSLDigest     *osslDigest         = (OSSLDigest *)((intptr_t)digestId);
     unsigned char *digestBytesNative = (unsigned char *)((intptr_t)digestBytes);
     unsigned int   digestLen         = (unsigned int)length;
-    int            rc                = 0;
 
-    DIGEST_digest_and_reset_internal(osslDigest, digestBytesNative, digestLen);
+    gslogMessage("DIGEST_digest_and_reset started.");
+
+    DIGEST_digest_and_reset_internal(env, osslDigest, digestBytesNative, digestLen);
+
+    gslogMessage("DIGEST_digest_and_reset finished.");
 }
 
 /*
@@ -386,13 +407,15 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1digest_1and_1reset__J_3B(
     JNIEnv *env, jclass thisObj, jlong digestId,
     jbyteArray digestBytes) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
+    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
 
     OSSLDigest     *osslDigest         = (OSSLDigest *)((intptr_t)digestId);
     unsigned char *digestBytesNative = NULL;
     jboolean       isCopy            = 0;
     int            returnResult      = 0;
     unsigned int digestLen           = 0;
+
+    gslogMessage("DIGEST_digest_and_reset started.");
 
     if (NULL == digestBytes) {
         throwOSSLException(env, 0, "DIGEST_digest_and_reset: The specified data array is null");
@@ -405,12 +428,14 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1digest_1
         goto cleanup;
     }
 
-    returnResult = DIGEST_digest_and_reset_internal(osslDigest, digestBytesNative, digestLen);
+    returnResult = DIGEST_digest_and_reset_internal(env, osslDigest, digestBytesNative, digestLen);
 
 cleanup:
     if (digestBytesNative != NULL) {
         (*env)->ReleasePrimitiveArrayCritical(env, digestBytes, digestBytesNative, 0);
     }
+
+    gslogMessage("DIGEST_digest_and_reset finished.");
 
     return (jint)returnResult;
 }
@@ -424,10 +449,12 @@ cleanup:
 JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1size(
     JNIEnv *env, jclass thisObj, jlong digestId) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_size";
+    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_size";
 
     OSSLDigest *osslDigest = (OSSLDigest *)((intptr_t)digestId);
     int        digestLen = 0;
+
+    gslogMessage("DIGEST_size started.");
 
     if (NULL == osslDigest) {
         throwOSSLException(env, 0, "DIGEST_size: The specified OSSLDigest is null");
@@ -445,6 +472,7 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1size(
         throwOSSLException(env, 0, "DIGEST_size: EVP_MD_size failed");
     }
 
+    gslogMessage("DIGEST_size finished.");
     return digestLen;
 }
 
@@ -457,10 +485,12 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1size(
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1reset(
     JNIEnv *env, jclass thisObj, jlong digestId) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_reset";
+    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_reset";
 
     OSSLDigest *osslDigest = (OSSLDigest *)((intptr_t)digestId);
     int        rc        = 0;
+
+    gslogMessage("DIGEST_reset started.");
 
     if (NULL == osslDigest) {
         throwOSSLException(env, 0, "DIGEST_size: The specified OSSLDigest is null");
@@ -477,6 +507,8 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1reset(
         //ockCheckStatus(ockCtx);
         throwOSSLException(env, 0, "DIGEST_reset: EVP_DigestInit_ex2 failed");
     }
+
+    gslogMessage("DIGEST_reset finished.");
 }
 
 //============================================================================
@@ -488,7 +520,9 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1reset(
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1delete(
     JNIEnv *env, jclass thisObj, jlong digestId) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_delete";
+    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_delete";
+
+    gslogMessage("DIGEST_delete started.");
 
     OSSLDigest *osslDigest = (OSSLDigest *)((intptr_t)digestId);
 
@@ -500,4 +534,6 @@ Java_com_ibm_crypto_plus_provider_ossl_NativeOSSLImplementation_DIGEST_1delete(
         free(osslDigest);
         osslDigest = NULL;
     }
+
+    gslogMessage("DIGEST_delete finished.");
 }

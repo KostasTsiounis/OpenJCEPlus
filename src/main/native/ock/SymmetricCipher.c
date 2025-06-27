@@ -115,7 +115,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1create(
                 ockCipher->cached_context = ICC_EVP_CIPHER_CTX_new(ockCtx);
                 if (NULL == ockCipher->cached_context) {
                     ockCheckStatus(ockCtx);
-                    throwNativeException(
+                    throwOCKException(
                         env, 0,
                         "ICC_EVP_CIPHER_CTX_new failed for cached context");
                 } else {
@@ -238,7 +238,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1init(
                                                  ockCipher->cipherCtx);
                     if (rc != ICC_OSSL_SUCCESS) {
                         ockCheckStatus(ockCtx);
-                        throwNativeException(
+                        throwOCKException(
                             env, 0,
                             "ICC_EVP_CIPHER_CTX_copy failed for CIPHER_init");
                     }
@@ -573,7 +573,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1encryptUpd
     }
 
     if ((ockCipher == NULL) || (plaintext == NULL) || (ciphertext == NULL)) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "The specified Cipher encrypt update arguments are incorrect.");
         if (debug) {
@@ -709,7 +709,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1encryptFin
         gslogFunctionEntry(functionName);
     }
     if ((ockCipher == NULL) || (ciphertext == NULL)) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "The specified Cipher encrypt final arguments are incorrect.");
         if (debug) {
@@ -818,7 +818,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1decryptUpd
     }
 
     if ((ockCipher == NULL) || (ciphertext == NULL) || (plaintext == NULL)) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "The specified Cipher decrypt update arguments are incorrect.");
         if (debug) {
@@ -956,7 +956,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_CIPHER_1decryptFin
         gslogFunctionEntry(functionName);
     }
     if ((ockCipher == NULL) || (plaintext == NULL)) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "The specified Cipher decrypt final arguments are incorrect.");
         if (debug) {

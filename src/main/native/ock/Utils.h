@@ -50,6 +50,6 @@ int gslogFunctionExit(const char* functionName);
 
 void ockCheckStatus(ICC_CTX* ctx);
 
-void throwNativeException(JNIEnv* env, int code, const char* msg);
+void throwOCKException(JNIEnv* env, int code, const char* msg);
 
 #endif

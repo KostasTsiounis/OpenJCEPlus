@@ -149,7 +149,7 @@ void ockCheckStatus(ICC_CTX *ctx) {
 //============================================================================
 //
 //
-void throwNativeException(JNIEnv *env, int code, const char *msg) {
+void throwOCKException(JNIEnv *env, int code, const char *msg) {
 #define EXCEPTION_CLASS "com/ibm/crypto/plus/provider/ock/NativeException"
     static const char *exceptionClass = EXCEPTION_CLASS;
 #ifdef __MVS__

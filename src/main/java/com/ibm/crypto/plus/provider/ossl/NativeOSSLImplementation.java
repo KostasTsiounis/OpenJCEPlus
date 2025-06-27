@@ -32,7 +32,7 @@ final class NativeOSSLImplementation {
     // Default ock core library name
     //
     private static final String OSSL_CORE_LIBRARY_NAME = "crypto";
-    private static final String JGSKIT_CORE_LIBRARY_NAME = "ossl";
+    private static final String JGSKIT_CORE_LIBRARY_NAME = "ourcode";
     private static String osName = null;
     private static String osArch = null;
     private static String JVMFIPSmode = null;
@@ -124,6 +124,7 @@ final class NativeOSSLImplementation {
         if (osName.startsWith("Windows") && osArch.equals("amd64")) {
             loadFile = new File(jgskitPath, "lib" + JGSKIT_CORE_LIBRARY_NAME + "_64.dll");
         } else if (osName.equals("Mac OS X")) {
+            System.out.println("Looking for: " + jgskitPath + "/" + "lib" + JGSKIT_CORE_LIBRARY_NAME + ".dylib");
             loadFile = new File(jgskitPath, "lib" + JGSKIT_CORE_LIBRARY_NAME + ".dylib");
         } else {
             loadFile = new File(jgskitPath, "lib" + JGSKIT_CORE_LIBRARY_NAME + ".so");
@@ -170,8 +171,10 @@ final class NativeOSSLImplementation {
 
     private static boolean loadIfExists(File libraryFile) {
         String libraryName = libraryFile.getAbsolutePath();
+        System.out.println("Absolute path: " + libraryName);
 
         if (libraryFile.exists()) {
+            System.out.println("File exists!!!");
             // Need a try/catch block in case the library has already been
             // loaded by another ClassLoader
             //
@@ -180,16 +183,19 @@ final class NativeOSSLImplementation {
                 if (debug != null) {
                     debug.println("Loaded : " + libraryName);
                 }
+                System.out.println("Loaded : " + libraryName);
                 return true;
             } catch (Throwable t) {
                 if (debug != null) {
                     debug.println("Failed to load : " + libraryName);
                 }
+                System.out.println("Failed to load : " + libraryName);
             }
         } else {
             if (debug != null) {
                 debug.println("Skipping load of " + libraryName);
             }
+            System.out.println("Skipping load of " + libraryName);
         }
         return false;
     }

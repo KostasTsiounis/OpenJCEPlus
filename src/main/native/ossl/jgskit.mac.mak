@@ -36,14 +36,14 @@ JAVACLASSDIR=${BUILDTOP}/classes
 
 OBJS = \
 	${HOSTOUT}/Digest.o \
-	${HOSTOUT}/Utils.o \
+	${HOSTOUT}/Utils.o
 
-TARGET = ${HOSTOUT}/libossl.dylib
+TARGET = ${HOSTOUT}/libourcode.dylib
 
 all : ${TARGET}
 
 ${TARGET} : ${OBJS}
-	gcc ${LDFLAGS} ${ARCHFLAGS} -o ${TARGET} ${OBJS} -L ${OSSL_HOME}/lib -lssl -lcrypto
+	gcc ${LDFLAGS} ${ARCHFLAGS} -o ${TARGET} ${OBJS} -L ${OSSL_HOME}/lib -lcrypto
 
 ${HOSTOUT}/%.o : %.c
 	test -d ${@D} || mkdir -p ${@D} 2>/dev/null

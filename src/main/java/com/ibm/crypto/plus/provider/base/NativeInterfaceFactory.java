@@ -10,9 +10,14 @@ package com.ibm.crypto.plus.provider.base;
 
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
+import com.ibm.crypto.plus.provider.ossl.NativeOSSLAdapterNonFIPS;
 
 public class NativeInterfaceFactory {
     public static NativeAdapter getImpl(boolean isFIPS) {
+        return isFIPS ? NativeOCKAdapterFIPS.getInstance() : NativeOCKAdapterNonFIPS.getInstance();
+    }
+
+    public static NativeAdapter getDigestImpl(boolean isFIPS) {
         return isFIPS ? NativeOCKAdapterFIPS.getInstance() : NativeOCKAdapterNonFIPS.getInstance();
     }
 }

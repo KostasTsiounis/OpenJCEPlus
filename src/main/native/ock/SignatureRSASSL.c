@@ -166,7 +166,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSASSL_1SIGNATURE_
                                     "DETAIL_SIG_RSASSL FAILURE sigBytesNative");
                             }
 #endif
-                            throwNativeException(
+                            throwOCKException(
                                 env, 0, "NULL from GetPrimitiveArrayCritical");
                         } else {
                             memcpy(sigBytesNative, sigBytesLocal, outLen);
@@ -228,7 +228,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSASSL_1SIGNATURE_
 #endif
     }
     if ((digest == NULL) || (ockRSA == NULL)) {
-        throwNativeException(
+        throwOCKException(
             env, 0,
             "RSA SSL Signature verification input arguments are incorrect.");
         if (debug) {

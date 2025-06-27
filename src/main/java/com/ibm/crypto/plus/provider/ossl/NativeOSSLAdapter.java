@@ -141,7 +141,7 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
         // code one time.
         //
         if (osslVersion == unobtainedValue) {
-            osslVersion = CTX_getValue(VALUE_OSSL_VERSION);
+            //osslVersion = CTX_getValue(VALUE_OSSL_VERSION);
         }
     }
 
@@ -151,13 +151,13 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
         // code one time.
         //
         if (osslInstallPath == unobtainedValue) {
-            osslInstallPath = CTX_getValue(VALUE_OSSL_INSTALL_PATH);
+            //osslInstallPath = CTX_getValue(VALUE_OSSL_INSTALL_PATH);
         }
     }
 
     @Override
     public void validateLibraryLocation() throws ProviderException {
-        if (NativeOSSLImplementation.requirePreloadOSSL == false) {
+        /*if (NativeOSSLImplementation.requirePreloadOSSL == false) {
             // If we are not requiring OSSL to be pre-loaded, then it does not need to be
             // loaded from the JRE location
             //
@@ -186,12 +186,13 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
             }
         } catch (java.io.IOException e) {
             throw new ProviderException("Failed to validate dependent library", e);
-        }
+        }*/
+        return;
     }
 
     @Override
     public void validateLibraryVersion() throws ProviderException {
-        if (NativeOSSLImplementation.requirePreloadOSSL == false) {
+        /*if (NativeOSSLImplementation.requirePreloadOSSL == false) {
             // If we are not requiring OSSL to be pre-loaded, then it does not need to be
             // a specific version
             //
@@ -207,7 +208,8 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
         } else if (expectedVersion.equals(actualVersion) == false) {
             throw new ProviderException("Expected depdendent library version " + expectedVersion
                     + ", got " + actualVersion);
-        }
+        }*/
+        return;
     }
 
     private String getExpectedLibraryVersion() {
@@ -259,7 +261,8 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
 
     @Override
     public String CTX_getValue(int valueId) {
-        return NativeOSSLImplementation.CTX_getValue(valueId);
+        //return NativeOSSLImplementation.CTX_getValue(valueId);
+        return null;
     }
 
     @Override
