@@ -29,8 +29,8 @@ fi
 
 cd src/main/native/ock
 
-#make -f jgskit.mac.mak clean
-#make -f jgskit.mac.mak
+make -f jgskit.mac.mak clean
+make -f jgskit.mac.mak
 
 cd ../ossl
 

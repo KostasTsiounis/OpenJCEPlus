@@ -171,8 +171,10 @@ final class NativeOCKImplementation {
 
     private static boolean loadIfExists(File libraryFile) {
         String libraryName = libraryFile.getAbsolutePath();
+        System.out.println("Absolute path: " + libraryName);
 
         if (libraryFile.exists()) {
+            System.out.println("File exists!!!");
             // Need a try/catch block in case the library has already been
             // loaded by another ClassLoader
             //
@@ -181,16 +183,19 @@ final class NativeOCKImplementation {
                 if (debug != null) {
                     debug.println("Loaded : " + libraryName);
                 }
+                System.out.println("Loaded : " + libraryName);
                 return true;
             } catch (Throwable t) {
                 if (debug != null) {
                     debug.println("Failed to load : " + libraryName);
                 }
+                System.out.println("Failed to load : " + libraryName);
             }
         } else {
             if (debug != null) {
                 debug.println("Skipping load of " + libraryName);
             }
+            System.out.println("Skipping load of " + libraryName);
         }
         return false;
     }
