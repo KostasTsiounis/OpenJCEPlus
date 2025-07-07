@@ -181,8 +181,6 @@ final class EdDSAPrivateKeyImpl extends PKCS8Key implements EdECPrivateKey {
 
         // Read, convert, then write private key
         this.privKeyMaterial = inputValue[2].getOctetString(); // Get octet string
-        //Need to remove seq tag from key
-        //this.privKeyMaterial = Arrays.copyOfRange(this.privKeyMaterial, 2, this.privKeyMaterial.length);
         DerInputStream derStream = new DerInputStream(this.privKeyMaterial);
         this.h = derStream.getOctetString();
 
@@ -248,7 +246,6 @@ final class EdDSAPrivateKeyImpl extends PKCS8Key implements EdECPrivateKey {
         byte[] privData = null;
         if (inputValue.length > 2) {
             privData = inputValue[2].getOctetString();
-            //privData = new DerInputStream(privData).getOctetString();
             return privData;
         }
         return null;
