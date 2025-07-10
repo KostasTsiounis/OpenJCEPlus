@@ -248,6 +248,55 @@ final class DSAPrivateKey extends PKCS8Key
         }
     }
 
+
+    /**
+     * Compares two private keys. This returns false if the object with which
+    * to compare is not of type <code>Key</code>.
+    * Otherwise, we compare the private part of the key and the params to validate equivalence.
+    * We can not compare encodings because there are 2 different ones and both can be the same
+    * key.
+    *
+    * @param object the object with which to compare
+    * @return {@code true} if this key has the same encoding as the
+    *          object argument; {@code false} otherwise.
+    */
+    public boolean equals(Object object) {
+        try {
+            if (this == object) {
+                return true;
+            }
+
+            if (object instanceof java.security.interfaces.DSAPrivateKey otherKey) {
+                BigInteger i = otherKey.getX();
+                DSAParams otherParams = otherKey.getParams();
+                if (!this.x.equals(i)) {
+                    System.out.println("BigIntegers don't match:");
+                    System.out.println("\tThis: " + this.x.toString());
+                    System.out.println("\tOther: " + i.toString());
+                    return false;
+                }
+                if (!equals(this.getParams(), otherParams)) {
+                    System.out.println("Parameters don't match:");
+                    System.out.println("\tThis: " + otherParams.getG().toString()
+                                            + ", " + otherParams.getP().toString()
+                                            + ", " + otherParams.getQ().toString());
+                    System.out.println("\tOther: " + otherParams.getG().toString()
+                                            + ", " + otherParams.getP().toString()
+                                            + ", " + otherParams.getQ().toString());
+                    return false;
+                }
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e1) {
+            //Should never get here
+            //System.out.println("Object = Exception - " + e1.toString());
+        }
+        return false;
+    }
+
     public static boolean equals(DSAParams spec1, DSAParams spec2) {
         if (spec1 == spec2) {
             return true;
