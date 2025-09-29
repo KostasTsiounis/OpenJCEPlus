@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.ECKey;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
@@ -18,7 +17,11 @@ import java.security.PublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+
 import javax.security.auth.DestroyFailedException;
+
+import com.ibm.crypto.plus.provider.ock.ECKey;
+
 import sun.security.pkcs.PKCS8Key;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
@@ -151,24 +154,24 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         this.provider = provider;
 
         try {
-            parseKeyBits();
+            parseEncodedPrivateKey();
         } catch (IOException e) {
             throw new InvalidKeyException("parseKeyBits: " + e.getMessage());
         }
 
-        try {
-            getEncodedPrivateKeyBytes(encoded);
-        } catch (IOException e) {
-            // e.printStackTrace();
-            throw new InvalidKeyException("getEncodedPrivateKeyBytes " + e.getMessage());
+        AlgorithmParameters algParams = this.algid.getParameters();
+        if (algParams == null) {
+            throw new IOException(
+                    "EC domain parameters must be encoded in the algorithm identifier");
         }
+        // System.out.println("algParams=" + algParams);
+
+        this.params = algParams.getParameterSpec(ECParameterSpec.class);
+
         // System.out.println("After decoding this.publicKey=" +
         // this.publicKey);
         try {
-            byte[] privateKeyBytes = privateKeyBytesEncoded; // buildOCKPrivateKeyBytes();
-            // System.out.println("ECPrivateKey(byte[]encoded) privateKeyBytes="
-            // +
-            // ECUtils.bytesToHex(privateKeyBytes));
+            byte[] privateKeyBytes = this.privKeyMaterial;
             byte[] paramBytes = ECParameters.encodeECParameters(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
@@ -234,7 +237,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         // Universal Primary object ID for parameter curve
         // Primitive bit string
         // Convert the JCEFIPS encoding similar to others
-        DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privateKeyMaterial);
+        DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
 
         BigInteger tempVersion1 = inputDerValue[0].getBigInteger();
