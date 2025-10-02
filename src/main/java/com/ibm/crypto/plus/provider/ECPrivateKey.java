@@ -161,7 +161,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
                         "EC domain parameters must be encoded in the algorithm identifier");
             }
             this.params = algParams.getParameterSpec(ECParameterSpec.class);
-            getEncodedPrivateKeyBytes(encoded);
+            //getEncodedPrivateKeyBytes(encoded);
         } catch (Exception e) {
             throw new InvalidKeyException(e);
         }
@@ -171,9 +171,9 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         // System.out.println("After decoding this.publicKey=" +
         // this.publicKey);
         try {
-            byte[] privateKeyBytes = this.privKeyMaterial;
-            System.out.println("ECPrivateKey constructor (privKeyMaterial): " + ECUtils.bytesToHex(this.privKeyMaterial));
-            System.out.println("ECPrivateKey constructor (privateKeyBytesEncoded): " + ECUtils.bytesToHex(this.privateKeyBytesEncoded));
+            byte[] privateKeyBytes = this.privateKeyBytesEncoded;
+            // System.out.println("ECPrivateKey constructor (privKeyMaterial): " + ECUtils.bytesToHex(this.privKeyMaterial));
+            // System.out.println("ECPrivateKey constructor (privateKeyBytesEncoded): " + ECUtils.bytesToHex(this.privateKeyBytesEncoded));
             byte[] paramBytes = ECParameters.encodeECParameters(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
@@ -241,25 +241,37 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         // Convert the JCEFIPS encoding similar to others
         DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
+        DerOutputStream outEncodedStream = new DerOutputStream();
 
+        if (inputDerValue.length < 2) {
+            throw new IOException("Incorrect EC private key encoding");
+        }
         BigInteger tempVersion1 = inputDerValue[0].getBigInteger();
         if (tempVersion1.compareTo(BigInteger.ONE) != 0) {
             throw new IOException("Decoding EC private key failed. The version must be 1");
         }
+        outEncodedStream.putInteger(tempVersion1);
 
-        byte[] privateKeyBytes = null;
-        if (inputDerValue.length > 1) {
-            privateKeyBytes = inputDerValue[1].getOctetString();
-            s = new BigInteger(1, privateKeyBytes);
-        }
+        byte[] privateKeyBytes = inputDerValue[1].getOctetString();
+        s = new BigInteger(1, privateKeyBytes);
+        outEncodedStream.putOctetString(privateKeyBytes);
 
+        byte[] encodedParams = this.getAlgorithmId().getEncodedParams();
         if (inputDerValue.length > 2) {
             if (!inputDerValue[2].isContextSpecific(TAG_PARAMETERS_ATTRS)) {
                 throw new IOException("Decoding EC private key failed. Third element is not tagged as parameters");
             }
             DerInputStream paramDerInputStream = inputDerValue[2].getData();
+            byte[] privateKeyParams = paramDerInputStream.toByteArray();
+            
             // Maybe compare to this.params?
+            if (Arrays.equals(privateKeyParams, encodedParams)) {
+                throw new IOException("Decoding EC private key failed. The params are not the same as PKCS8 key");
+            }
         }
+        outEncodedStream.write(
+                    DerValue.createTag(DerValue.TAG_CONTEXT, true, TAG_PARAMETERS_ATTRS),
+                    encodedParams);
 
         if (inputDerValue.length > 3) {
             if (!inputDerValue[3].isContextSpecific(TAG_PUBLIC_KEY_ATTRS)) {
@@ -269,11 +281,19 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             this.publicKeyBytes = pubKeyStream.getBitString();
 
             DerValue bits = inputDerValue[3].withTag(DerValue.tag_BitString);
-                this.pubKeyEncoded = new X509Key(this.algid,
+            this.pubKeyEncoded = new X509Key(this.algid,
                     bits.data.getUnalignedBitString()).getEncoded();
 
-            // compare with result from calculatePublicKey()?
+            DerOutputStream derPubKey = new DerOutputStream();
+            derPubKey.putBitString(this.publicKeyBytes);
+
+            outEncodedStream.write(DerValue.createTag(DerValue.TAG_CONTEXT, true,
+                    TAG_PUBLIC_KEY_ATTRS), derPubKey);
         }
+
+        DerOutputStream asn1Key = new DerOutputStream();
+        asn1Key.write(DerValue.tag_Sequence, outEncodedStream.toByteArray());
+        this.privateKeyBytesEncoded = asn1Key.toByteArray();
     }
 
     private void getEncodedPrivateKeyBytes(byte[] encoded) throws IOException {
