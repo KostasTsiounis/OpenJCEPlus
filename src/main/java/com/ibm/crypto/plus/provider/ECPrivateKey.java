@@ -161,6 +161,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
                         "EC domain parameters must be encoded in the algorithm identifier");
             }
             this.params = algParams.getParameterSpec(ECParameterSpec.class);
+            getEncodedPrivateKeyBytes(encoded);
         } catch (Exception e) {
             throw new InvalidKeyException(e);
         }
@@ -171,7 +172,8 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         // this.publicKey);
         try {
             byte[] privateKeyBytes = this.privKeyMaterial;
-            System.out.println("ECPrivateKey constructor: " + ECUtils.bytesToHex(privateKeyBytes));
+            System.out.println("ECPrivateKey constructor (privKeyMaterial): " + ECUtils.bytesToHex(this.privKeyMaterial));
+            System.out.println("ECPrivateKey constructor (privateKeyBytesEncoded): " + ECUtils.bytesToHex(this.privateKeyBytesEncoded));
             byte[] paramBytes = ECParameters.encodeECParameters(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
