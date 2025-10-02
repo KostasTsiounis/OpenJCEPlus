@@ -271,6 +271,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
                     bits.data.getUnalignedBitString()).getEncoded();
 
             // compare with result from calculatePublicKey()?
+        }
     }
 
     private void getEncodedPrivateKeyBytes(byte[] encoded) throws IOException {
