@@ -98,8 +98,8 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
         // BaseUtils.bytesToHex(pubKeyBytes));
         // System.out.println (methodName + " privKeyBytes length=" +
         // privKeyBytes.length);
-        System.out.println (methodName + " privKeyBytes (" + generateProviderName + ") = " +
-                BaseUtils.bytesToHex(privKeyBytes));
+        // System.out.println (methodName + " privKeyBytes (" + generateProviderName + ") = " +
+        //         BaseUtils.bytesToHex(privKeyBytes));
 
         KeyFactory keyFactory = KeyFactory.getInstance("EC", importProviderName);
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
