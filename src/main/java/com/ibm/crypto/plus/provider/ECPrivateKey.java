@@ -155,18 +155,17 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
 
         try {
             parseEncodedPrivateKey();
-        } catch (IOException e) {
-            throw new InvalidKeyException("parseKeyBits: " + e.getMessage());
+            AlgorithmParameters algParams = this.algid.getParameters();
+            if (algParams == null) {
+                throw new IOException(
+                        "EC domain parameters must be encoded in the algorithm identifier");
+            }
+            this.params = algParams.getParameterSpec(ECParameterSpec.class);
+        } catch (Exception e) {
+            throw new InvalidKeyException(e);
         }
 
-        AlgorithmParameters algParams = this.algid.getParameters();
-        if (algParams == null) {
-            throw new IOException(
-                    "EC domain parameters must be encoded in the algorithm identifier");
-        }
-        // System.out.println("algParams=" + algParams);
-
-        this.params = algParams.getParameterSpec(ECParameterSpec.class);
+        
 
         // System.out.println("After decoding this.publicKey=" +
         // this.publicKey);
