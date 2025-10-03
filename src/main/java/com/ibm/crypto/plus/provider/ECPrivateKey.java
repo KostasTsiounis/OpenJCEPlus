@@ -71,7 +71,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
 
         AlgorithmParameters myAlgorithmParameters = com.ibm.crypto.plus.provider.ECParameters
                 .getAlgorithmParameters(provider, params);
-        algid = new AlgorithmId(AlgorithmId.EC_oid, myAlgorithmParameters);
+        this.algid = new AlgorithmId(AlgorithmId.EC_oid, myAlgorithmParameters);
 
         // Convert s to fixed-length array.
         byte[] sArr = s.toByteArray();
@@ -119,14 +119,18 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             }
             this.params = algParams.getParameterSpec(ECParameterSpec.class);
 
+            // Get from the encoding:
+            //    * the private key as a BigInteger (this.s)
+            //    * the public key, if available (this.pubKeyEncoded)
+            parsePrivateKeyEncoding();
+
             // Create appropriate encoding and create ecKey
             byte[] privateKeyBytes = createEncodedPrivateKeyWithParams();
             byte[] paramBytes = ECParameters.encodeECParameters(params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes);
             
-            // Check the encoding for a public key and save if available.
-            parsePublicKey();
+            
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         }
@@ -157,8 +161,10 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // Get private key encoding from ECKey.
             this.privKeyMaterial = ecKey.getPrivateKeyBytes();
 
-            // Check the encoding for a public key and save if available.
-            parsePublicKey();
+            // Get from the encoding:
+            //    * the private key as a BigInteger (this.s)
+            //    * the public key, if available (this.pubKeyEncoded)
+            parsePrivateKeyEncoding();
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         } finally {
@@ -187,7 +193,6 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         outEncodedStream.putInteger(tempVersion1);
 
         byte[] privateKeyBytes = inputDerValue[1].getOctetString();
-        s = new BigInteger(1, privateKeyBytes);
         outEncodedStream.putOctetString(privateKeyBytes);
 
         byte[] encodedParams = this.getAlgorithmId().getEncodedParams();
@@ -213,17 +218,18 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         return asn1Key.toByteArray();
     }
 
-    private void parsePublicKey() throws IOException {
+    private void parsePrivateKeyEncoding() throws IOException {
         DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
+
+        byte[] privateKeyBytes = inputDerValue[1].getOctetString();
+        this.s = new BigInteger(1, privateKeyBytes);
 
         if (inputDerValue.length == 4) {
             if (!inputDerValue[3].isContextSpecific(TAG_PUBLIC_KEY_ATTRS)) {
                 throw new IOException("Decoding EC private key failed. Last element is not tagged as public key");
             }
             DerInputStream pubKeyStream = inputDerValue[3].getData();
-            this.publicKeyBytes = pubKeyStream.getBitString();
-
             DerValue bits = inputDerValue[3].withTag(DerValue.tag_BitString);
             this.pubKeyEncoded = new X509Key(this.algid,
                     bits.data.getUnalignedBitString()).getEncoded();
