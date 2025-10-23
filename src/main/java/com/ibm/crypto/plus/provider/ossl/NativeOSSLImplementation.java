@@ -31,7 +31,7 @@ final class NativeOSSLImplementation {
 
     // Default ock core library name
     //
-    private static final String OSSL_CORE_LIBRARY_NAME = "crypto";
+    private static final String OSSL_CORE_LIBRARY_NAME = "crypto-semeru";
     private static final String JGSKIT_CORE_LIBRARY_NAME = "ourcode";
     private static String osName = null;
     private static String osArch = null;
