@@ -11,6 +11,9 @@ package com.ibm.crypto.plus.provider.ossl;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
+
+import com.ibm.crypto.plus.provider.ock.OCKException;
+
 import sun.security.util.Debug;
 
 final class NativeOSSLImplementation {
@@ -761,4 +764,43 @@ final class NativeOSSLImplementation {
 
     static public native byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt,
             int iterations, int keyLength);
+
+    // =========================================================================
+    // ML-KEY key functions
+    // =========================================================================
+
+    static public native long MLKEY_generate(String cipherName)
+            throws OCKException;
+
+    static public native long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
+            throws OCKException;
+
+    static public native long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
+            throws OCKException;
+
+    static public native byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
+            throws OCKException;
+
+    static public native byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
+            throws OCKException;
+
+    static public native void MLKEY_delete(long mlkeyId);
+
+    // =========================================================================
+    // Key Encapsulation functions
+    // =========================================================================
+    static public native void KEM_encapsulate(long ockPKeyId, byte[] wrappedKey, byte[] randomKey)
+            throws OCKException;
+
+    static public native byte[] KEM_decapsulate(long ockPKeyId, byte[] wrappedKey)
+            throws OCKException;
+
+    // =========================================================================
+    // PQC Signture functions - for use with ML-DSA and ML-SLH
+    // =========================================================================
+    static public native byte[] PQC_SIGNATURE_sign(long ockPKeyId, byte[] data) 
+            throws OCKException;
+
+    static public native boolean PQC_SIGNATURE_verify(long ockPKeyId, byte[] sigBytes, byte[] data) 
+            throws OCKException;
 }

@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
 import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.ock.OCKException;
 
 import sun.security.util.Debug;
 
@@ -1126,5 +1127,64 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
     @Override
     public byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt, int iterations, int keyLength) {
         return NativeOSSLImplementation.PBKDF2_derive(hashAlgorithm, password, salt, iterations, keyLength);
+    }
+
+    @Override
+    public long MLKEY_generate(String cipherName)
+            throws OCKException {
+        return NativeOSSLImplementation.MLKEY_generate(cipherName);
+    }
+
+    @Override
+    public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
+            throws OCKException {
+        return NativeOSSLImplementation.MLKEY_createPrivateKey(cipherName, privateKeyBytes);
+    }
+
+    @Override
+    public long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
+            throws OCKException {
+        return NativeOSSLImplementation.MLKEY_createPublicKey(cipherName, publicKeyBytes);
+    }
+
+    @Override
+    public byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
+            throws OCKException {
+        return NativeOSSLImplementation.MLKEY_getPrivateKeyBytes(mlkeyId);
+    }
+
+    @Override
+    public byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
+            throws OCKException {
+        return NativeOSSLImplementation.MLKEY_getPublicKeyBytes(mlkeyId);
+    }
+
+    @Override
+    public void MLKEY_delete(long mlkeyId) {
+        NativeOSSLImplementation.MLKEY_delete(mlkeyId);
+    }
+
+    @Override
+    public void KEM_encapsulate(long pKeyId, byte[] wrappedKey, byte[] randomKey)
+            throws OCKException {
+        NativeOSSLImplementation.KEM_encapsulate(pKeyId, wrappedKey, randomKey);
+    }
+
+    @Override
+    public byte[] KEM_decapsulate(long pKeyId, byte[] wrappedKey)
+            throws OCKException {
+        return NativeOSSLImplementation.KEM_decapsulate(pKeyId, wrappedKey);
+    }
+
+    @Override
+    public byte[] PQC_SIGNATURE_sign(long pKeyId, byte[] data)
+            throws OCKException {
+        return NativeOSSLImplementation.PQC_SIGNATURE_sign(pKeyId, data);
+    }
+
+    @Override
+    public boolean PQC_SIGNATURE_verify(long pKeyId, byte[] sigBytes, byte[] data)
+            throws OCKException {
+        return NativeOSSLImplementation.PQC_SIGNATURE_verify(pKeyId, sigBytes, data);
     }
 }
