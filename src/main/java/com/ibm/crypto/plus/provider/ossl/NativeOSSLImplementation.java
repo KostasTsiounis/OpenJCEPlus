@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
+import com.ibm.crypto.plus.provider.base.NativeException;
 import com.ibm.crypto.plus.provider.ock.OCKException;
 
 import sun.security.util.Debug;
@@ -285,7 +286,10 @@ final class NativeOSSLImplementation {
     static public native long checkHardwareSupport();
 
     static public native void CIPHER_delete(long ockCipherId)
-           ;
+            throws NativeException;
+
+    static public native byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type)
+            throws NativeException;
 
     static public native int z_kmc_native(byte[] input, int inputOffset, byte[] output,
             int outputOffset, long paramPointer, int inputLength, int mode);

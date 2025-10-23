@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.security.ProviderException;
 
 import com.ibm.crypto.plus.provider.base.NativeAdapter;
+import com.ibm.crypto.plus.provider.base.NativeException;
 import com.ibm.crypto.plus.provider.ock.OCKException;
 
 import sun.security.util.Debug;
@@ -380,8 +381,13 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
     }
 
     @Override
-    public void CIPHER_delete(long ockCipherId) {
+    public void CIPHER_delete(long ockCipherId) throws NativeException {
         NativeOSSLImplementation.CIPHER_delete(ockCipherId);
+    }
+
+    @Override
+    public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type) throws NativeException {
+        return NativeOSSLImplementation.CIPHER_KeyWraporUnwrap(key, KEK, type);
     }
 
     @Override
