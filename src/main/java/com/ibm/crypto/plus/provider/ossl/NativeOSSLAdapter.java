@@ -8,17 +8,12 @@
 
 package com.ibm.crypto.plus.provider.ossl;
 
-
+import com.ibm.crypto.plus.provider.base.NativeAdapter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
-
-import com.ibm.crypto.plus.provider.base.NativeAdapter;
-import com.ibm.crypto.plus.provider.base.NativeException;
-import com.ibm.crypto.plus.provider.ock.OCKException;
-
 import sun.security.util.Debug;
 
 public abstract class NativeOSSLAdapter extends NativeAdapter {
@@ -381,12 +376,12 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
     }
 
     @Override
-    public void CIPHER_delete(long ockCipherId) throws NativeException {
+    public void CIPHER_delete(long ockCipherId) throws OSSLException {
         NativeOSSLImplementation.CIPHER_delete(ockCipherId);
     }
 
     @Override
-    public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type) throws NativeException {
+    public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type) throws OSSLException {
         return NativeOSSLImplementation.CIPHER_KeyWraporUnwrap(key, KEK, type);
     }
 
@@ -1137,31 +1132,31 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
 
     @Override
     public long MLKEY_generate(String cipherName)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.MLKEY_generate(cipherName);
     }
 
     @Override
     public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.MLKEY_createPrivateKey(cipherName, privateKeyBytes);
     }
 
     @Override
     public long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.MLKEY_createPublicKey(cipherName, publicKeyBytes);
     }
 
     @Override
     public byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.MLKEY_getPrivateKeyBytes(mlkeyId);
     }
 
     @Override
     public byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.MLKEY_getPublicKeyBytes(mlkeyId);
     }
 
@@ -1172,25 +1167,25 @@ public abstract class NativeOSSLAdapter extends NativeAdapter {
 
     @Override
     public void KEM_encapsulate(long pKeyId, byte[] wrappedKey, byte[] randomKey)
-            throws OCKException {
+            throws OSSLException {
         NativeOSSLImplementation.KEM_encapsulate(pKeyId, wrappedKey, randomKey);
     }
 
     @Override
     public byte[] KEM_decapsulate(long pKeyId, byte[] wrappedKey)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.KEM_decapsulate(pKeyId, wrappedKey);
     }
 
     @Override
     public byte[] PQC_SIGNATURE_sign(long pKeyId, byte[] data)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.PQC_SIGNATURE_sign(pKeyId, data);
     }
 
     @Override
     public boolean PQC_SIGNATURE_verify(long pKeyId, byte[] sigBytes, byte[] data)
-            throws OCKException {
+            throws OSSLException {
         return NativeOSSLImplementation.PQC_SIGNATURE_verify(pKeyId, sigBytes, data);
     }
 }
