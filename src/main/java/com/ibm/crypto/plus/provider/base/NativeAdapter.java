@@ -10,9 +10,6 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
-
-import com.ibm.crypto.plus.provider.ock.OCKException;
-
 import sun.security.util.Debug;
 
 public abstract class NativeAdapter {

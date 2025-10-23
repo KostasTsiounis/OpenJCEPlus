@@ -68,7 +68,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
     // User enabled debugging
     private static Debug debug = Debug.getInstance(DEBUG_VALUE);
 
-    private static final boolean isPlatformSupported;
+    private static final boolean isFIPSCertifiedPlatform;
     private static final Map<String, List<String>> supportedPlatforms = new HashMap<>();
     private static final String osName;
     private static final String osArch;
