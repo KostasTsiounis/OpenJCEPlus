@@ -18,6 +18,6 @@ public class NativeInterfaceFactory {
     }
 
     public static NativeAdapter getDigestImpl(boolean isFIPS) {
-        return isFIPS ? NativeOCKAdapterFIPS.getInstance() : NativeOCKAdapterNonFIPS.getInstance();
+        return isFIPS ? NativeOCKAdapterFIPS.getInstance() : NativeOSSLAdapterNonFIPS.getInstance();
     }
 }
