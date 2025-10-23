@@ -284,6 +284,9 @@ final class NativeOCKImplementation {
     static public native void CIPHER_delete(long ockContextId, long ockCipherId)
             throws NativeException;
 
+    static public native byte[] CIPHER_KeyWraporUnwrap(long ockContextId, byte[] key, byte[] KEK, int type)
+            throws NativeException;
+
     static public native int z_kmc_native(byte[] input, int inputOffset, byte[] output,
             int outputOffset, long paramPointer, int inputLength, int mode);
 

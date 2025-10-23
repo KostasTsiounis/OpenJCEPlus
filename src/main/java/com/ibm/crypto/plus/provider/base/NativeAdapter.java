@@ -10,6 +10,9 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
+
+import com.ibm.crypto.plus.provider.ock.OCKException;
+
 import sun.security.util.Debug;
 
 public abstract class NativeAdapter {
@@ -117,6 +120,9 @@ public abstract class NativeAdapter {
     abstract public long checkHardwareSupport();
 
     abstract public void CIPHER_delete(long ockCipherId)
+            throws NativeException;
+
+    abstract public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type)
             throws NativeException;
 
     abstract public int z_kmc_native(byte[] input, int inputOffset, byte[] output,
@@ -596,4 +602,43 @@ public abstract class NativeAdapter {
 
     abstract public byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt,
             int iterations, int keyLength) throws NativeException;
+
+    // =========================================================================
+    // ML-KEY key functions
+    // =========================================================================
+
+    abstract public long MLKEY_generate(String cipherName)
+            throws NativeException;
+
+    abstract public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
+            throws NativeException;
+
+    abstract public long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
+            throws NativeException;
+
+    abstract public byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
+            throws NativeException;
+
+    abstract public byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
+            throws NativeException;
+
+    abstract public void MLKEY_delete(long mlkeyId);
+
+    // =========================================================================
+    // Key Encapsulation functions
+    // =========================================================================
+    abstract public void KEM_encapsulate(long ockPKeyId, byte[] wrappedKey, byte[] randomKey)
+            throws NativeException;
+
+    abstract public byte[] KEM_decapsulate(long ockPKeyId, byte[] wrappedKey)
+            throws NativeException;
+
+    // =========================================================================
+    // PQC Signture functions - for use with ML-DSA and ML-SLH
+    // =========================================================================
+    abstract public byte[] PQC_SIGNATURE_sign(long ockPKeyId, byte[] data)
+            throws NativeException;
+
+    abstract public boolean PQC_SIGNATURE_verify(long ockPKeyId, byte[] sigBytes, byte[] data)
+            throws NativeException;
 }

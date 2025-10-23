@@ -402,6 +402,12 @@ public abstract class NativeOCKAdapter extends NativeAdapter {
     }
 
     @Override
+    public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type)
+            throws NativeException {
+                return NativeOCKImplementation.CIPHER_KeyWraporUnwrap(ockContext.getId(), key, KEK, type);
+            }
+
+    @Override
     public int z_kmc_native(byte[] input, int inputOffset, byte[] output, int outputOffset, long paramPointer,
             int inputLength, int mode) {
         return NativeOCKImplementation.z_kmc_native(input, inputOffset, output, outputOffset, paramPointer, inputLength, mode);

@@ -17,18 +17,18 @@ public final class AESKeyWrap {
     private boolean padding = false;
 
     public AESKeyWrap(boolean isFIPS, byte[] key, boolean padding)
-            throws OCKException {
+            throws NativeException {
         if (key == null) {
-            throw new OCKException("Invalid input data");
+            throw new NativeException("Invalid input data");
         }
         this.isFIPS = isFIPS;
         this.key = key;
         this.padding = padding;
     }
 
-    public byte[] wrap(byte[] data, int start, int length) throws OCKException {
+    public byte[] wrap(byte[] data, int start, int length) throws NativeException {
         if (data == null || start < 0 || data.length < start || data.length < (length + start)) {
-            throw new OCKException("Invalid input data");
+            throw new NativeException("Invalid input data");
         }
         byte[] output = null;
         byte[] inData = Arrays.copyOfRange(data, start, length);
@@ -39,10 +39,10 @@ public final class AESKeyWrap {
         }
 
         try {
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             output = nativeImpl.CIPHER_KeyWraporUnwrap(inData, this.key, type);
         } catch (Exception e) {
-            throw new OCKException("Failed to wrap data" + e.getMessage());
+            throw new NativeException("Failed to wrap data" + e.getMessage());
         }  finally {
             //Clear inData
             Arrays.fill(inData, (byte) 0);
@@ -50,9 +50,9 @@ public final class AESKeyWrap {
         return output;
     }
 
-    public byte[] unwrap(byte[] data, int start, int length) throws OCKException {
+    public byte[] unwrap(byte[] data, int start, int length) throws NativeException {
         if (data == null || start < 0 || length < start || data.length < (length - start)) {
-            throw new OCKException("Invalid input data");
+            throw new NativeException("Invalid input data");
         }
         byte[] output = null;
         byte[] inData = Arrays.copyOfRange(data, start, length);
@@ -63,10 +63,10 @@ public final class AESKeyWrap {
         }
 
         try {
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             output = nativeImpl.CIPHER_KeyWraporUnwrap(inData, this.key, type);
         } catch (Exception e) {
-            throw new OCKException("Failed to unwrap data"+ e.getMessage());
+            throw new NativeException("Failed to unwrap data"+ e.getMessage());
         }  finally {
             //Clear inData
             Arrays.fill(inData, (byte) 0);

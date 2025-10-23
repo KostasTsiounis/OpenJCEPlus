@@ -18,7 +18,7 @@ public final class PQCKey implements AsymmetricKey {
     static final byte[] unobtainedKeyBytes = new byte[0];
 
     private boolean isFIPS;
-    private NativeInterface nativeImpl = null;
+    private NativeAdapter nativeImpl = null;
     private long pkeyId;
     private String algName;
     private byte[] privateKeyBytes;
@@ -26,56 +26,48 @@ public final class PQCKey implements AsymmetricKey {
     private final static String badIdMsg = "Key Identifier is not valid";
 
     public static PQCKey generateKeyPair(boolean isFIPS, String algName)
-            throws OCKException {
+            throws NativeException {
         long keyId = 0;
         // final String methodName = "generateKeyPair ";
         try {
             String NoDashAlg = algName.replace('-', '_');
-            NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
             keyId = nativeImpl.MLKEY_generate(NoDashAlg);
 
             if (keyId == 0) {
-                throw new OCKException("PQCKey.generateKeyPair: MLKEY_generate failed");
+                throw new NativeException("PQCKey.generateKeyPair: MLKEY_generate failed");
             }
         } catch (Exception e) {
-            throw new OCKException("PQCKey.generateKeyPair: Exception " + e.getMessage(), e);
+            throw new NativeException("PQCKey.generateKeyPair: Exception " + e.getMessage(), e);
         }
         return new PQCKey(isFIPS, keyId, unobtainedKeyBytes, unobtainedKeyBytes, algName);
     }
 
     public static PQCKey createPrivateKey(boolean isFIPS, String algName, byte[] privateKeyBytes)
-            throws OCKException {
+            throws NativeException {
         // final String methodName = "createPrivateKey ";
 
         if (privateKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
-<<<<<<< HEAD
         String NoDashAlg = algName.replace('-', '_');
-=======
-        String NoDashAlg = algName.replace('-','_');
->>>>>>> 7649ecb (Update new PQC algorithms)
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         keyId = nativeImpl.MLKEY_createPrivateKey( NoDashAlg, privateKeyBytes);
 
         return new PQCKey(isFIPS, keyId, privateKeyBytes.clone(), null, algName);
     }
 
     public static PQCKey createPublicKey(boolean isFIPS,  String algName, byte[] publicKeyBytes)
-            throws OCKException {
+            throws NativeException {
         // final String methodName = "createPublicKey ";
 
         if (publicKeyBytes == null) {
             throw new IllegalArgumentException("key bytes is null");
         }
         long keyId = 0;
-<<<<<<< HEAD
         String NoDashAlg = algName.replace('-', '_');
-=======
-        String NoDashAlg = algName.replace('-','_');
->>>>>>> 7649ecb (Update new PQC algorithms)
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         keyId = nativeImpl.MLKEY_createPublicKey(NoDashAlg, publicKeyBytes);
 
         // OCKDebug.Msg (debPrefix, methodName, "mlkemKeyId :" + mlkemKeyId);
@@ -83,14 +75,14 @@ public final class PQCKey implements AsymmetricKey {
     }
 
     private PQCKey(boolean isFIPS, long keyId, byte[] privateKeyBytes,
-            byte[] publicKeyBytes, String algName) throws OCKException {
+            byte[] publicKeyBytes, String algName) throws NativeException {
         this.isFIPS = isFIPS;
         this.nativeImpl = NativeInterfaceFactory.getImpl(this.isFIPS);
         this.pkeyId = keyId;
         this.algName = algName;
 
         if (!validId(pkeyId)) {
-            throw new OCKException(badIdMsg);
+            throw new NativeException(badIdMsg);
         }
 
         if (privateKeyBytes == unobtainedKeyBytes) {
@@ -111,12 +103,12 @@ public final class PQCKey implements AsymmetricKey {
     }
 
     @Override
-    public long getPKeyId() throws OCKException {
+    public long getPKeyId() throws NativeException {
         return pkeyId;
     }
 
     @Override
-    public byte[] getPrivateKeyBytes() throws OCKException {
+    public byte[] getPrivateKeyBytes() throws NativeException {
         // final String methodName = "getPrivateKeyBytes :";
         if (privateKeyBytes == unobtainedKeyBytes) {
             obtainPrivateKeyBytes();
@@ -125,7 +117,7 @@ public final class PQCKey implements AsymmetricKey {
     }
 
     @Override
-    public byte[] getPublicKeyBytes() throws OCKException {
+    public byte[] getPublicKeyBytes() throws NativeException {
         // final String methodName = "getPublicKeyBytes";
         if (publicKeyBytes == unobtainedKeyBytes) {
             obtainPublicKeyBytes();
@@ -133,14 +125,14 @@ public final class PQCKey implements AsymmetricKey {
         return (publicKeyBytes == null) ? null : publicKeyBytes.clone();
     }
 
-    private synchronized void obtainPrivateKeyBytes() throws OCKException {
+    private synchronized void obtainPrivateKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPrivateKeyBytes at the same time, we only want to call the
         // native code one time.
         //
         if (privateKeyBytes == unobtainedKeyBytes) {
             if (!validId(pkeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
         
             System.out.println("getPrivKeyBytes - pkeyId :" + pkeyId);
@@ -148,14 +140,14 @@ public final class PQCKey implements AsymmetricKey {
         }
     }
 
-    private synchronized void obtainPublicKeyBytes() throws OCKException {
+    private synchronized void obtainPublicKeyBytes() throws NativeException {
         // Leave this duplicate check in here. If two threads are both trying
         // to getPublicKeyBytes at the same time, we only want to call the
         // native code one time.
         //
         if (publicKeyBytes == unobtainedKeyBytes) {
             if (!validId(pkeyId)) {
-                throw new OCKException(badIdMsg);
+                throw new NativeException(badIdMsg);
             }
             this.publicKeyBytes = nativeImpl.MLKEY_getPublicKeyBytes(pkeyId);
         }

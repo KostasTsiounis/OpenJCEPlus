@@ -27,6 +27,11 @@ public class NativeException extends java.lang.Exception  {
         this.code = GKR_UNSPECIFIED;
     }
 
+    public NativeException(String s, Exception exc) {
+        super(s, exc);
+        this.code = GKR_UNSPECIFIED;
+    }
+
     public NativeException(int code) {
         super(errorMessage(code));
         this.code = code;

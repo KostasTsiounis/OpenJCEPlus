@@ -15,14 +15,14 @@ public final class OJPKEM {
      */
 
     public static void KEM_encapsulate(boolean isFIPS, long ockPKeyId, byte[] encapsulatedKey,
-            byte[] keyMaterial) throws OCKException {
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            byte[] keyMaterial) throws NativeException {
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         nativeImpl.KEM_encapsulate(ockPKeyId, encapsulatedKey, keyMaterial);
     }
 
     public static byte[] KEM_decapsulate(boolean isFIPS, long ockPKeyId, byte[] encapsulatedKey)
-            throws OCKException {
-        NativeInterface nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
+            throws NativeException {
+        NativeAdapter nativeImpl = NativeInterfaceFactory.getImpl(isFIPS);
         byte[] keyMaterial = nativeImpl.KEM_decapsulate(ockPKeyId, encapsulatedKey);
         return keyMaterial;
     }
