@@ -25,6 +25,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KDF;
+import javax.crypto.KDFParameters;
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -34,6 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BaseTestHKDF extends BaseTestJunit5 {
 
@@ -202,6 +204,19 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         String plainStr = decrypt(calcOkm, encryptedBytes, "AES/ECB/PKCS5Padding");
         assertTrue(plainStr.equals(strToEncrypt));
     }
+
+
+    @Test
+    public void testConstructorParameters() throws NoSuchAlgorithmException {
+        try {
+            KDF.getInstance("HKDF-SHA256", new MyKDFParameters());
+            fail("Expected InvalidAlgorithmParameterException not thrown.");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // Expected exception
+        }
+    }
+    
+    private static class MyKDFParameters implements KDFParameters {}
 
     private void aesHKDF(int aesKeySize, String hashAlg, String extractAlg, String expandAlg,
             String providerName) throws NoSuchAlgorithmException, NoSuchProviderException,
