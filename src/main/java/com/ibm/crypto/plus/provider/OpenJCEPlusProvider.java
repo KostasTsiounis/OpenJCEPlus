@@ -112,7 +112,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
             exception.initCause(ockException);
         }
 
-    protected static class OpenJCEPlusService extends Service {
+    static class OpenJCEPlusService extends Service {
 
         OpenJCEPlusService(Provider provider, String type, String algorithm, String className,
                 String[] aliases) {
