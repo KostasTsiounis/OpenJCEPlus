@@ -111,8 +111,9 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         if ((debug != null) && (exception != null) && (exception.getCause() == null)) {
             exception.initCause(ockException);
         }
+    }
 
-    static class OpenJCEPlusService extends Service {
+    protected static class OpenJCEPlusService extends Service {
 
         OpenJCEPlusService(Provider provider, String type, String algorithm, String className,
                 String[] aliases) {
