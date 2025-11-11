@@ -216,7 +216,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         }
 
         try {
-            KDF.getInstance("HKDF-SHA256", new MyKDFParameters(), getProviderName());
+            KDF.getInstance("HKDF-SHA256", new MyKDFParameters2(), getProviderName());
             fail("Expected InvalidAlgorithmParameterException not thrown.");
         } catch (InvalidAlgorithmParameterException iape) {
             // Expected exception
@@ -224,6 +224,8 @@ public class BaseTestHKDF extends BaseTestJunit5 {
     }
     
     private static class MyKDFParameters implements KDFParameters {}
+
+    private static class MyKDFParameters2 implements KDFParameters {}
 
     private void aesHKDF(int aesKeySize, String hashAlg, String extractAlg, String expandAlg,
             String providerName) throws NoSuchAlgorithmException, NoSuchProviderException,

@@ -156,7 +156,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
                     parameters[0] = Class
                             .forName("com.ibm.crypto.plus.provider.OpenJCEPlusProvider");
                     Constructor<?> constr = cls.getConstructor(parameters);
-                    System.out.println(constr.toString());
+                    //System.out.println(constr.toString());
 
                     Object[] ctrParams;
                     if (constructorParameter != null) {
