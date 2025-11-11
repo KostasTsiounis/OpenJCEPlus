@@ -309,7 +309,7 @@ public class HKDFKeyDerivation extends KDFSpi {
 
         public HKDFSHA384(OpenJCEPlusProvider provider)
                 throws InvalidAlgorithmParameterException {
-            super(provider, SupportedHmac.SHA256, null);
+            super(provider, SupportedHmac.SHA384, null);
         }
     }
 
@@ -321,7 +321,7 @@ public class HKDFKeyDerivation extends KDFSpi {
 
         public HKDFSHA512(OpenJCEPlusProvider provider)
                 throws InvalidAlgorithmParameterException {
-            super(provider, SupportedHmac.SHA256, null);
+            super(provider, SupportedHmac.SHA512, null);
         }
     }
 }
