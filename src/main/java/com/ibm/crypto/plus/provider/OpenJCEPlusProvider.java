@@ -8,9 +8,9 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.lang.ref.Cleaner;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -22,8 +22,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.crypto.SecretKey;
-import javax.crypto.KDFParameters;
+
+import org.bouncycastle.crypto.params.KDFParameters;
+
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 import sun.security.util.Debug;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
@@ -148,44 +153,62 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
         public Object newInstance(Object constructorParameter) throws NoSuchAlgorithmException {
             Provider provider = getProvider();
             String className = getClassName();
+            String type = getType();
+            String algorithm = getAlgorithm();
+
+            Class<?> cls = Class.forName(className);
+
+            // Call the constructor that takes an OpenJCEPlusProvider if
+            // available
+            //
             try {
-                Class<?> cls = Class.forName(className);
-
-                // Call the constructor that takes an OpenJCEPlusProvider if
-                // available
-                //
-                try {
-                    Class<?>[] parameters;
-                    if (constructorParameter != null) {
-                        parameters = new Class<?>[2];
-                        parameters[1] = getParameterClass(getType());
-                        System.out.println("Parameters class: " + parameters[1].getName());
-                    } else {
-                        parameters = new Class<?>[1];
+                Class<?>[] parameters;
+                if (constructorParameter != null) {
+                    parameters = new Class<?>[2];
+                    Class<?> ctrParamClz = getParameterClass(type);
+                    
+                    Class<?> argClass = constructorParameter.getClass();
+                    if (!ctrParamClz.isAssignableFrom(argClass)) {
+                        throw new InvalidParameterException
+                            ("constructorParameter must be instanceof "
+                            + ctrParamClz.getName().replace('$', '.')
+                            + " for type " + type);
                     }
-                    parameters[0] = Class
-                            .forName("com.ibm.crypto.plus.provider.OpenJCEPlusProvider");
-                    Constructor<?> constr = cls.getConstructor(parameters);
-                    //System.out.println(constr.toString());
 
-                    Object[] ctrParams;
-                    if (constructorParameter != null) {
-                        ctrParams = new Object[2];
-                        ctrParams[1] = constructorParameter;
-                        System.out.println("Parameters: " + ctrParams[1].getClass().getName());
-                    } else {
-                        ctrParams = new Object[1];
-                    }
-                    ctrParams[0] = provider;
-
-                    return constr.newInstance(ctrParams);
-                } catch (java.lang.NoSuchMethodException e) {
+                    parameters[1] = ctrParamClz;
+                    System.out.println("Parameters class: " + parameters[1].getName());
+                } else {
+                    parameters = new Class<?>[1];
                 }
-            } catch (Exception clex) {
-                throw new NoSuchAlgorithmException(clex);
-            }
+                parameters[0] = Class
+                        .forName("com.ibm.crypto.plus.provider.OpenJCEPlusProvider");
+                Constructor<?> constr = cls.getConstructor(parameters);
+                //System.out.println(constr.toString());
 
-            return super.newInstance(constructorParameter);
+                Object[] ctrParams;
+                if (constructorParameter != null) {
+                    ctrParams = new Object[2];
+                    ctrParams[1] = constructorParameter;
+                    System.out.println("Parameters: " + ctrParams[1].getClass().getName());
+                } else {
+                    ctrParams = new Object[1];
+                }
+                ctrParams[0] = provider;
+
+                return constr.newInstance(ctrParams);
+            } catch (NoSuchAlgorithmException e) {
+                throw e;
+            } catch (InvocationTargetException e) {
+                throw new NoSuchAlgorithmException
+                    ("Error constructing implementation (algorithm: "
+                    + algorithm + ", provider: " + provider.getName()
+                    + ", class: " + className + ")", e.getCause());
+            } catch (Exception e) {
+                throw new NoSuchAlgorithmException
+                    ("Error constructing implementation (algorithm: "
+                    + algorithm + ", provider: " + provider.getName()
+                    + ", class: " + className + ")", e);
+            }
         }
 
         @Override
