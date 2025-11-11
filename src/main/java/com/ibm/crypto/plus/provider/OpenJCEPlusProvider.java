@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.SecretKey;
-
-import org.bouncycastle.crypto.params.KDFParameters;
-
+import javax.crypto.KDFParameters;
 import sun.security.util.Debug;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
