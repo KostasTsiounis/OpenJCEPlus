@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.SecretKey;
+
+import org.bouncycastle.crypto.params.KDFParameters;
+
 import sun.security.util.Debug;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
@@ -134,6 +137,15 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
             return (aliases == null) ? null : Arrays.asList(aliases);
         }
 
+        private Class<?> getParameterClass(String type) {
+            switch (type) {
+                case "KDF":
+                    return KDFParameters.class;
+                default:
+                    return null;
+            }
+        }
+
         @Override
         public Object newInstance(Object constructorParameter) throws NoSuchAlgorithmException {
             Provider provider = getProvider();
@@ -148,7 +160,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
                     Class<?>[] parameters;
                     if (constructorParameter != null) {
                         parameters = new Class<?>[2];
-                        parameters[1] = constructorParameter.getClass();
+                        parameters[1] = getParameterClass(getType());
                         System.out.println("Parameters class: " + parameters[1].getName());
                     } else {
                         parameters = new Class<?>[1];
