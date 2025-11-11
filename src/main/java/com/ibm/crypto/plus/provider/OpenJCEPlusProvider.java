@@ -152,7 +152,13 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
             String type = getType();
             String algorithm = getAlgorithm();
 
-            Class<?> cls = Class.forName(className);
+            try {
+                Class<?> cls = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchAlgorithmException
+                    ("class configured for " + type + " (provider: " +
+                    provider.getName() + ") cannot be found.", e);
+            }
 
             // Call the constructor that takes an OpenJCEPlusProvider if
             // available
