@@ -207,7 +207,7 @@ public class BaseTestHKDF extends BaseTestJunit5 {
 
 
     @Test
-    public void testConstructorParameters() throws NoSuchAlgorithmException {
+    public void testConstructorParameters() throws NoSuchAlgorithmException, NoSuchProviderException {
         try {
             KDF.getInstance("HKDF-SHA256", new MyKDFParameters());
             fail("Expected InvalidAlgorithmParameterException not thrown.");
