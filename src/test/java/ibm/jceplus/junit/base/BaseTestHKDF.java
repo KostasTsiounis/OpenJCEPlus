@@ -214,6 +214,13 @@ public class BaseTestHKDF extends BaseTestJunit5 {
         } catch (InvalidAlgorithmParameterException iape) {
             // Expected exception
         }
+
+        try {
+            KDF.getInstance("HKDF-SHA256", new MyKDFParameters(), getProviderName());
+            fail("Expected InvalidAlgorithmParameterException not thrown.");
+        } catch (InvalidAlgorithmParameterException iape) {
+            // Expected exception
+        }
     }
     
     private static class MyKDFParameters implements KDFParameters {}
