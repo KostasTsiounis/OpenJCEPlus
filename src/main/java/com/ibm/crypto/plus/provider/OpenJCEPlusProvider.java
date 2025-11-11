@@ -8,6 +8,7 @@
 
 package com.ibm.crypto.plus.provider;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.lang.ref.Cleaner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,13 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import javax.crypto.KDFParameters;
 import javax.crypto.SecretKey;
-
-import org.bouncycastle.crypto.params.KDFParameters;
-
-import com.ibm.crypto.plus.provider.ock.OCKContext;
-
 import sun.security.util.Debug;
 
 // Internal interface for OpenJCEPlus and OpenJCEPlus implementation classes.
