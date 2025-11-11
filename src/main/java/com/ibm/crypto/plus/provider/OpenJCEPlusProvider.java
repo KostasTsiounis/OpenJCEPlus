@@ -199,8 +199,6 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
                 ctrParams[0] = provider;
 
                 return constr.newInstance(ctrParams);
-            } catch (NoSuchAlgorithmException e) {
-                throw e;
             } catch (InvocationTargetException e) {
                 throw new NoSuchAlgorithmException
                     ("Error constructing implementation (algorithm: "
