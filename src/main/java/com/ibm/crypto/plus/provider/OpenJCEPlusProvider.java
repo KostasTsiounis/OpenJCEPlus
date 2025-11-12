@@ -152,6 +152,12 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
             String type = getType();
             String algorithm = getAlgorithm();
 
+            // AlgorithmParameters instances don't need the provider as a parameter,
+            // so the superclass constructor can be used.
+            if ("AlgorithmParameters".equals(type)) {
+                return super.newInstance(constructorParameter);
+            }
+
             Class<?> cls;
             try {
                 cls = Class.forName(className);
