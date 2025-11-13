@@ -33,6 +33,8 @@ public final class DHParameters extends AlgorithmParametersSpi implements java.i
     // The private-value length (l)
     private int l;
 
+    public DHParameters() {}
+
     @Override
     protected void engineInit(AlgorithmParameterSpec paramSpec)
             throws InvalidParameterSpecException {
