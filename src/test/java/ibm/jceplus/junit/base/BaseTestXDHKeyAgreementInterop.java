@@ -46,6 +46,9 @@ public class BaseTestXDHKeyAgreementInterop extends BaseTestJunit5Interop {
 
         assertArrayEquals(ss1, ss2, "Key Agreement not compatible with different key providers");
 
+        ka1 = KeyAgreement.getInstance("XDH", getInteropProviderName());
+        ka2 = KeyAgreement.getInstance("XDH", getProviderName());
+
         ka1.init(kp2.getPrivate());
         ka1.doPhase(kp1.getPublic(), true);
 
