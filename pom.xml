@@ -12,7 +12,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>OpenJCEPlus</artifactId>
-    <version>25</version>
+    <version>26</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -197,30 +197,12 @@
             </properties>
           </profile>
           <profile>
-            <id>Profile for JDK 23 Build</id>
+            <id>Profile for JDK 26 Build</id>
             <activation>
-              <jdk>23</jdk>
+              <jdk>26</jdk>
             </activation>
             <properties>
-                <jdk.build.target>23</jdk.build.target>
-            </properties>
-          </profile>
-          <profile>
-            <id>Profile for JDK 24 Build</id>
-            <activation>
-              <jdk>24</jdk>
-            </activation>
-            <properties>
-                <jdk.build.target>24</jdk.build.target>
-            </properties>
-          </profile>
-          <profile>
-            <id>Profile for JDK 25 Build</id>
-            <activation>
-              <jdk>25</jdk>
-            </activation>
-            <properties>
-                <jdk.build.target>25</jdk.build.target>
+                <jdk.build.target>26</jdk.build.target>
             </properties>
           </profile>
           <!--
@@ -432,8 +414,8 @@
                         <message>"Property ock.library.path is not set, perhaps this required property is missing from the command line?"</message>
                       </requireProperty>
                       <requireJavaVersion>
-                        <version>[25,26]</version>
-                        <message>"Java 25 or 26 required to build OpenJCEPlus."</message>
+                        <version>[26,27]</version>
+                        <message>"Java 26 or 27 required to build OpenJCEPlus."</message>
                       </requireJavaVersion>
                       <requireEnvironmentVariable>
                         <variableName>JAVA_HOME</variableName>
