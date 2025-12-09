@@ -35,6 +35,9 @@ public class BaseTestXDHKeyAgreementInterop extends BaseTestJunit5Interop {
         KeyPair kp1 = kpg1.generateKeyPair();
         KeyPair kp2 = kpg2.generateKeyPair();
 
+        System.out.println("Sun private: " + BaseUtils.bytesToHex(kp1.getPrivate().getEncoded()));
+        System.out.println("OpenJCEPlus private: " + BaseUtils.bytesToHex(kp2.getPrivate().getEncoded()));
+
         ka1.init(kp1.getPrivate());
         ka1.doPhase(kp2.getPublic(), true);
         
