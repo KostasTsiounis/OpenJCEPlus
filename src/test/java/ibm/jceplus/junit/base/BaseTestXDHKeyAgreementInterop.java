@@ -44,6 +44,9 @@ public class BaseTestXDHKeyAgreementInterop extends BaseTestJunit5Interop {
         byte[] ss1 = ka1.generateSecret();
         byte[] ss2 = ka2.generateSecret();
 
+        System.out.println("Sun secret: " + BaseUtils.bytesToHex(ss1));
+        System.out.println("OpenJCEPlus secret: " + BaseUtils.bytesToHex(ss2));
+
         assertArrayEquals(ss1, ss2, "Key Agreement not compatible with different key providers");
 
         ka1 = KeyAgreement.getInstance("XDH", getInteropProviderName());
