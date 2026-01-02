@@ -114,7 +114,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
             //    * the public key, if available (this.pubKeyEncoded)
-            parsePrivateKeyEncoding();
+            this.privKeyMaterial = parsePrivateKeyEncoding();
 
             // Create appropriate encoding and create ecKey.
             byte[] privateKeyBytes = createEncodedPrivateKeyWithParams();
@@ -154,7 +154,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
             //    * the public key, if available (this.pubKeyEncoded)
-            parsePrivateKeyEncoding();
+            this.privKeyMaterial = parsePrivateKeyEncoding();
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         } finally {
@@ -223,12 +223,16 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
      *
      * @throws IOException
      */
-    private void parsePrivateKeyEncoding() throws IOException {
+    private byte[] parsePrivateKeyEncoding() throws IOException {
         DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
+        DerOutputStream outEncodedStream = new DerOutputStream();
+
+        outEncodedStream.putInteger(inputDerValue[0].getBigInteger());
 
         byte[] privateKeyBytes = inputDerValue[1].getOctetString();
         this.s = new BigInteger(1, privateKeyBytes);
+        outEncodedStream.putOctetString(privateKeyBytes);
 
         if (inputDerValue.length == 4) {
             if (!inputDerValue[3].isContextSpecific(TAG_PUBLIC_KEY_ATTRS)) {
@@ -238,6 +242,10 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             this.pubKeyEncoded = new X509Key(this.algid,
                     bits.data.getUnalignedBitString()).getEncoded();
         }
+
+        DerOutputStream asn1Key = new DerOutputStream();
+        asn1Key.write(DerValue.tag_Sequence, outEncodedStream.toByteArray());
+        return asn1Key.toByteArray();
     }
 
     public BigInteger getS() {
