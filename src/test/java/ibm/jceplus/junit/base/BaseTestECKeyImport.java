@@ -19,8 +19,10 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
+import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.EllipticCurve;
 import java.security.spec.EncodedKeySpec;
+import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -118,11 +120,16 @@ public class BaseTestECKeyImport extends BaseTestJunit5 {
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
         PrivateKey privateKey2 = keyFactory.generatePrivate(privateKeySpec);
 
+        KeySpec privateKeySpec2 = keyFactory.getKeySpec(privateKey, ECPrivateKeySpec.class);
+        PrivateKey privateKey3 = keyFactory.generatePrivate(privateKeySpec2);
+
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(pubKeyBytes);
         PublicKey publicKey2 = keyFactory.generatePublic(publicKeySpec);
 
         // The original and new keys are the same
         boolean same = privateKey.equals(privateKey2);
+        assertTrue(same);
+        same = privateKey.equals(privateKey3);
         assertTrue(same);
         same = publicKey.equals(publicKey2);
         assertTrue(same);
@@ -180,14 +187,20 @@ public class BaseTestECKeyImport extends BaseTestJunit5 {
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
         PrivateKey privateKey2 = keyFactory.generatePrivate(privateKeySpec);
 
+        KeySpec privateKeySpec2 = keyFactory.getKeySpec(privateKey, ECPrivateKeySpec.class);
+        PrivateKey privateKey3 = keyFactory.generatePrivate(privateKeySpec2);
+
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
         PublicKey publicKey2 = keyFactory.generatePublic(publicKeySpec);
 
         // The original and new keys are the same
         boolean same = privateKey.equals(privateKey2);
         assertTrue(same);
+        same = privateKey.equals(privateKey3);
+        assertTrue(same);
         same = publicKey.equals(publicKey2);
         assertTrue(same);
+
         byte[] publicKey2Bytes = publicKey2.getEncoded();
         byte[] privateKey2Bytes = privateKey2.getEncoded();
 
@@ -217,15 +230,20 @@ public class BaseTestECKeyImport extends BaseTestJunit5 {
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(originalPrivKeyBytes);
         PrivateKey importPrivateKey = keyFactory.generatePrivate(privateKeySpec);
 
+        KeySpec privateKeySpec2 = keyFactory.getKeySpec(privateKey, ECPrivateKeySpec.class);
+        PrivateKey importPrivateKey2 = keyFactory.generatePrivate(privateKeySpec2);
+
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(originalPubKeyBytes);
         PublicKey importPublicKey = keyFactory.generatePublic(publicKeySpec);
 
         byte[] importPubKeyBytes = importPublicKey.getEncoded();
         byte[] importPrivKeyBytes = importPrivateKey.getEncoded();
+        byte[] importPrivKeyBytes2 = importPrivateKey2.getEncoded();
 
         // Check that the original and factory created keys produce the same encoding.
         assertArrayEquals(importPubKeyBytes, originalPubKeyBytes, "Public key encodings don't match.");
         assertArrayEquals(importPrivKeyBytes, originalPrivKeyBytes, "Private key encodings don't match.");
+        assertArrayEquals(importPrivKeyBytes2, originalPrivKeyBytes, "Private key encodings don't match.");
     }
 
     /**

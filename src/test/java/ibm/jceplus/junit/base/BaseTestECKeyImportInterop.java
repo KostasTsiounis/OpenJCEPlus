@@ -19,8 +19,10 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
+import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.EllipticCurve;
 import java.security.spec.EncodedKeySpec;
+import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -106,12 +108,16 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
         PrivateKey privateKey2 = keyFactory.generatePrivate(privateKeySpec);
 
+        KeySpec privateKeySpec2 = keyFactory.getKeySpec(privateKey, ECPrivateKeySpec.class);
+        PrivateKey privateKey3 = keyFactory.generatePrivate(privateKeySpec2);
+
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(pubKeyBytes);
         PublicKey publicKey2 = keyFactory.generatePublic(publicKeySpec);
 
         // The original and new keys are the same
         assertTrue(Arrays.equals(publicKey2.getEncoded(), pubKeyBytes));
         assertTrue(Arrays.equals(privateKey2.getEncoded(), privKeyBytes));
+        assertTrue(Arrays.equals(privateKey3.getEncoded(), privKeyBytes));
     }
 
     @Test
@@ -173,13 +179,18 @@ public class BaseTestECKeyImportInterop extends BaseTestJunit5Interop {
         EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
         PrivateKey privateKey2 = keyFactory.generatePrivate(privateKeySpec);
 
+        KeySpec privateKeySpec2 = keyFactory.getKeySpec(privateKey, ECPrivateKeySpec.class);
+        PrivateKey privateKey3 = keyFactory.generatePrivate(privateKeySpec2);
+
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
         PublicKey publicKey2 = keyFactory.generatePublic(publicKeySpec);
 
         byte[] publicKey2Bytes = publicKey2.getEncoded();
         byte[] privateKey2Bytes = privateKey2.getEncoded();
+        byte[] privateKey3Bytes = privateKey3.getEncoded();
 
         assertTrue(Arrays.equals(publicKey2Bytes, publicKeyBytes));
         assertTrue(Arrays.equals(privateKey2Bytes, privKeyBytes));
+        assertTrue(Arrays.equals(privateKey3Bytes, privKeyBytes));
     }
 }
