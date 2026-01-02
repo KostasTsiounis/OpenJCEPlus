@@ -114,7 +114,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
             //    * the public key, if available (this.pubKeyEncoded)
-            this.privKeyMaterial = parsePrivateKeyEncoding();
+            parsePrivateKeyEncoding();
 
             // Create appropriate encoding and create ecKey.
             byte[] privateKeyBytes = createEncodedPrivateKeyWithParams();
@@ -149,12 +149,12 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             this.params = algParams.getParameterSpec(ECParameterSpec.class);
 
             // Get private key encoding from ECKey.
-            this.privKeyMaterial = ecKey.getPrivateKeyBytes();
+            this.privKeyMaterial = removeOptionals(ecKey.getPrivateKeyBytes());
 
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
             //    * the public key, if available (this.pubKeyEncoded)
-            this.privKeyMaterial = parsePrivateKeyEncoding();
+            parsePrivateKeyEncoding();
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         } finally {
@@ -223,7 +223,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
      *
      * @throws IOException
      */
-    private byte[] parsePrivateKeyEncoding() throws IOException {
+    private void parsePrivateKeyEncoding() throws IOException {
         DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
         DerOutputStream outEncodedStream = new DerOutputStream();
@@ -246,6 +246,29 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         DerOutputStream asn1Key = new DerOutputStream();
         asn1Key.write(DerValue.tag_Sequence, outEncodedStream.toByteArray());
         return asn1Key.toByteArray();
+    }
+
+    private byte[] removeOptionals(byte[] privateKeyEnc) throws IOException {
+        DerInputStream privKeyBytesEncodedStream = new DerInputStream(privateKeyEnc);
+        DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
+        DerOutputStream outEncodedStream = new DerOutputStream();
+
+        if (inputDerValue.length < 2) {
+            throw new IOException("Incorrect EC private key encoding");
+        }
+        BigInteger tempVersion1 = inputDerValue[0].getBigInteger();
+        if (tempVersion1.compareTo(BigInteger.ONE) != 0) {
+            throw new IOException("Decoding EC private key failed. The version must be 1");
+        }
+        outEncodedStream.putInteger(tempVersion1);
+
+        byte[] privateKeyBytes = inputDerValue[1].getOctetString();
+        outEncodedStream.putOctetString(privateKeyBytes);
+
+        DerOutputStream asn1Key = new DerOutputStream();
+        asn1Key.write(DerValue.tag_Sequence, outEncodedStream.toByteArray());
+        return asn1Key.toByteArray();
+
     }
 
     public BigInteger getS() {
