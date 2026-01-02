@@ -149,12 +149,14 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             this.params = algParams.getParameterSpec(ECParameterSpec.class);
 
             // Get private key encoding from ECKey.
-            this.privKeyMaterial = removeOptionals(ecKey.getPrivateKeyBytes());
+            this.privKeyMaterial = ecKey.getPrivateKeyBytes();
 
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
             //    * the public key, if available (this.pubKeyEncoded)
             parsePrivateKeyEncoding();
+
+            this.privKeyMaterial = removeOptionals(this.privKeyMaterial);
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         } finally {
