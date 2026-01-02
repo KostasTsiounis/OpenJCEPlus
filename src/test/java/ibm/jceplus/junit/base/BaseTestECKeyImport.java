@@ -281,13 +281,8 @@ public class BaseTestECKeyImport extends BaseTestJunit5 {
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
         byte[] pubKeyBytes = publicKey.getEncoded();
-        byte[] privKeyBytes = privateKey.getEncoded();
 
-        KeyFactory keyFactory = KeyFactory.getInstance("EC", getProviderName());
-        EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
-        PrivateKey importPrivKey = keyFactory.generatePrivate(privateKeySpec);
-
-        byte[] pubFromPrivate = ((PKCS8Key) importPrivKey).getPubKeyEncoded();
+        byte[] pubFromPrivate = ((PKCS8Key) privateKey).getPubKeyEncoded();
 
         // The original and new keys are the same
         assertArrayEquals(pubKeyBytes, pubFromPrivate, "Public key encodings don't match.");
