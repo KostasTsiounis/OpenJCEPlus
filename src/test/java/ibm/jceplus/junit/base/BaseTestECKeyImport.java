@@ -249,6 +249,8 @@ public class BaseTestECKeyImport extends BaseTestJunit5 {
         assertArrayEquals(importPrivKeyBytes2, originalPrivKeyBytes, "Private key encodings don't match.");
     }
 
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     private static String bytesToHex(byte[] bytes) {
         if (bytes == null)
             return new String("-null-");
