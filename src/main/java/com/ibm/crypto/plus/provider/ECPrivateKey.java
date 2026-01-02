@@ -86,8 +86,6 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             byte[] paramBytes = ECParameters.encodeECParameters(this.params);
             this.ecKey = ECKey.createPrivateKey(provider.getOCKContext(), privateKeyBytes,
                     paramBytes, provider);
-            // Reset private key encoding to include parameters and public key.
-            this.privKeyMaterial = this.ecKey.getPrivateKeyBytes();
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         }
