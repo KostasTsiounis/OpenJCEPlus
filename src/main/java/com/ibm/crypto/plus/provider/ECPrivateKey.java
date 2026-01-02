@@ -156,7 +156,8 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             //    * the public key, if available (this.pubKeyEncoded)
             parsePrivateKeyEncoding();
 
-            this.privKeyMaterial = removeOptionals(this.privKeyMaterial);
+            // Remove optional fields from private key encoding.
+            removeOptionals();
         } catch (Exception exception) {
             throw new InvalidKeyException("Failed to create EC private key", exception);
         } finally {
@@ -242,8 +243,8 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
         }
     }
 
-    private byte[] removeOptionals(byte[] privateKeyEnc) throws IOException {
-        DerInputStream privKeyBytesEncodedStream = new DerInputStream(privateKeyEnc);
+    private void removeOptionals() throws IOException {
+        DerInputStream privKeyBytesEncodedStream = new DerInputStream(this.privKeyMaterial);
         DerValue[] inputDerValue = privKeyBytesEncodedStream.getSequence(4);
         DerOutputStream outEncodedStream = new DerOutputStream();
 
@@ -261,8 +262,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
 
         DerOutputStream asn1Key = new DerOutputStream();
         asn1Key.write(DerValue.tag_Sequence, outEncodedStream.toByteArray());
-        return asn1Key.toByteArray();
-
+        this.privKeyMaterial = asn1Key.toByteArray();
     }
 
     public BigInteger getS() {
