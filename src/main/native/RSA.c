@@ -114,13 +114,9 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1encrypt(
 #endif
 
     // To get output length.
-    outLen = ICC_EVP_PKEY_encrypt(ockCtx, keyCtx,
-                              NULL, &outlen,
-                              plaintextNative + (int) plaintextOff,  (size_t) plaintextLen);
-
-    outLen = ICC_EVP_PKEY_encrypt(ockCtx, keyCtx,
-                              ciphertextNative + (int) ciphertextOff, &outLen,
-                              plaintextNative + (int) plaintextOff,  (size_t) plaintextLen);
+    outLen = ICC_EVP_PKEY_encrypt(ockCtx, ciphertextNative + (int) ciphertextOff,
+                                  plaintextNative + (int) plaintextOff,  (size_t) plaintextLen,
+                                  keyCtx);
     if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
@@ -182,7 +178,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     ICC_EVP_PKEY_CTX *keyCtx            = NULL;
     unsigned char    *plaintextNative   = NULL;
     unsigned char    *ciphertextNative  = NULL;
-    size_t           *outLen;
+    size_t           outLen             = 0;
     jboolean         isCopy;
 
     if (debug) {
@@ -258,13 +254,9 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
 #endif
 
     // To get output length.
-    outLen = ICC_EVP_PKEY_decrypt(ockCtx, keyCtx,
-                              NULL, &outlen,
-                              ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
-
-    outLen = ICC_EVP_PKEY_decrypt(ockCtx, keyCtx,
-                              plaintextNative + (int) plaintextOff,  &outLen,
-                              ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
+    outLen = ICC_EVP_PKEY_decrypt(ockCtx, plaintextNative + (int) plaintextOff,
+                                  ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen,
+                                  keyCtx);
     if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
