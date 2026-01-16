@@ -19,7 +19,7 @@
 
 static int rsaPaddingMap(int rsaPaddingId);
 static char * getDigestName(int mdId);
-static int setPadding(ICC_CTX *icc_ctx, ICC_EVP_PKEY_CTX *ctx, char *padding);
+static int setPadding(ICC_CTX *icc_ctx, ICC_EVP_PKEY_CTX *ctx, int rsaPaddingId, int mdId);
 
 /*
  * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
@@ -81,7 +81,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1encrypt(
     }
 
 
-    if (-1 == setPadding(ockCtx, keyCtx, rsaPaddingId, mdId)) {
+    if (-1 == setPadding(ockCtx, keyCtx, (int) rsaPaddingId, (int) mdId)) {
         throwOCKException(env, 0, "Could not set padding.");
         if (debug) {
             gslogFunctionExit(functionName);
