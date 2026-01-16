@@ -374,9 +374,17 @@ public final class RSA extends CipherSpi {
                 || padding.equalsIgnoreCase("OAEPWithSHA-1AndMGF1Padding")
                 || padding.equalsIgnoreCase("OAEPWithSHA1AndMGF1Padding")) {
             this.padding = RSAPadding.OAEPPadding;
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA224AndMGF1Padding")) {
+            this.padding = RSAPadding.OAEPPaddingSHA224;
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA256AndMGF1Padding")) {
+            this.padding = RSAPadding.OAEPPaddingSHA256;
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA512AndMGF1Padding")) {
+            this.padding = RSAPadding.OAEPPaddingSHA512;
         } else {
             throw new NoSuchPaddingException("Padding: " + padding + " not implemented");
         }
+
+        oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
     }
 
     @Override
@@ -446,9 +454,39 @@ public final class RSA extends CipherSpi {
         }
     }
 
+    private String getMDName(int md) throws NoSuchPaddingException {
+        switch (md) {
+            case 1:
+                return "SHA-1";
+            case 2:
+                return "SHA-224";
+            case 3:
+                return "SHA-256";
+            case 4:
+                return "SHA-512";
+            default:
+                throw new NoSuchPaddingException("Incorrect message digest in OAEP padding.");
+        }
+    }
+
+    private int getDigestLength() throws Exception{
+        switch (this.padding.getMessageDigest()) {
+            case 1:
+                return 20;
+            case 2:
+                return 28;
+            case 3:
+                return 32;
+            case 4:
+                return 64;
+            default:
+                throw new Exception("Padding doesn't have a message digest.");
+        }
+    }
+
     private int oaepInputLimit() throws Exception {
         try {
-            int digestLength = 20; // sha-1 digest length
+            int digestLength = getDigestLength(); // sha-1 digest length
             return rsaCipher.getOutputSize() - (2 * digestLength) - 2;
         } catch (Exception e) {
             throw provider.providerException("Unable to get input limit", e);

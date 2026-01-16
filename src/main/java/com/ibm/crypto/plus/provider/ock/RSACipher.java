@@ -42,7 +42,6 @@ public final class RSACipher {
     private OCKContext ockContext = null;
     private RSAKey rsaKey = null;
     private final String badIdMsg = "RSA Key Identifier is not valid";
-    private boolean convertKey = false; //Used to convert RSA Plain keys
     // private final String debPrefix = "RSACipher"; /* Adding DEBUG messes up encrypt/decrypt cases */
 
     public static RSACipher getInstance(OCKContext ockContext) {
@@ -62,7 +61,6 @@ public final class RSACipher {
             throw new InvalidKeyException("key is null");
         }
         this.rsaKey = key;
-        this.convertKey = plainRSAKey;
     }
 
     // Method not synchronized since ObtainKeySize method used getKeySize is synchronized 
@@ -83,8 +81,8 @@ public final class RSACipher {
         if (!validId(this.rsaKey.getRSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        return checkOutLen(NativeInterface.RSACIPHER_public_encrypt(this.ockContext.getId(),
-                this.rsaKey.getRSAKeyId(), padding.getId(), input, inOffset, inLen, output,
+        return checkOutLen(NativeInterface.RSACIPHER_encrypt(this.ockContext.getId(),
+                this.rsaKey.getRSAKeyId(), padding.getId(), padding.getMessageDigest(), input, inOffset, inLen, output,
                 outOffset));
     }
 
@@ -99,9 +97,9 @@ public final class RSACipher {
         if (!validId(this.rsaKey.getRSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        return checkOutLen(NativeInterface.RSACIPHER_private_encrypt(this.ockContext.getId(),
-                this.rsaKey.getRSAKeyId(), padding.getId(), input, inOffset, inLen, output,
-                outOffset, convertKey));
+        return checkOutLen(NativeInterface.RSACIPHER_encrypt(this.ockContext.getId(),
+                this.rsaKey.getRSAKeyId(), padding.getId(), padding.getMessageDigest(), input, inOffset, inLen, output,
+                outOffset));
     }
 
     public synchronized int publicDecrypt(RSAPadding padding, byte[] input, int inOffset, int inLen,
@@ -119,8 +117,8 @@ public final class RSACipher {
         if (!validId(this.rsaKey.getRSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        return checkOutLen(NativeInterface.RSACIPHER_public_decrypt(this.ockContext.getId(),
-                this.rsaKey.getRSAKeyId(), padding.getId(), input, inOffset, inLen, output,
+        return checkOutLen(NativeInterface.RSACIPHER_decrypt(this.ockContext.getId(),
+                this.rsaKey.getRSAKeyId(), padding.getId(), padding.getMessageDigest(), input, inOffset, inLen, output,
                 outOffset));
     }
 
@@ -139,9 +137,9 @@ public final class RSACipher {
         if (!validId(this.rsaKey.getRSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
-        return checkOutLen(NativeInterface.RSACIPHER_private_decrypt(this.ockContext.getId(),
-                this.rsaKey.getRSAKeyId(), padding.getId(), input, inOffset, inLen, output,
-                outOffset, convertKey));
+        return checkOutLen(NativeInterface.RSACIPHER_decrypt(this.ockContext.getId(),
+                this.rsaKey.getRSAKeyId(), padding.getId(), padding.getMessageDigest(), input, inOffset, inLen, output,
+                outOffset));
     }
 
     private void checkInputRange(byte[] input, int offset, int length) {

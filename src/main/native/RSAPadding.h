@@ -16,4 +16,10 @@
 #define RSAPAD_PKCS1 1
 #define RSAPAD_OAEP 2
 
+#define NONE 0
+#define SHA1 1
+#define SHA224 2
+#define SHA256 3
+#define SHA512 4
+
 #endif
