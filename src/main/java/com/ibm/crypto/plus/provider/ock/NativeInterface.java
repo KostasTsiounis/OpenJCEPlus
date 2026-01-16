@@ -535,21 +535,13 @@ final class NativeInterface {
     // RSA cipher functions
     // =========================================================================
 
-    static public native int RSACIPHER_public_encrypt(long ockContextId, long rsaKeyId,
-            int rsaPaddingId, byte[] plaintext, int plaintextOffset, int plaintextLen,
+    static public native int RSACIPHER_encrypt(long ockContextId, long rsaKeyId,
+            int rsaPaddingId, int mdId, byte[] plaintext, int plaintextOffset, int plaintextLen,
             byte[] ciphertext, int ciphertextOffset) throws OCKException;
 
-    static public native int RSACIPHER_private_encrypt(long ockContextId, long rsaKeyId,
-            int rsaPaddingId, byte[] plaintext, int plaintextOffset, int plaintextLen,
-            byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws OCKException;
-
-    static public native int RSACIPHER_public_decrypt(long ockContextId, long rsaKeyId,
-            int rsaPaddingId, byte[] ciphertext, int ciphertextOffset, int ciphertextLen,
+    static public native int RSACIPHER_decrypt(long ockContextId, long rsaKeyId,
+            int rsaPaddingId, int mdId, byte[] ciphertext, int ciphertextOffset, int ciphertextLen,
             byte[] plaintext, int plaintextOffset) throws OCKException;
-
-    static public native int RSACIPHER_private_decrypt(long ockContextId, long rsaKeyId,
-            int rsaPaddingId, byte[] ciphertext, int ciphertextOffset, int ciphertextLen,
-            byte[] plaintext, int plaintextOffset, boolean convertKey) throws OCKException;
 
     // =========================================================================
     // DH key functions
