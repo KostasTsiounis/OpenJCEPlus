@@ -116,7 +116,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1encrypt(
     // To get output length.
     outLen = ICC_EVP_PKEY_encrypt(ockCtx, ciphertextNative + (int) ciphertextOff,
                                   plaintextNative + (int) plaintextOff,  (size_t) plaintextLen,
-                                  keyCtx);
+                                  ockRSA);
     if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
@@ -193,8 +193,8 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     }
 
     if ((ockRSA == NULL) || (plaintext == NULL) || (ciphertext == NULL) ||
-        (plaintextOff < 0) || (plaintextOff > plaintextLen) ||
-        (ciphertextOff < 0)) {
+        (ciphertextOff < 0) || (ciphertextOff > ciphertextLen) ||
+        (plaintextOff < 0)) {
         throwOCKException(env, 0, "The RSA input parameters are incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);
@@ -256,7 +256,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     // To get output length.
     outLen = ICC_EVP_PKEY_decrypt(ockCtx, plaintextNative + (int) plaintextOff,
                                   ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen,
-                                  keyCtx);
+                                  ockRSA);
     if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
