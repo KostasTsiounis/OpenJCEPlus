@@ -114,12 +114,16 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1encrypt(
 #endif
 
     // To get output length.
-    outLen = ICC_EVP_PKEY_encrypt(ockCtx, ciphertextNative + (int) ciphertextOff,
-                                  plaintextNative + (int) plaintextOff,  (size_t) plaintextLen,
-                                  ockRSA);
-    gslogMessagePrefix("DETAIL_RSACIPHER Encrypted data - %d bytes: ",
-                            outLen);
-    if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
+    rc = ICC_EVP_PKEY_encrypt_new(ockCtx, keyCtx,
+                                      NULL, &outLen,
+                                      plaintextNative + (int) plaintextOff,  (size_t) plaintextLen);
+
+    rc = ICC_EVP_PKEY_encrypt_new(ockCtx, keyCtx,
+                                      ciphertextNative + (int) ciphertextOff, &outLen,
+                                      plaintextNative + (int) plaintextOff,  (size_t) plaintextLen);
+    //gslogMessagePrefix("DETAIL_RSACIPHER Encrypted data - %d bytes: ",
+    //                        outLen);
+    if (rc == ICC_OSSL_FAILURE || rc == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
             gslogMessage(
@@ -256,10 +260,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
 #endif
 
     // To get output length.
-    outLen = ICC_EVP_PKEY_decrypt(ockCtx, plaintextNative + (int) plaintextOff,
-                                  ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen,
-                                  ockRSA);
-    if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
+    rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
+                                      NULL, &outLen,
+                                      ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
+
+    rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
+                                      plaintextNative + (int) plaintextOff, &outLen,
+                                      ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
+    if (rc == ICC_OSSL_FAILURE || rc == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
             gslogMessage(
@@ -355,11 +363,9 @@ setPadding(ICC_CTX *icc_ctx, ICC_EVP_PKEY_CTX *ctx, int rsaPaddingId, int mdId)
     int p1Pad = rsaPaddingMap(rsaPaddingId);
     const ICC_EVP_MD *md = NULL;
 
-    if (p1Pad != ICC_RSA_NO_PADDING) {
-        rc = ICC_EVP_PKEY_CTX_set_rsa_padding(icc_ctx, ctx, p1Pad);
-        if (rc != ICC_OSSL_SUCCESS) {
-            return -1;
-        }
+    rc = ICC_EVP_PKEY_CTX_set_rsa_padding(icc_ctx, ctx, p1Pad);
+    if (rc != ICC_OSSL_SUCCESS) {
+        return -1;
     }
     
     if (p1Pad == ICC_RSA_PKCS1_OAEP_PADDING) {

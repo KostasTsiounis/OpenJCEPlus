@@ -81,6 +81,7 @@ public final class RSACipher {
         if (!validId(this.rsaKey.getRSAKeyId())) {
             throw new OCKException(badIdMsg);
         }
+        System.out.println("Padding ID: " + padding.getId() + "\t MD ID: " + padding.getMessageDigest());
         return checkOutLen(NativeInterface.RSACIPHER_encrypt(this.ockContext.getId(),
                 this.rsaKey.getRSAKeyId(), padding.getId(), padding.getMessageDigest(), input, inOffset, inLen, output,
                 outOffset));
