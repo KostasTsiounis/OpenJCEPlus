@@ -20,6 +20,7 @@
 #define SHA1 1
 #define SHA224 2
 #define SHA256 3
-#define SHA512 4
+#define SHA384 4
+#define SHA512 5
 
 #endif

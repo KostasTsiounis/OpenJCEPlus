@@ -117,6 +117,8 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1encrypt(
     outLen = ICC_EVP_PKEY_encrypt(ockCtx, ciphertextNative + (int) ciphertextOff,
                                   plaintextNative + (int) plaintextOff,  (size_t) plaintextLen,
                                   ockRSA);
+    gslogMessagePrefix("DETAIL_RSACIPHER Encrypted data - %d bytes: ",
+                            outLen);
     if (outLen == ICC_OSSL_FAILURE || outLen == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
@@ -337,6 +339,8 @@ getDigestName(int mdId)
             return "SHA224";
         case SHA256:
             return "SHA256";
+        case SHA384:
+            return "SHA384";
         case SHA512:
             return "SHA512";
         default:

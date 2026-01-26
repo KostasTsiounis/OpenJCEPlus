@@ -21,13 +21,15 @@ public final class RSAPadding {
     public static final int SHA1 = 1;
     public static final int SHA224 = 2;
     public static final int SHA256 = 3;
-    public static final int SHA512 = 4;
+    public static final int SHA384 = 4;
+    public static final int SHA512 = 5;
 
     public static final RSAPadding NoPadding = new RSAPadding(RSAPAD_NONE, NONE, "NoPadding");
     public static final RSAPadding PKCS1Padding = new RSAPadding(RSAPAD_PKCS1, NONE, "PKCS1Padding");
     public static final RSAPadding OAEPPadding = new RSAPadding(RSAPAD_OAEP, SHA1, "OAEPPadding");
     public static final RSAPadding OAEPPaddingSHA224 = new RSAPadding(RSAPAD_OAEP, SHA224, "OAEPPadding");
     public static final RSAPadding OAEPPaddingSHA256 = new RSAPadding(RSAPAD_OAEP, SHA256, "OAEPPadding");
+    public static final RSAPadding OAEPPaddingSHA384 = new RSAPadding(RSAPAD_OAEP, SHA384, "OAEPPadding");
     public static final RSAPadding OAEPPaddingSHA512 = new RSAPadding(RSAPAD_OAEP, SHA512, "OAEPPadding");
 
     private int id;

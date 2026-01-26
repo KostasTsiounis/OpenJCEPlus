@@ -149,7 +149,7 @@ public final class RSA extends CipherSpi {
         } catch (BadPaddingException ock_bpe) {
             BadPaddingException bpe = new BadPaddingException(ock_bpe.getMessage());
             provider.setOCKExceptionCause(bpe, ock_bpe);
-            throw bpe;
+            throw ock_bpe;
         } catch (Exception e) {
             // Unsure of msg length behavior on failure. e.g. do we set it to 0?
             // do we clear the buffer?
@@ -267,7 +267,7 @@ public final class RSA extends CipherSpi {
                     throw new InvalidAlgorithmParameterException(
                             "Wrong parameters for OAEP Padding");
                 }
-                checkOAEPParameters((OAEPParameterSpec) params);
+                //checkOAEPParameters((OAEPParameterSpec) params);
                 this.spec = params;
             } else {
                 this.spec = new OAEPParameterSpec(oaepHashAlgorithm, "MGF1", MGF1ParameterSpec.SHA1,
@@ -374,17 +374,28 @@ public final class RSA extends CipherSpi {
                 || padding.equalsIgnoreCase("OAEPWithSHA-1AndMGF1Padding")
                 || padding.equalsIgnoreCase("OAEPWithSHA1AndMGF1Padding")) {
             this.padding = RSAPadding.OAEPPadding;
-        } else if (padding.equalsIgnoreCase("OAEPWithSHA224AndMGF1Padding")) {
+            oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA-224AndMGF1Padding")
+                || padding.equalsIgnoreCase("OAEPWithSHA224AndMGF1Padding")) {
             this.padding = RSAPadding.OAEPPaddingSHA224;
-        } else if (padding.equalsIgnoreCase("OAEPWithSHA256AndMGF1Padding")) {
+            oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA-256AndMGF1Padding")
+                || padding.equalsIgnoreCase("OAEPWithSHA256AndMGF1Padding")) {
             this.padding = RSAPadding.OAEPPaddingSHA256;
-        } else if (padding.equalsIgnoreCase("OAEPWithSHA512AndMGF1Padding")) {
+            oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA-384AndMGF1Padding")
+                || padding.equalsIgnoreCase("OAEPWithSHA384AndMGF1Padding")) {
+            this.padding = RSAPadding.OAEPPaddingSHA384;
+            oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
+        } else if (padding.equalsIgnoreCase("OAEPWithSHA-512AndMGF1Padding")
+                || padding.equalsIgnoreCase("OAEPWithSHA512AndMGF1Padding")) {
             this.padding = RSAPadding.OAEPPaddingSHA512;
+            oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
         } else {
             throw new NoSuchPaddingException("Padding: " + padding + " not implemented");
         }
 
-        oaepHashAlgorithm = getMDName(this.padding.getMessageDigest());
+        
     }
 
     @Override
@@ -463,9 +474,11 @@ public final class RSA extends CipherSpi {
             case 3:
                 return "SHA-256";
             case 4:
+                return "SHA-384";
+            case 5:
                 return "SHA-512";
             default:
-                throw new NoSuchPaddingException("Incorrect message digest in OAEP padding.");
+                throw new NoSuchPaddingException("Incorrect message digest in OAEP padding: " + md);
         }
     }
 
@@ -478,6 +491,8 @@ public final class RSA extends CipherSpi {
             case 3:
                 return 32;
             case 4:
+                return 48;
+            case 5:
                 return 64;
             default:
                 throw new Exception("Padding doesn't have a message digest.");

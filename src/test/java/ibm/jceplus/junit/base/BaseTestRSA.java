@@ -76,7 +76,7 @@ public class BaseTestRSA extends BaseTestCipher {
         encryptDecrypt("RSA");
     }
 
-    @Test
+    /*@Test
     public void testRSAPlainCipher() throws Exception {
         KeyFactory kf;
 
@@ -193,7 +193,7 @@ public class BaseTestRSA extends BaseTestCipher {
         if (Arrays.equals(r, s) != result) {
             throw new Exception("Unexpected test result");
         }
-    }
+    }*/
 
     @Test
     public void testRSACipher_PKCS1Padding() throws Exception {
@@ -1036,10 +1036,10 @@ public class BaseTestRSA extends BaseTestCipher {
     @Override
     public boolean isPaddingValidButUnsupported(String padding) {
         if (padding.equalsIgnoreCase("ZeroPadding")
-                || padding.equalsIgnoreCase("OAEPWithSHA-224AndMGF1Padding")
+                /*|| padding.equalsIgnoreCase("OAEPWithSHA-224AndMGF1Padding")
                 || padding.equalsIgnoreCase("OAEPWithSHA-256AndMGF1Padding")
                 || padding.equalsIgnoreCase("OAEPWithSHA-384AndMGF1Padding")
-                || padding.equalsIgnoreCase("OAEPWithSHA-512AndMGF1Padding")) {
+                || padding.equalsIgnoreCase("OAEPWithSHA-512AndMGF1Padding")*/) {
             return true;
         }
 

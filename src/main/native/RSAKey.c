@@ -132,7 +132,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
         goto cleanup;
     }
 
-    rsaKeyId = (jlong)((intptr_t)ockRSA);
+    rsaKeyId = (jlong)((intptr_t)ockPKey);
 #ifdef DEBUG_RSA_DETAIL
     if (debug) {
         gslogMessage("DETAIL_RSA rsaKeyId %lx", rsaKeyId);
@@ -145,12 +145,12 @@ cleanup:
         pctx = NULL;
     }
 
-    if (ockPKey != NULL) {
+    if ((ockPKey != NULL) && (rsaKeyId == 0)) {
         ICC_EVP_PKEY_free(ockCtx, ockPKey);
         ockPKey = NULL;
     }
 
-    if ((ockRSA != NULL) && (rsaKeyId == 0)) {
+    if (ockRSA != NULL) {
         ICC_RSA_free(ockCtx, ockRSA);
         ockRSA = NULL;
     }
@@ -418,7 +418,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
         "NativeInterface.RSAKEY_getPrivateKeyBytes";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_RSA       *ockRSA         = (ICC_RSA *)((intptr_t)rsaKeyId);
+    ICC_EVP_PKEY       *ockPKey         = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
     jbyteArray     keyBytes       = NULL;
     unsigned char *keyBytesNative = NULL;
     jboolean       isCopy         = 0;
@@ -429,7 +429,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
         gslogFunctionEntry(functionName);
     }
 
-    if (ockRSA == NULL) {
+    if (ockPKey == NULL) {
         throwOCKException(env, 0, "The RSA Key identifier is incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);
@@ -442,7 +442,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
         gslogMessage("DETAIL_RSA rsaKeyId  %lx", (long)rsaKeyId);
     }
 #endif
-    size = ICC_i2d_RSAPrivateKey(ockCtx, ockRSA, NULL);
+    size = ICC_i2d_PrivateKey(ockCtx, ockPKey, NULL);
     if (size <= 0) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {
@@ -475,7 +475,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
             } else {
                 unsigned char *pBytes = (unsigned char *)keyBytesNative;
 
-                size = ICC_i2d_RSAPrivateKey(ockCtx, ockRSA, &pBytes);
+                size = ICC_i2d_PrivateKey(ockCtx, ockPKey, &pBytes);
                 if (size <= 0) {
                     ockCheckStatus(ockCtx);
 #ifdef DEBUG_RSA_DETAIL
@@ -527,7 +527,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPublicKeyBytes(
         "NativeInterface.RSAKEY_getPublicKeyBytes";
 
     ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_RSA       *ockRSA         = (ICC_RSA *)((intptr_t)rsaKeyId);
+    ICC_EVP_PKEY       *ockPKey         = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
     jbyteArray     keyBytes       = NULL;
     unsigned char *keyBytesNative = NULL;
     jboolean       isCopy         = 0;
@@ -538,14 +538,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPublicKeyBytes(
         gslogFunctionEntry(functionName);
     }
 
-    if (ockRSA == NULL) {
+    if (ockPKey == NULL) {
         throwOCKException(env, 0, "The RSA Key identifier is incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);
         }
         return retKeyBytes;
     }
-    size = ICC_i2d_RSAPublicKey(ockCtx, ockRSA, NULL);
+    size = ICC_i2d_PublicKey(ockCtx, ockPKey, NULL);
 #ifdef DEBUG_RSA_DETAIL
     if (debug) {
         gslogMessage("DETAIL_RSA rsaKeyId %lx size %d ", (long)rsaKeyId,
@@ -584,7 +584,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPublicKeyBytes(
             } else {
                 unsigned char *pBytes = (unsigned char *)keyBytesNative;
 
-                size = ICC_i2d_RSAPublicKey(ockCtx, ockRSA, &pBytes);
+                size = ICC_i2d_PublicKey(ockCtx, ockPKey, &pBytes);
                 if (size <= 0) {
                     ockCheckStatus(ockCtx);
 #ifdef DEBUG_RSA_DETAIL
@@ -715,14 +715,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1size(
     static const char *functionName = "NativeInterface.RSAKEY_size";
 
     ICC_CTX *ockCtx = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_RSA *ockRSA = (ICC_RSA *)((intptr_t)rsaKeyId);
+    ICC_EVP_PKEY *ockPKey = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
     int      size   = 0;
 
     if (debug) {
         gslogFunctionEntry(functionName);
     }
 
-    if (ockRSA == NULL) {
+    if (ockPKey == NULL) {
         throwOCKException(env, 0, "The RSA Key identifier is incorrect.");
         if (debug) {
             gslogFunctionExit(functionName);
@@ -735,7 +735,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1size(
     }
 #endif
 
-    size = ICC_RSA_size(ockCtx, ockRSA);
+    size = ICC_EVP_PKEY_size(ockCtx, ockPKey);
 #ifdef DEBUG_RSA_DETAIL
     if (debug) {
         gslogMessage("DETAIL_RSA size=%d", size);
@@ -761,7 +761,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1delete(
     static const char *functionName = "NativeInterface.RSAKEY_delete";
 
     ICC_CTX *ockCtx = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_RSA *ockRSA = (ICC_RSA *)((intptr_t)rsaKeyId);
+    ICC_EVP_PKEY *ockPKey = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -771,9 +771,9 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1delete(
         gslogMessage("DETAIL_RSA rsaKeyId=%lx", (long)rsaKeyId);
     }
 #endif
-    if (ockRSA != NULL) {
-        ICC_RSA_free(ockCtx, ockRSA);
-        ockRSA = NULL;
+    if (ockPKey != NULL) {
+        ICC_EVP_PKEY_free(ockCtx, ockPKey);
+        ockPKey = NULL;
     }
 
     if (debug) {
