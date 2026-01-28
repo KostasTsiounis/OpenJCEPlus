@@ -126,7 +126,7 @@ public final class RSA extends CipherSpi {
             } else {
                 if (this.msgLength != engineGetOutputSize(0)) {
                     throw new BadPaddingException(
-                            "message must be same length as key for rsa decryption");
+                            "message must be same length as key for rsa decryption: " + msgLength + " vs " + engineGetOutputSize(0));
                 }
                 outLen = this.keyType == Cipher.PUBLIC_KEY
                         ? rsaCipher.publicDecrypt(this.padding, this.msgBuffer.array(), 0,

@@ -73,6 +73,7 @@ public final class RSACipher {
     public synchronized int publicEncrypt(RSAPadding padding, byte[] input, int inOffset, int inLen,
             byte[] output, int outOffset) throws BadPaddingException, IllegalBlockSizeException,
             ShortBufferException, OCKException {
+        System.out.println("In publicEncrypt...");
         checkInitialized();
         if (inLen == 0)
             return 0;
@@ -90,6 +91,7 @@ public final class RSACipher {
     public synchronized int privateEncrypt(RSAPadding padding, byte[] input, int inOffset,
             int inLen, byte[] output, int outOffset) throws BadPaddingException,
             IllegalBlockSizeException, ShortBufferException, OCKException {
+        System.out.println("In privateEncrypt...");
         checkInitialized();
         if (inLen == 0)
             return 0;
@@ -106,6 +108,7 @@ public final class RSACipher {
     public synchronized int publicDecrypt(RSAPadding padding, byte[] input, int inOffset, int inLen,
             byte[] output, int outOffset) throws BadPaddingException, IllegalBlockSizeException,
             ShortBufferException, OCKException {
+        System.out.println("In publicDecrypt...");
         checkInitialized();
         if (inLen == 0)
             return 0;
@@ -126,6 +129,7 @@ public final class RSACipher {
     public synchronized int privateDecrypt(RSAPadding padding, byte[] input, int inOffset,
             int inLen, byte[] output, int outOffset) throws BadPaddingException,
             IllegalBlockSizeException, ShortBufferException, OCKException {
+        System.out.println("In privateDecrypt...");
         checkInitialized();
         if (inLen == 0)
             return 0;

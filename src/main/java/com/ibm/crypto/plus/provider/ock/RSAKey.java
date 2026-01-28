@@ -115,12 +115,7 @@ public final class RSAKey implements AsymmetricKey {
 
     @Override
     public long getPKeyId() throws OCKException {
-        //final String methodName = "getPkeyId :";
-        if (pkeyId.getValue() == 0) {
-            obtainPKeyId();
-        }
-        //OCKDebug.Msg(debPrefix, methodName,   this.pkeyId);
-        return pkeyId.getValue();
+        return this.rsaKeyId;
     }
 
     public int getKeySize() throws OCKException {

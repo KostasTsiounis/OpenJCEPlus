@@ -184,6 +184,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     ICC_EVP_PKEY_CTX *keyCtx            = NULL;
     unsigned char    *plaintextNative   = NULL;
     unsigned char    *ciphertextNative  = NULL;
+    const unsigned char    *in  = NULL;
     size_t           outLen             = 0;
     jboolean         isCopy;
 
@@ -259,14 +260,19 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     }
 #endif
 
+    in  = (const unsigned char *) ciphertextNative + (int) ciphertextOff;
     // To get output length.
     rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
                                       NULL, &outLen,
-                                      ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
-
+                                      in, (size_t) ciphertextLen);
+    fprintf(stderr, "Decrypt return initial: %d\n", rc);
+    fprintf(stderr, "Out length: %zu\n", outLen);
     rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
                                       plaintextNative + (int) plaintextOff, &outLen,
-                                      ciphertextNative + (int) ciphertextOff, (size_t) ciphertextLen);
+                                      in, (size_t) ciphertextLen);
+    fprintf(stderr, "Decrypt return: %d\n", rc);
+    fprintf(stderr, "OpenSSL Errors: %ld\n", ICC_ERR_get_error(ockCtx));
+    
     if (rc == ICC_OSSL_FAILURE || rc == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
         if (debug) {

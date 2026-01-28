@@ -232,7 +232,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1createPrivateKey(
     }
 #endif
 
-    ICC_EVP_PKEY *ret = ICC_d2i_PrivateKey(ockCtx, 6, &ockPKey, &pBytes, (long)size);
+    ICC_EVP_PKEY *ret = ICC_d2i_PrivateKey(ockCtx, ICC_EVP_PKEY_RSA, &ockPKey, &pBytes, (long)size);
 #ifdef DEBUG_RSA_DETAIL
     if (debug) {
         gslogMessage("DETAIL_RSA pointer to ICC_EVP_PKEY %x", ret);
@@ -401,14 +401,13 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
     static const char *functionName =
         "NativeInterface.RSAKEY_getPrivateKeyBytes";
 
-    ICC_CTX             *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_EVP_PKEY        *ockPKey        = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
-    jbyteArray           keyBytes       = NULL;
-    unsigned char       *keyBytesNative = NULL;
-    const unsigned char *pBytes         = NULL;
-    jboolean             isCopy         = 0;
-    int                  size;
-    jbyteArray           retKeyBytes    = NULL;
+    ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
+    ICC_EVP_PKEY  *ockPKey        = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
+    jbyteArray     keyBytes       = NULL;
+    unsigned char *keyBytesNative = NULL;
+    jboolean       isCopy         = 0;
+    int            size;
+    jbyteArray     retKeyBytes    = NULL;
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -461,8 +460,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPrivateKeyBytes
         goto cleanup;
     }
 
-    pBytes = (const unsigned char *)keyBytesNative;
-    size = ICC_i2d_PrivateKey(ockCtx, ockPKey, &pBytes);
+    size = ICC_i2d_PrivateKey(ockCtx, ockPKey, &keyBytesNative);
     if (size <= 0) {
         ockCheckStatus(ockCtx);
 #ifdef DEBUG_RSA_DETAIL
@@ -513,14 +511,13 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPublicKeyBytes(
     static const char *functionName =
         "NativeInterface.RSAKEY_getPublicKeyBytes";
 
-    ICC_CTX             *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_EVP_PKEY        *ockPKey        = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
-    jbyteArray           keyBytes       = NULL;
-    unsigned char       *keyBytesNative = NULL;
-    const unsigned char *pBytes         = NULL;
-    jboolean             isCopy         = 0;
-    int                  size;
-    jbyteArray           retKeyBytes    = NULL;
+    ICC_CTX       *ockCtx         = (ICC_CTX *)((intptr_t)ockContextId);
+    ICC_EVP_PKEY  *ockPKey        = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
+    jbyteArray     keyBytes       = NULL;
+    unsigned char *keyBytesNative = NULL;
+    jboolean       isCopy         = 0;
+    int            size;
+    jbyteArray     retKeyBytes    = NULL;
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -574,8 +571,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1getPublicKeyBytes(
         goto cleanup;
     }
 
-    pBytes = (const unsigned char *)keyBytesNative;
-    size = ICC_i2d_PublicKey(ockCtx, ockPKey, &pBytes);
+    size = ICC_i2d_PublicKey(ockCtx, ockPKey, &keyBytesNative);
     if (size <= 0) {
         ockCheckStatus(ockCtx);
 #ifdef DEBUG_RSA_DETAIL

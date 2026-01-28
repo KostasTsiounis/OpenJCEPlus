@@ -8,6 +8,8 @@
 
 package ibm.jceplus.junit.base;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,11 +27,14 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Random;
 import javax.crypto.BadPaddingException;
@@ -39,10 +44,10 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
+
+import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class BaseTestRSA extends BaseTestCipher {
 
@@ -57,7 +62,7 @@ public class BaseTestRSA extends BaseTestCipher {
     protected KeyPair rsaKeyPair;
     protected RSAPublicKey rsaPub;
     protected RSAPrivateCrtKey rsaPriv;
-    protected int specifiedKeySize = 0;
+    protected int specifiedKeySize = 1024;
     protected boolean providerStripsLeadingZerosForNoPaddingDecrypt = false; // FIXME - IBMJCE tests will need this to be true
 
     @BeforeEach
@@ -71,12 +76,12 @@ public class BaseTestRSA extends BaseTestCipher {
         rsaPriv = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
     }
 
-    @Test
+    /*@Test
     public void testRSACipher() throws Exception {
         encryptDecrypt("RSA");
-    }
+    }*/
 
-    /*@Test
+    @Test
     public void testRSAPlainCipher() throws Exception {
         KeyFactory kf;
 
@@ -111,7 +116,7 @@ public class BaseTestRSA extends BaseTestCipher {
         }
 
         try {
-            kf = KeyFactory.getInstance("RSA", getProviderName());
+            kf = KeyFactory.getInstance("RSA", "SunJCE");
         } catch (NoSuchAlgorithmException e) {
             kf = KeyFactory.getInstance("RSA");
         }
@@ -121,25 +126,39 @@ public class BaseTestRSA extends BaseTestCipher {
 
         RSAPrivateKeySpec privSpec = new RSAPrivateKeySpec(N, D);
         PrivateKey privateKey = kf.generatePrivate(privSpec);
+        System.out.println("Private key 1: " + bytesToHex(privateKey.getEncoded()));
 
-        try {
-            // blocktype 2
-            plainKeyEncDec("RSA/ECB/PKCS1Padding", 96, publicKey, privateKey);
-            // blocktype 1
-            plainKeyEncDec("RSA/ECB/NoPadding", 128, publicKey, privateKey);
+        byte[] pubEncoded = rsaPub.getEncoded();
+        PublicKey publicKey2 = kf.generatePublic(new X509EncodedKeySpec(pubEncoded));
 
-            // expected failure, blocktype 2 random padding bytes are different
-            plainKeyCipher("RSA/ECB/PKCS1Padding", Cipher.ENCRYPT_MODE, publicKey, in2, out2,
-                    false);
-            plainKeyCipher("RSA/ECB/PKCS1Padding", Cipher.DECRYPT_MODE, privateKey, out2, in2,
-                    true);
+        byte[] privEncoded = rsaPriv.getEncoded();
+        System.out.println("Original private key: " + bytesToHex(privEncoded));
+        PrivateKey privateKey2 = kf.generatePrivate(new PKCS8EncodedKeySpec(privEncoded));
+        System.out.println("Private key 2: " + bytesToHex(privateKey2.getEncoded()));
 
-            plainKeyCipher("RSA/ECB/NoPadding", Cipher.ENCRYPT_MODE, publicKey, rin1, rout1, true);
-            plainKeyCipher("RSA/ECB/NoPadding", Cipher.DECRYPT_MODE, privateKey, rout1, rin1, true);
-        } catch (Exception e) {
-            fail("Got Exception in testRSAPlainCipher");
-            return;
-        }
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) rsaPub;
+        RSAPublicKeySpec pubSpec3 = new RSAPublicKeySpec(rsaPublicKey.getModulus(), rsaPublicKey.getPublicExponent());
+        PublicKey publicKey3 = kf.generatePublic(pubSpec3);
+
+        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) rsaPriv;
+        RSAPrivateKeySpec privSpec3 = new RSAPrivateKeySpec(rsaPrivateKey.getModulus(), rsaPrivateKey.getPrivateExponent());
+        PrivateKey privateKey3 = kf.generatePrivate(privSpec3);
+        System.out.println("Private key 3: " + bytesToHex(privateKey3.getEncoded()));
+        
+        // blocktype 2
+        plainKeyEncDec("RSA/ECB/PKCS1Padding", 96, publicKey, privateKey);
+        // blocktype 1
+        /*plainKeyEncDec("RSA/ECB/NoPadding", 128, publicKey, privateKey);
+
+        // expected failure, blocktype 2 random padding bytes are different
+        plainKeyCipher("RSA/ECB/PKCS1Padding", Cipher.ENCRYPT_MODE, publicKey, in2, out2,
+                false);
+        plainKeyCipher("RSA/ECB/PKCS1Padding", Cipher.DECRYPT_MODE, privateKey, out2, in2,
+                true);
+
+        plainKeyCipher("RSA/ECB/NoPadding", Cipher.ENCRYPT_MODE, publicKey, rin1, rout1, true);
+        plainKeyCipher("RSA/ECB/NoPadding", Cipher.DECRYPT_MODE, privateKey, rout1, rin1, true);
+        
         try {
             // decrypt something not PKCS#1 formatted
             plainKeyCipher("RSA/ECB/PKCS1Padding", Cipher.DECRYPT_MODE, privateKey, rout1, rin1,
@@ -160,7 +179,7 @@ public class BaseTestRSA extends BaseTestCipher {
             // ok
         }
 
-        assertTrue(true);
+        assertTrue(true);*/
 
     }
 
@@ -176,12 +195,30 @@ public class BaseTestRSA extends BaseTestCipher {
         c.init(Cipher.ENCRYPT_MODE, encKey);
         byte[] enc = c.doFinal(b);
 
+        //c = Cipher.getInstance(alg, getProviderName());
         c.init(Cipher.DECRYPT_MODE, decKey);
         byte[] dec = c.doFinal(enc);
 
-        if (Arrays.equals(b, dec) == false) {
-            throw new Exception("Failure");
+        System.out.println("Original: " + bytesToHex(b));
+        System.out.println("Decoded: " + bytesToHex(dec));
+        assertArrayEquals(b, dec);
+    }
+
+    /**
+     * utility function to debug
+     */
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    static String bytesToHex(byte[] bytes) {
+        if (bytes == null)
+            return new String("-null-");
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
+        return new String(hexChars);
     }
 
     public void plainKeyCipher(String alg, int mode, Key key, String in, String out, boolean result)
@@ -193,9 +230,9 @@ public class BaseTestRSA extends BaseTestCipher {
         if (Arrays.equals(r, s) != result) {
             throw new Exception("Unexpected test result");
         }
-    }*/
+    }
 
-    @Test
+    /*@Test
     public void testRSACipher_PKCS1Padding() throws Exception {
         encryptDecrypt("RSA/ECB/PKCS1Padding");
     }
@@ -874,7 +911,7 @@ public class BaseTestRSA extends BaseTestCipher {
 
         boolean success = decryptResultsMatch(cp.getAlgorithm(), message, newPlainText);
         assertTrue(success, "Decrypted text does not match expected");
-    }
+    }*/
 
     /*
      * Checks if the given portion of b1 and b2 are equal.

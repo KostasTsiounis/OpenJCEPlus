@@ -319,6 +319,7 @@ public class RSAKeyFactory extends KeyFactorySpi {
             } else if (key instanceof java.security.interfaces.RSAPrivateKey) {
                 // Check if key originates from this factory
                 if (key instanceof com.ibm.crypto.plus.provider.RSAPrivateKey) {
+                    System.out.println("This is an OpenJCEPlus private key.");
                     return key;
                 }
                 // Convert key to spec
