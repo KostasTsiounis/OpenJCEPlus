@@ -180,13 +180,14 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     static const char *functionName = "NativeInterface.RSACIPHER_decrypt";
 
     ICC_CTX          *ockCtx            = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_EVP_PKEY     *ockRSA            = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
+    ICC_EVP_PKEY     *ockPKey            = (ICC_EVP_PKEY *)((intptr_t)rsaKeyId);
     ICC_EVP_PKEY_CTX *keyCtx            = NULL;
     unsigned char    *plaintextNative   = NULL;
     unsigned char    *ciphertextNative  = NULL;
     const unsigned char    *in  = NULL;
     size_t           outLen             = 0;
     jboolean         isCopy;
+    int rc = 0;
 
     if (debug) {
         gslogFunctionEntry(functionName);
@@ -199,7 +200,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
 #endif
     }
 
-    if ((ockRSA == NULL) || (plaintext == NULL) || (ciphertext == NULL) ||
+    if ((ockPKey == NULL) || (plaintext == NULL) || (ciphertext == NULL) ||
         (ciphertextOff < 0) || (ciphertextOff > ciphertextLen) ||
         (plaintextOff < 0)) {
         throwOCKException(env, 0, "The RSA input parameters are incorrect.");
@@ -209,7 +210,11 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
         return outLen;
     }
 
-    keyCtx = ICC_EVP_PKEY_CTX_new(ockCtx, ockRSA, NULL);
+    ICC_RSA *ockRSA = ICC_EVP_PKEY_get1_RSA(ockCtx, ockPKey);
+    ICC_RSA_FixEncodingZeros(ockCtx, ockRSA, NULL, 0);
+    rc = ICC_EVP_PKEY_set1_RSA(ockCtx, ockPKey, ockRSA);
+
+    keyCtx = ICC_EVP_PKEY_CTX_new(ockCtx, ockPKey, NULL);
     if (!keyCtx) {
         throwOCKException(env, 0, "Could not create RSA context.");
         if (debug) {
@@ -218,7 +223,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
         return outLen;
     }
 
-    int rc = ICC_EVP_PKEY_decrypt_init(ockCtx, keyCtx);
+    rc = ICC_EVP_PKEY_decrypt_init(ockCtx, keyCtx);
     if (rc != ICC_OSSL_SUCCESS) {
         throwOCKException(env, 0, "Could not initialize.");
         if (debug) {
@@ -265,13 +270,10 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSACIPHER_1decrypt(
     rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
                                       NULL, &outLen,
                                       in, (size_t) ciphertextLen);
-    fprintf(stderr, "Decrypt return initial: %d\n", rc);
-    fprintf(stderr, "Out length: %zu\n", outLen);
+
     rc = ICC_EVP_PKEY_decrypt_new(ockCtx, keyCtx,
                                       plaintextNative + (int) plaintextOff, &outLen,
                                       in, (size_t) ciphertextLen);
-    fprintf(stderr, "Decrypt return: %d\n", rc);
-    fprintf(stderr, "OpenSSL Errors: %ld\n", ICC_ERR_get_error(ockCtx));
     
     if (rc == ICC_OSSL_FAILURE || rc == ICC_FAILURE) {
 #ifdef DEBUG_RSA_DETAIL
