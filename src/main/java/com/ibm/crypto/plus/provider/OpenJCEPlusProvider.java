@@ -85,10 +85,6 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
     public static Debug getDebug() {
         return debug;
     }
-    
-    // Get OCK context for crypto operations
-    //
-    abstract OCKContext getOCKContext();
 
     // Get the context associated with the provider. The context is used in
     // serialization to be able to keep track of the associated provider.
@@ -105,9 +101,7 @@ public abstract class OpenJCEPlusProvider extends java.security.Provider {
     // Return whether the provider is FIPS. If the provider is using an OCK
     // context in FIPS mode then it is FIPS.
     //
-    boolean isFIPS() {
-        return getOCKContext().isFIPS();
-    }
+    abstract boolean isFIPS();
 
     // Return the Java version.
     //
