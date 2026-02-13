@@ -9,9 +9,12 @@
 package com.ibm.crypto.plus.provider.base;
 
 import java.security.InvalidKeyException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
+
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 
 /*From section 9.11 of GSKit_crypto.pdf 

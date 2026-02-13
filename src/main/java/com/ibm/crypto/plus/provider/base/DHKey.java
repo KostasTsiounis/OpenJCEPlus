@@ -10,6 +10,7 @@ package com.ibm.crypto.plus.provider.base;
 
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.PrimitiveWrapper;
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.util.Arrays;
 
 public final class DHKey implements AsymmetricKey {

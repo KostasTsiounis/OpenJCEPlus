@@ -10,6 +10,8 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.security.InvalidKeyException;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 //------------------------------------------------------------------------------
 // NOTE:
 //

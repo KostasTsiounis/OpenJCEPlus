@@ -8,8 +8,10 @@
 
 package com.ibm.crypto.plus.provider.base;
 
-import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import java.util.Arrays;
+
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 public final class XECKey implements AsymmetricKey {
     // The following is a special byte[] instance to indicate that the

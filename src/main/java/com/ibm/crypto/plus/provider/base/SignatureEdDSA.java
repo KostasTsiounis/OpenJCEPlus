@@ -11,6 +11,8 @@ package com.ibm.crypto.plus.provider.base;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 public final class SignatureEdDSA {
 
     private OCKContext ockContext = null;

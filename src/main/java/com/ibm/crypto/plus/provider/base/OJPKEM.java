@@ -8,6 +8,8 @@
 
 package com.ibm.crypto.plus.provider.base;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 public final class OJPKEM {
     /*
      * ===========================================================================
