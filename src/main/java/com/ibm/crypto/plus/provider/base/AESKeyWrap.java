@@ -8,6 +8,7 @@
 
 package com.ibm.crypto.plus.provider.base;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.util.Arrays;
 
 public final class AESKeyWrap {

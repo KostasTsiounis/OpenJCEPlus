@@ -10,6 +10,8 @@ package com.ibm.crypto.plus.provider.base;
 
 import java.security.InvalidKeyException;
 
+import com.ibm.crypto.plus.provider.ock.OCKContext;
+
 /**
  * This code is used to do Signature Operations on ML-DSA and SLH-DSA keys.
  * These are both PQC algorithms and by definition do not support any kind 

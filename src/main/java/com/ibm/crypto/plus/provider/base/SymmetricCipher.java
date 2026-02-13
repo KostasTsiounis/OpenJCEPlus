@@ -8,15 +8,18 @@
 
 package com.ibm.crypto.plus.provider.base;
 
-import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
+
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 public final class SymmetricCipher {
 
