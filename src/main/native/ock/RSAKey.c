@@ -13,18 +13,18 @@
 #include <jcc_a.h>
 #include <icc.h>
 
-#include "com_ibm_crypto_plus_provider_base_NativeInterface.h"
+#include "com_ibm_crypto_plus_provider_ock_NativeOCKImplementation.h"
 #include "Utils.h"
 #include <stdint.h>
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_generate
  * Signature: (JI)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1generate(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1generate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits, jlong e) {
     static const char *functionName = "NativeInterface.RSAKEY_generate";
 
@@ -174,12 +174,12 @@ cleanup:
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_createPrivateKey
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPrivateKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1createPrivateKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray privateKeyBytes) {
     static const char *functionName = "NativeInterface.RSAKEY_createPrivateKey";
@@ -296,12 +296,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPrivateKey(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_createPublicKey
  * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPublicKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1createPublicKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId,
     jbyteArray publicKeyBytes) {
     static const char *functionName = "NativeInterface.RSAKEY_createPublicKey";
@@ -417,12 +417,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPublicKey(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_getPrivateKeyBytes
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1getPrivateKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1getPrivateKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId) {
     static const char *functionName =
         "NativeInterface.RSAKEY_getPrivateKeyBytes";
@@ -526,12 +526,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1getPrivateKeyByte
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_getPublicKeyBytes
  * Signature: (JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1getPublicKeyBytes(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1getPublicKeyBytes(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId) {
     static const char *functionName =
         "NativeInterface.RSAKEY_getPublicKeyBytes";
@@ -635,12 +635,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1getPublicKeyBytes
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_createPKey
  * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPKey(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1createPKey(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId) {
     static const char *functionName = "NativeInterface.RSAKEY_createPKey";
 
@@ -715,12 +715,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1createPKey(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_size
  * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1size(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1size(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId) {
     static const char *functionName = "NativeInterface.RSAKEY_size";
 
@@ -761,12 +761,12 @@ Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1size(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_base_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    RSAKEY_delete
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_RSAKEY_1delete(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RSAKEY_1delete(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong rsaKeyId) {
     static const char *functionName = "NativeInterface.RSAKEY_delete";
 
