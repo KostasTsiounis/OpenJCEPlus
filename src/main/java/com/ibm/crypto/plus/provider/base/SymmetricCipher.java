@@ -19,12 +19,14 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
 import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 public final class SymmetricCipher {
 
     private OpenJCEPlusProvider provider;
-    private OCKContext ockContext;
+    private NativeInterface nativeInterface;
     private final long ockCipherId;
     private boolean isInitialized = false;
     private boolean encrypting = true;
@@ -58,32 +60,32 @@ public final class SymmetricCipher {
     //final String debPrefix = "SymmetricCipher";
 
 
-    public static SymmetricCipher getInstanceChaCha20(OCKContext ockContext, Padding padding, OpenJCEPlusProvider provider)
+    public static SymmetricCipher getInstanceChaCha20(Padding padding, OpenJCEPlusProvider provider)
             throws OCKException {
         String algName = "chacha20";
-        return getInstance(ockContext, algName, padding, provider);
+        return getInstance(algName, padding, provider);
     }
 
-    public static SymmetricCipher getInstanceChaCha20Poly1305(OCKContext ockContext,
+    public static SymmetricCipher getInstanceChaCha20Poly1305(
             Padding padding, OpenJCEPlusProvider provider) throws OCKException {
         String algName = "chacha20-poly1305";
-        return getInstance(ockContext, algName, padding, provider);
+        return getInstance(algName, padding, provider);
     }
 
-    public static SymmetricCipher getInstanceAES(OCKContext ockContext, String mode,
+    public static SymmetricCipher getInstanceAES(String mode,
             Padding padding, int numKeyBytes, OpenJCEPlusProvider provider) throws OCKException {
         String algName = "AES-" + Integer.toString(numKeyBytes * 8) + "-" + mode.toUpperCase();
-        return getInstance(ockContext, algName, padding, provider);
+        return getInstance(algName, padding, provider);
     }
 
-    public static SymmetricCipher getInstanceDESede(OCKContext ockContext, String mode,
+    public static SymmetricCipher getInstanceDESede(String mode,
             Padding padding, OpenJCEPlusProvider provider) throws OCKException {
         String modeUpperCase = mode.toUpperCase();
         String algName = modeUpperCase.equals("ECB") ? "DES-EDE3" : "DES-EDE3-" + modeUpperCase;
-        return getInstance(ockContext, algName, padding, provider);
+        return getInstance(algName, padding, provider);
     }
 
-    public static SymmetricCipher getInstanceRC2(OCKContext ockContext, String mode,
+    public static SymmetricCipher getInstanceRC2(String mode,
             Padding padding, int keysize, OpenJCEPlusProvider provider) throws OCKException {
         String modeUpperCase = mode.toUpperCase();
         String algName;
@@ -91,22 +93,18 @@ public final class SymmetricCipher {
             algName = modeUpperCase.equals("ECB") ? "RC2" : "RC2-" + modeUpperCase;
         else 
             algName = modeUpperCase.equals("ECB") ? "RC2" : "RC2-40-" + modeUpperCase;
-        return getInstance(ockContext, algName, padding, provider);
+        return getInstance(algName, padding, provider);
     }
 
-    public static SymmetricCipher getInstanceRC4(OCKContext ockContext, int keysize,
+    public static SymmetricCipher getInstanceRC4(int keysize,
             OpenJCEPlusProvider provider) throws OCKException {
         String algName = keysize == 16 ? "RC4" : "RC4-40"; 
-        return getInstance(ockContext, algName, Padding.NoPadding, provider);
+        return getInstance(algName, Padding.NoPadding, provider);
     }
 
-    private static SymmetricCipher getInstance(OCKContext ockContext, String cipherName,
+    private static SymmetricCipher getInstance(String cipherName,
             Padding padding, OpenJCEPlusProvider provider) throws OCKException {
         //final String methodName = "getInstance";
-        if (ockContext == null) {
-            throw new IllegalArgumentException("context is null");
-        }
-
         if (cipherName == null || cipherName.isEmpty()) {
             throw new IllegalArgumentException("cipherName is null/empty");
         }
@@ -120,7 +118,7 @@ public final class SymmetricCipher {
         }
         //OCKDebug.Msg(debPrefix, methodName, "cipherName :" + cipherName);
 
-        return new SymmetricCipher(ockContext, cipherName, padding, provider);
+        return new SymmetricCipher(cipherName, padding, provider);
     }
 
     static void throwOCKException(int errorCode) throws BadPaddingException, OCKException {
@@ -140,10 +138,11 @@ public final class SymmetricCipher {
         }
     }
 
-    private SymmetricCipher(OCKContext ockContext, String cipherName, Padding padding, OpenJCEPlusProvider provider)
+    private SymmetricCipher(String cipherName, Padding padding, OpenJCEPlusProvider provider)
             throws OCKException {
         // Check whether used algorithm is CBC and whether hardware supports
         this.provider = provider;
+        this.nativeInterface = provider.isFIPS() ? NativeOCKAdapterFIPS.getInstance() : NativeOCKAdapterNonFIPS.getInstance();
         boolean isHardwareSupport = false;
         if (hardwareEnabled.containsKey(ockContext))
             isHardwareSupport = hardwareEnabled.get(ockContext);
@@ -155,10 +154,9 @@ public final class SymmetricCipher {
         use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
 
-        this.ockContext = ockContext;
         this.padding = padding;
         if (!use_z_fast_command) {
-            this.ockCipherId = NativeInterface.CIPHER_create(ockContext.getId(), cipherName);
+            this.ockCipherId = this.nativeInterface.CIPHER_create(cipherName);
         } else {
             this.ockCipherId = 0L;
         }

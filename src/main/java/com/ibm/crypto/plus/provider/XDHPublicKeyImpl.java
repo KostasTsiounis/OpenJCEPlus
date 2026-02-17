@@ -171,7 +171,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
         try {
             if (u == null) {
                 int keySize = CurveUtil.getCurveSize(curve);
-                this.xecKey = XECKey.generateKeyPair(provider.getOCKContext(), curve.ordinal(), keySize, provider);
+                this.xecKey = XECKey.generateKeyPair(curve.ordinal(), keySize, provider);
                 setFieldsFromXeckey();
             } else {
 
@@ -205,7 +205,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
                 byte[] der = buildICCPublicKeyBytes();
                 checkKeySize();
 
-                this.xecKey = XECKey.createPublicKey(provider.getOCKContext(), der, provider);
+                this.xecKey = XECKey.createPublicKey(der, provider);
             }
         } catch (InvalidKeyException ex) {
             throw ex;

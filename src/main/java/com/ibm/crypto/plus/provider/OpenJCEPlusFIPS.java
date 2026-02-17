@@ -720,7 +720,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
      * @return true if FIPS is active (certified or simulated)
      */
     @Override
-    boolean isFIPS() {
+    public boolean isFIPS() {
         return true;
     }
 

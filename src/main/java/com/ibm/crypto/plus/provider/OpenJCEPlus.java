@@ -1247,7 +1247,7 @@ public final class OpenJCEPlus extends OpenJCEPlusProvider {
 
 
     @Override
-    boolean isFIPS() {
+    public boolean isFIPS() {
         return false;
     }
 
