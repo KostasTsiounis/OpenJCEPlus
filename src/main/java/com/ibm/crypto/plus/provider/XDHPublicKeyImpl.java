@@ -128,7 +128,7 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
             this.u = new BigInteger(1, reverseKey); // u is the public key reversed
 
             byte[] alteredEncoded = alterEncodedPublicKey(encoded); // Alters encoded to fit GSKit, and sets params
-            this.xecKey = XECKey.createPublicKey(provider.getOCKContext(), alteredEncoded, provider);
+            this.xecKey = XECKey.createPublicKey(alteredEncoded, provider);
         } catch (Exception exception) {
             InvalidKeyException ike = new InvalidKeyException("Failed to create XEC public key");
             provider.setOCKExceptionCause(ike, exception);
