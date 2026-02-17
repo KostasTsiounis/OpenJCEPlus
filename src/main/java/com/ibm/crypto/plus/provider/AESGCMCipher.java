@@ -38,7 +38,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
 
     private OpenJCEPlusProvider provider = null;
-    private OCKContext ockContext = null;
     private boolean encrypting = true;
     private boolean initialized = false;
     private int tagLenInBytes = DEFAULT_TAG_LENGTH / 8;
@@ -138,11 +137,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
     public AESGCMCipher(OpenJCEPlusProvider provider) {
         this.provider = provider;
-        try {
-            ockContext = provider.getOCKContext();
-        } catch (Exception e) {
-            throw provider.providerException("Failed to initialize cipher context", e);
-        }
+
         buffer = new byte[AES_BLOCK_SIZE * 2];
 
         this.provider.registerCleanable(this, cleanOCKResources(Key));
@@ -332,7 +327,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     }
                 }
 
-                int ret = GCMCipher.doGCMFinal_Encrypt(ockContext, Key.getValue(), IV, tagLenInBytes, input,
+                int ret = GCMCipher.doGCMFinal_Encrypt(Key.getValue(), IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData, provider);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
 
@@ -355,7 +350,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                     throw new ShortBufferException("Output buffer too small");
                 }
 
-                int ret = GCMCipher.doGCMFinal_Decrypt(ockContext, Key.getValue(), IV, tagLenInBytes, input,
+                int ret = GCMCipher.doGCMFinal_Decrypt(Key.getValue(), IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData, provider);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
                 return ret;
@@ -846,11 +841,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     protected byte[] engineUpdate(byte[] input, int inputOffset, int inputLen) {
         //final String methodName = "byte[] engineUpdate";
 
-        if (!GCMCipher.gcmUpdateSupported()) {
-            throw new ProviderException(
-                    "engineUpdate is not supported for AESGCM on this platform; only engineDoFinal is supported");
-        }
-
         boolean firstUpdate = !updateCalled;
         // OCKDebug.Msg(debPrefix, methodName, "3 paraemters firstUpdate = " +
         // firstUpdate + "encrypting = " + encrypting + "input.length=" + input.length +
@@ -870,10 +860,6 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     protected int engineUpdate(byte[] input, int inputOffset, int inputLen, byte[] output,
             int outputOffset) throws ShortBufferException {
         //final String methodName = "int engineUpdate";
-        if (!GCMCipher.gcmUpdateSupported()) {
-            throw new ProviderException(
-                    "engineUpdate is not supported for AESGCM on this platform; only engineDoFinal is supported");
-        }
         boolean firstUpdate = !updateCalled;
 
         // OCKDebug.Msg(debPrefix, methodName, "engineUpdate 5 parameters firstUpdate =
@@ -985,7 +971,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
             if (firstUpdate) {
                 if (!encrypting) {
                     // OCKDebug.Msg(debPrefix, methodName, "Calling do_GCM_InitForUpdateDecrypt");
-                    outLen = GCMCipher.do_GCM_InitForUpdateDecrypt(ockContext, Key.getValue(), IV,
+                    outLen = GCMCipher.do_GCM_InitForUpdateDecrypt(Key.getValue(), IV,
                             tagLenInBytes, buffer, 0, len, output, outputOffset, authData, provider);
                     // OCKDebug.Msg(debPrefix, methodName, "returning ret from
                     // InitForUpdateDecrypt=" + outLen);
@@ -1003,7 +989,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         }
                     }
                     // OCKDebug.Msg(debPrefix, methodName, "Calling do_GCM_InitForUpdateEncrypt");
-                    outLen = GCMCipher.do_GCM_InitForUpdateEncrypt(ockContext, Key.getValue(), IV,
+                    outLen = GCMCipher.do_GCM_InitForUpdateEncrypt(Key.getValue(), IV,
                             tagLenInBytes, buffer, 0, len, output, outputOffset, authData, provider);
                     // OCKDebug.Msg(debPrefix, methodName, "returning ret from
                     // InitForUpdateEncrypt=" + outLen);
@@ -1039,7 +1025,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         // OCKDebug.Msg(debPrefix, methodName, "Checks all passed Calling
                         // GCMCipher.do_GCM_UpdateDecrypt");
 
-                        outLen = GCMCipher.do_GCM_UpdForUpdateDecrypt(ockContext, Key.getValue(), IV,
+                        outLen = GCMCipher.do_GCM_UpdForUpdateDecrypt(Key.getValue(), IV,
                                 tagLenInBytes, buffer, 0, len, output, outputOffset, authData, provider);
 
                         // OCKDebug.Msg(debPrefix, methodName, "returning ret from
@@ -1050,7 +1036,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         // OCKDebug.Msg(debPrefix, methodName, "Encrypting");
                         // OCKDebug.Msg(debPrefix, methodName, "FirstUpdate generateIV");
 
-                        outLen = GCMCipher.do_GCM_UpdForUpdateEncrypt(ockContext, Key.getValue(), IV,
+                        outLen = GCMCipher.do_GCM_UpdForUpdateEncrypt(Key.getValue(), IV,
                                 tagLenInBytes, buffer, 0, len, output, outputOffset, authData, provider);
                         // OCKDebug.Msg(debPrefix, methodName, "returning ret from
                         // GCMCipher.do_GCM_UpdForUpdateEncrypt=" + outLen);
@@ -1083,12 +1069,12 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         // process 'buffer'. When finished we can null out 'buffer'
                         // Only necessary to null out if buffer holds data for encryption
                         if (!encrypting) {
-                            outLen = GCMCipher.do_GCM_UpdForUpdateDecrypt(ockContext, Key.getValue(), IV,
+                            outLen = GCMCipher.do_GCM_UpdForUpdateDecrypt(Key.getValue(), IV,
                                     tagLenInBytes, buffer, 0, buffered, output, outputOffset,
                                     authData, provider);
                             // outLen = cipher.decrypt(buffer, 0, buffered, output, outputOffset);
                         } else { // decrypting
-                            outLen = GCMCipher.do_GCM_UpdForUpdateEncrypt(ockContext, Key.getValue(), IV,
+                            outLen = GCMCipher.do_GCM_UpdForUpdateEncrypt(Key.getValue(), IV,
                                     tagLenInBytes, buffer, 0, buffered, output, outputOffset,
                                     authData, provider);
                             // outLen = cipher.encrypt(buffer, 0, buffered, output, outputOffset);
@@ -1103,14 +1089,14 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         // OCKDebug.Msg(debPrefix, methodName, "still has input to process");
                         if (!encrypting) {
 
-                            outLen += GCMCipher.do_GCM_UpdForUpdateDecrypt(ockContext, Key.getValue(), IV,
+                            outLen += GCMCipher.do_GCM_UpdForUpdateDecrypt(Key.getValue(), IV,
                                     tagLenInBytes, input, inputOffset, inputConsumed, output,
                                     outputOffset, authData, provider);
                             // outLen += cipher.decrypt(input, inputOffset, inputConsumed,
                             // output, outputOffset);
                         } else {
 
-                            outLen += GCMCipher.do_GCM_UpdForUpdateEncrypt(ockContext, Key.getValue(), IV,
+                            outLen += GCMCipher.do_GCM_UpdForUpdateEncrypt(Key.getValue(), IV,
                                     tagLenInBytes, input, inputOffset, inputConsumed, output,
                                     outputOffset, authData, provider);
 
@@ -1265,13 +1251,13 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         int outLen = 0;
 
         if (!encrypting) {
-            outLen = GCMCipher.do_GCM_FinalForUpdateDecrypt(ockContext, Key.getValue(), IV, tagLenInBytes, in,
+            outLen = GCMCipher.do_GCM_FinalForUpdateDecrypt(Key.getValue(), IV, tagLenInBytes, in,
                     inOfs, len, out, outOfs, authData, provider);
             // OCKDebug.Msg(debPrefix, methodName, "outLen from
             // GCMCipher.do_GCM_FinalForUpdateDecrypt=" + outLen);
 
         } else {
-            outLen = GCMCipher.do_GCM_FinalForUpdateEncrypt(ockContext, Key.getValue(), IV, tagLenInBytes, in,
+            outLen = GCMCipher.do_GCM_FinalForUpdateEncrypt(Key.getValue(), IV, tagLenInBytes, in,
                     inOfs, len, out, outOfs, authData, provider);
             // OCKDebug.Msg(debPrefix, methodName, "outLen from
             // GCMCipher.do_GCM_FinalForUpdateEncrypt=" + outLen);

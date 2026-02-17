@@ -8,20 +8,17 @@
 
 package com.ibm.crypto.plus.provider.base;
 
+import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
+import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.Optional;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
-
-import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
-import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 public final class SymmetricCipher {
 
@@ -49,7 +46,7 @@ public final class SymmetricCipher {
     private long paramPointer; // Pointer to memory that has the parameters/state keeping used by z_kmc
     private static long hardwareFunctionPtr = 0;
     private final boolean use_z_fast_command;
-    private static final ConcurrentHashMap<OCKContext, Boolean> hardwareEnabled = new ConcurrentHashMap<>(); // Caching for hardwareFunctionPtr
+    private static Optional<Boolean> hardwareEnabled = Optional.empty();
     private static final String badIdMsg = "Cipher Identifier is not valid";
     /* private final static String debPrefix = "SymCipher"; Adding Debug causes test cases to fail */
     int paramOffset;
@@ -144,12 +141,12 @@ public final class SymmetricCipher {
         this.provider = provider;
         this.nativeInterface = provider.isFIPS() ? NativeOCKAdapterFIPS.getInstance() : NativeOCKAdapterNonFIPS.getInstance();
         boolean isHardwareSupport = false;
-        if (hardwareEnabled.containsKey(ockContext))
-            isHardwareSupport = hardwareEnabled.get(ockContext);
+        if (hardwareEnabled.isPresent())
+            isHardwareSupport = hardwareEnabled.get();
         else {
-            hardwareFunctionPtr = checkHardwareSupport(ockContext.getId());
+            hardwareFunctionPtr = checkHardwareSupport(nativeInterface);
             isHardwareSupport = (hardwareFunctionPtr == 1) ? true : false;
-            hardwareEnabled.put(ockContext, isHardwareSupport);
+            hardwareEnabled = Optional.of(isHardwareSupport);
         }
         use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
@@ -161,7 +158,7 @@ public final class SymmetricCipher {
             this.ockCipherId = 0L;
         }
 
-        this.provider.registerCleanable(this, cleanOCKResources(use_z_fast_command, ockCipherId, reinitKey, ockContext));
+        this.provider.registerCleanable(this, cleanOCKResources(use_z_fast_command, ockCipherId, reinitKey, this.nativeInterface));
     }
 
     public synchronized void initCipherEncrypt(byte[] key, byte[] iv) throws OCKException {
@@ -187,7 +184,7 @@ public final class SymmetricCipher {
             if (ockCipherId == 0L) {
                 throw new OCKException(badIdMsg);
             }
-            NativeInterface.CIPHER_init(ockContext.getId(), ockCipherId, isEncrypt ? 1 : 0,
+            this.nativeInterface.CIPHER_init(ockCipherId, isEncrypt ? 1 : 0,
                     padding.getId(), key, iv);
         }
 
@@ -324,7 +321,7 @@ public final class SymmetricCipher {
             if (!use_z_fast_command) {
                 if (ockCipherId == 0L)
                     throw new OCKException(badIdMsg);
-                blockSize = NativeInterface.CIPHER_getBlockSize(ockContext.getId(), ockCipherId);
+                blockSize = this.nativeInterface.CIPHER_getBlockSize(ockCipherId);
             } else {
                 blockSize = 16;
             }
@@ -338,7 +335,7 @@ public final class SymmetricCipher {
                 if (ockCipherId == 0L) {
                     throw new OCKException(badIdMsg);
                 }
-                keyLength = NativeInterface.CIPHER_getKeyLength(ockContext.getId(), ockCipherId);
+                keyLength = this.nativeInterface.CIPHER_getKeyLength(ockCipherId);
             } else {
                 keyLength = 16;
             }
@@ -350,7 +347,7 @@ public final class SymmetricCipher {
         if (ivLength == 0 && !use_z_fast_command) {
             if (ockCipherId == 0L)
                 throw new OCKException(badIdMsg);
-            ivLength = NativeInterface.CIPHER_getIVLength(ockContext.getId(), ockCipherId);
+            ivLength = this.nativeInterface.CIPHER_getIVLength(ockCipherId);
         }
         return ivLength;
     }
@@ -418,10 +415,10 @@ public final class SymmetricCipher {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = this.nativeInterface.CIPHER_encryptUpdate(ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptUpdate(ockContext.getId(), ockCipherId,
+                outLen = this.nativeInterface.CIPHER_decryptUpdate(ockCipherId,
                         input, inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -461,7 +458,7 @@ public final class SymmetricCipher {
             needsReinit = false;
         }
 
-        outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
+        outLen = this.nativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
                 paramPointer, inputLen, mode);
         return outLen;
     }
@@ -550,10 +547,10 @@ public final class SymmetricCipher {
                 throw new OCKException(badIdMsg);
             }
             if (encrypting) {
-                outLen = NativeInterface.CIPHER_encryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = this.nativeInterface.CIPHER_encryptFinal(ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             } else {
-                outLen = NativeInterface.CIPHER_decryptFinal(ockContext.getId(), ockCipherId, input,
+                outLen = this.nativeInterface.CIPHER_decryptFinal(ockCipherId, input,
                         inputOffset, inputLen, tmpBuf, 0, needsReinit);
             }
             if (outLen < 0) {
@@ -606,7 +603,7 @@ public final class SymmetricCipher {
                 || (inputOffset + inputLen) > input.length))
             throw new IllegalArgumentException("Input range is invalid");
 
-        outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
+        outLen = this.nativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
                 paramPointer, inputLen, mode);
 
         // Need to reset the object such that it can be re-used.
@@ -622,8 +619,8 @@ public final class SymmetricCipher {
         return (id != 0L);
     }
 
-    private static long checkHardwareSupport(long ockId) {
-        return NativeInterface.checkHardwareSupport(ockId);
+    private static long checkHardwareSupport(NativeInterface nativeInterface) {
+        return nativeInterface.checkHardwareSupport();
     }
 
     public boolean getHardwareSupportStatus() {
@@ -695,12 +692,12 @@ public final class SymmetricCipher {
         }
     }
 
-    private Runnable cleanOCKResources(boolean use_z_fast_command, long ockCipherId, byte[] reinitKey, OCKContext ockContext) {
+    private Runnable cleanOCKResources(boolean use_z_fast_command, long ockCipherId, byte[] reinitKey, NativeInterface nativeInterface){
         return () -> {
             try {
                 if (!use_z_fast_command) {
                     if (ockCipherId != 0) {
-                        NativeInterface.CIPHER_delete(ockContext.getId(), ockCipherId);
+                        nativeInterface.CIPHER_delete(ockCipherId);
                     }
                 }
                 if (reinitKey != null) {
