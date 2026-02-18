@@ -781,12 +781,12 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1delete(
 
 //============================================================================
 /*
- * Class:     com_ibm_crypto_plus_provider_ock_NativeInterface
+ * Class:     com_ibm_crypto_plus_provider_ock_NativeOCKImplementation
  * Method:    DIGEST_PKCS12KeyDeriveHelp
  * Signature: (JJ[BIII)I
  */
 JNIEXPORT jint JNICALL
-Java_com_ibm_crypto_plus_provider_base_NativeInterface_DIGEST_1PKCS12KeyDeriveHelp(
+Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DIGEST_1PKCS12KeyDeriveHelp(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong digestId,
     jbyteArray data, jint offset, jint dataLen, jint iterationCount) {
     ICC_CTX       *ockCtx    = (ICC_CTX *)((intptr_t)ockContextId);

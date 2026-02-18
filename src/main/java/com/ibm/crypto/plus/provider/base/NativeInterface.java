@@ -402,7 +402,7 @@ public interface NativeInterface {
 
     public void DIGEST_delete(long digestId) throws OCKException;
 
-    static public native int DIGEST_PKCS12KeyDeriveHelp(long ockContextId, long digestId, byte[] input,
+    public int DIGEST_PKCS12KeyDeriveHelp(long digestId, byte[] input,
             int offset, int length, int iterationCount) throws OCKException;
 
     // =========================================================================

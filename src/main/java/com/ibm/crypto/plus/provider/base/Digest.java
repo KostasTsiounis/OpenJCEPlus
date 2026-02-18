@@ -12,7 +12,6 @@ import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.PrimitiveWrapper;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -350,7 +349,7 @@ public final class Digest implements Cloneable {
             throw new OCKException(badIdMsg);
         }
 
-        errorCode = NativeInterface.DIGEST_PKCS12KeyDeriveHelp(this.ockContext.getId(), this.digestId, input, offset, length, iterationCount);
+        errorCode = this.nativeInterface.DIGEST_PKCS12KeyDeriveHelp(this.digestId, input, offset, length, iterationCount);
         if (errorCode < 0) {
             throwOCKException(errorCode);
         }

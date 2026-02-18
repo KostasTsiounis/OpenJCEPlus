@@ -578,6 +578,9 @@ final class NativeOCKImplementation {
 
     static public native void DIGEST_delete(long ockContextId, long digestId) throws OCKException;
 
+    static public native int DIGEST_PKCS12KeyDeriveHelp(long ockContextId, long digestId, byte[] input,
+            int offset, int length, int iterationCount) throws OCKException;
+
     // =========================================================================
     // Signature functions (with digest)
     // =========================================================================

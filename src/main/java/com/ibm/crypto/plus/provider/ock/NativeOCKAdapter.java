@@ -892,6 +892,12 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
+    public int DIGEST_PKCS12KeyDeriveHelp(long digestId, byte[] input,
+            int offset, int length, int iterationCount) throws OCKException {
+        return NativeOCKImplementation.DIGEST_PKCS12KeyDeriveHelp(ockContext.getId(),
+                digestId, input, offset, length, iterationCount);
+    }
+    @Override
     public byte[] SIGNATURE_sign(long digestId, long pkeyId, boolean convert) throws OCKException {
         return NativeOCKImplementation.SIGNATURE_sign(ockContext.getId(), digestId, pkeyId, convert);
     }
