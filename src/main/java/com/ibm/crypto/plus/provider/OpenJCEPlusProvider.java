@@ -8,7 +8,6 @@
 
 package com.ibm.crypto.plus.provider;
 
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.lang.ref.Cleaner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -8,12 +8,9 @@
 
 package com.ibm.crypto.plus.provider.base;
 
-import java.lang.annotation.Native;
-
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 public final class ExtendedRandom {
 

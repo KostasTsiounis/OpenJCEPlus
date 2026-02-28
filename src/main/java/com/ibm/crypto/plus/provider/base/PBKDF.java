@@ -11,7 +11,6 @@ package com.ibm.crypto.plus.provider.base;
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 
 /**
  * Provides native implementations for password based key derivation related functions.

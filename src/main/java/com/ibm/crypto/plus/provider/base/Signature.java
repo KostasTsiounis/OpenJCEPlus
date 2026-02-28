@@ -8,12 +8,10 @@
 
 package com.ibm.crypto.plus.provider.base;
 
-import java.security.InvalidKeyException;
-
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
+import java.security.InvalidKeyException;
 
 public final class Signature {
 

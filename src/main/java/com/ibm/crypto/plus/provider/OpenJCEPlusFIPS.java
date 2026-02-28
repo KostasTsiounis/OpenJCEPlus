@@ -10,7 +10,6 @@ package com.ibm.crypto.plus.provider;
 
 import com.ibm.crypto.plus.provider.base.OCKException;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
-import com.ibm.crypto.plus.provider.ock.OCKContext;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.ProviderException;

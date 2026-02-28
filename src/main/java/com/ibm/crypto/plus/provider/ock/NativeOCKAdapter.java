@@ -52,6 +52,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         this.useFIPSMode = useFIPSMode;
         initializeContext();
     }
+
     // Initialize OCK context(s)
     //
     private synchronized void initializeContext() {
@@ -897,6 +898,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
         return NativeOCKImplementation.DIGEST_PKCS12KeyDeriveHelp(ockContext.getId(),
                 digestId, input, offset, length, iterationCount);
     }
+
     @Override
     public byte[] SIGNATURE_sign(long digestId, long pkeyId, boolean convert) throws OCKException {
         return NativeOCKImplementation.SIGNATURE_sign(ockContext.getId(), digestId, pkeyId, convert);
