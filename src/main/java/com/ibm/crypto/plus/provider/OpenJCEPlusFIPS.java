@@ -57,7 +57,6 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
     private static volatile OpenJCEPlusFIPS instance;
 
     private static boolean ockInitialized = false;
-    private static OCKContext ockContext;
 
     private static final boolean isFIPSCertifiedPlatform;
     private static final Map<String, List<String>> supportedPlatforms = new HashMap<>();
