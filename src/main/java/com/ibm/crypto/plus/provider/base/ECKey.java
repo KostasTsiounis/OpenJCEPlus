@@ -131,7 +131,7 @@ public final class ECKey implements AsymmetricKey {
         long ecKeyId;
         try {
             ecKeyId = nativeInterface.ECKEY_generate(size);
-        } catch (OCKException oe){
+        } catch (OCKException oe) {
             if (oe.getMessage().contains("Incorrect key size") && allowIncorrectKeysizes) {
                 // If the flag is set and an incorrect key size was provided, default to 256.
                 ecKeyId = nativeInterface.ECKEY_generate(256);

@@ -1031,7 +1031,7 @@ public final class GCMCipher {
             return gcmCtx;
         }
 
-        private Runnable cleanOCKResources(long gcmCtx, NativeInterface nativeInterface){
+        private Runnable cleanOCKResources(long gcmCtx, NativeInterface nativeInterface) {
             return () -> {
                 try {
                     if (gcmCtx != 0) {

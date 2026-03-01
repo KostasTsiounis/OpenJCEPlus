@@ -186,7 +186,7 @@ public final class PQCKey implements AsymmetricKey {
         return out;
     }
 
-    private Runnable cleanOCKResources(byte[] privateKeyBytes, long pkeyId, NativeInterface nativeInterface){
+    private Runnable cleanOCKResources(byte[] privateKeyBytes, long pkeyId, NativeInterface nativeInterface) {
         return () -> {
             try {
                 if ((privateKeyBytes != null) && (privateKeyBytes != unobtainedKeyBytes)) {

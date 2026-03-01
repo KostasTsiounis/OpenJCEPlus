@@ -692,7 +692,7 @@ public final class SymmetricCipher {
         }
     }
 
-    private Runnable cleanOCKResources(boolean use_z_fast_command, long ockCipherId, byte[] reinitKey, NativeInterface nativeInterface){
+    private Runnable cleanOCKResources(boolean use_z_fast_command, long ockCipherId, byte[] reinitKey, NativeInterface nativeInterface) {
         return () -> {
             try {
                 if (!use_z_fast_command) {
