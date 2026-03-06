@@ -24,13 +24,13 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 abstract public class JMHBase {
-    private static List<String> allowedProviders;
+    private static final List<String> allowedProviders = new ArrayList<>();
 
     static {
         String providers = System.getProperty("com.ibm.openjceplus.jmh.allowedProviders");
         if (providers != null) {
             System.out.println("Providers specified: " + providers);
-            allowedProviders = new ArrayList<>(Arrays.asList(providers.split(",")));
+            allowedProviders.addAll(Arrays.asList(providers.split(",")));
             System.out.println("Allowed providers: " + allowedProviders.toString());
         }
     }
