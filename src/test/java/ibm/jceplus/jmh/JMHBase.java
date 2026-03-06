@@ -12,7 +12,6 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Provider;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.openjdk.jmh.profile.ClassloaderProfiler;
@@ -29,6 +28,7 @@ abstract public class JMHBase {
     static {
         String providers = System.getProperty("com.ibm.openjceplus.jmh.allowedProviders");
         if (providers != null) {
+            System.out.println("Providers specified: " + providers);
             allowedProviders = Arrays.asList(providers.split(","));
         }
     }
@@ -101,6 +101,7 @@ abstract public class JMHBase {
     }
 
     protected void setup(String provider) throws Exception {
+        System.out.println("Checking provider " + provider);
         if ((allowedProviders != null) && !allowedProviders.contains(provider)) {
             throw new RunnerException("Skipping provider: " + provider);
         }
