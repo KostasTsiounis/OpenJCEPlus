@@ -30,6 +30,7 @@ abstract public class JMHBase {
         if (providers != null) {
             System.out.println("Providers specified: " + providers);
             allowedProviders = Arrays.asList(providers.split(","));
+            System.out.println("Allowed providers: " + allowedProviders.toString());
         }
     }
 
@@ -103,6 +104,7 @@ abstract public class JMHBase {
     protected void setup(String provider) throws Exception {
         System.out.println("Checking provider " + provider);
         if ((allowedProviders != null) && !allowedProviders.contains(provider)) {
+            System.out.println("Should throw exception in a bit.");
             throw new RunnerException("Skipping provider: " + provider);
         }
 
