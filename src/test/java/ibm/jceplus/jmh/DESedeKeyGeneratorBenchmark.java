@@ -39,7 +39,7 @@ public class DESedeKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         desedeKeyGenerator = KeyGenerator.getInstance("DESede", provider);
     }

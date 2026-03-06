@@ -42,7 +42,7 @@ public class HMACKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         hmacSha1KeyGenerator = KeyGenerator.getInstance("HmacSHA1", provider);
         hmacSha256KeyGenerator = KeyGenerator.getInstance("HmacSHA256", provider);

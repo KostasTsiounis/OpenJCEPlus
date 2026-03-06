@@ -52,7 +52,7 @@ public class HmacBenchmark extends JMHBase {
 
     @Setup(Level.Trial)
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         KeyGenerator kg = KeyGenerator.getInstance("AES");
         kg.init(256);

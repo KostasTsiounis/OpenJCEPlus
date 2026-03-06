@@ -47,7 +47,7 @@ public class ECDHKeyExchangeBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         ecKeyPairGenerator = KeyPairGenerator.getInstance("EC", provider);
         ECGenParameterSpec ecSpec = new ECGenParameterSpec(curveName);

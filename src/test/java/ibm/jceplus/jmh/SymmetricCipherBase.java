@@ -9,6 +9,7 @@
 package ibm.jceplus.jmh;
 
 import java.security.SecureRandom;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -38,7 +39,7 @@ abstract public class SymmetricCipherBase extends JMHBase {
      */
     public void setup(int keySize, String transformation, int payloadSize, String provider)
             throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
         String splitTransformation[] = transformation.split("/");
 
         String algorithm = splitTransformation[0];

@@ -11,7 +11,6 @@ package ibm.jceplus.jmh;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.concurrent.TimeUnit;
-import javax.crypto.KEM;
 import javax.crypto.SecretKey;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -48,8 +47,8 @@ public class MLKEMBenchmark extends JMHBase {
     private KEM.Decapsulator decapsulator;
 
     @Setup
-    public void setup() throws Exception {
-        insertProvider(provider);
+    public void setup(String provider) throws Exception {
+        super.setup(provider);
 
         myKEM = KEM.getInstance(transformation, provider);
         keyPairGen = KeyPairGenerator.getInstance(transformation, provider);

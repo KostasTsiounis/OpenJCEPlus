@@ -40,7 +40,7 @@ public class DHKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         dhKeyPairGenerator1024 = KeyPairGenerator.getInstance("DH", provider);
         dhKeyPairGenerator1024.initialize(1024);

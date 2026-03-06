@@ -40,7 +40,7 @@ public class DSAKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         dsaKeyPairGenerator1024 = KeyPairGenerator.getInstance("DSA", provider);
         dsaKeyPairGenerator1024.initialize(1024);

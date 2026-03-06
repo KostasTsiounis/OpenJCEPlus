@@ -40,7 +40,7 @@ public class EdKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         ed25519KeyPairGenerator = KeyPairGenerator.getInstance("Ed25519", provider);
         ed448KeyPairGenerator = KeyPairGenerator.getInstance("Ed448", provider);

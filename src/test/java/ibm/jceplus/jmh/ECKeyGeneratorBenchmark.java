@@ -42,7 +42,7 @@ public class ECKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         ecKeyPairGeneratorP256 = KeyPairGenerator.getInstance("EC", provider);
         ecKeyPairGeneratorP256.initialize(new ECGenParameterSpec("secp256r1"));

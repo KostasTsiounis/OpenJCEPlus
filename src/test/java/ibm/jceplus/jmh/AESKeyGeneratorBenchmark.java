@@ -41,7 +41,7 @@ public class AESKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         aesKeyGenerator128 = KeyGenerator.getInstance("AES", provider);
         aesKeyGenerator128.init(128);

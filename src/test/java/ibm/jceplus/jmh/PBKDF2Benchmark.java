@@ -11,8 +11,10 @@ package ibm.jceplus.jmh;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -47,7 +49,7 @@ public class PBKDF2Benchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         pbkdf2Sha1Factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1", provider);
         pbkdf2Sha256Factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256", provider);

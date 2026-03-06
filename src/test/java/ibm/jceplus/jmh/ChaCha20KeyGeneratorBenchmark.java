@@ -39,7 +39,7 @@ public class ChaCha20KeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         chaCha20KeyGenerator = KeyGenerator.getInstance("ChaCha20", provider);
     }

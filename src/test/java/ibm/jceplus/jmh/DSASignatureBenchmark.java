@@ -59,7 +59,7 @@ public class DSASignatureBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         dsaKeyPairGenerator = KeyPairGenerator.getInstance("DSA", provider);
         dsaKeyPairGenerator.initialize(keySize);

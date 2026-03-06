@@ -11,6 +11,7 @@ package ibm.jceplus.jmh;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -47,7 +48,7 @@ public class MessageDigestInstanceBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
         payload = new byte[payloadSize];
         random.nextBytes(payload);
     }

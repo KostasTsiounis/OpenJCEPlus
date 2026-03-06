@@ -11,7 +11,9 @@ package ibm.jceplus.jmh;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.KeyAgreement;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -43,7 +45,7 @@ public class X448KeyExchangeBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         x448KeyPairGenerator = KeyPairGenerator.getInstance("X448", provider);
         x448KeyAgreement = KeyAgreement.getInstance("X448", provider);

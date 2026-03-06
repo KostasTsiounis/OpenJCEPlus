@@ -11,6 +11,7 @@ package ibm.jceplus.jmh;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.concurrent.TimeUnit;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -41,7 +42,7 @@ public class RSAKeyGeneratorBenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         rsaKeyPairGenerator1024 = KeyPairGenerator.getInstance("RSA", provider);
         rsaKeyPairGenerator1024.initialize(1024);

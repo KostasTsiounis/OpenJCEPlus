@@ -13,6 +13,7 @@ import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.util.concurrent.TimeUnit;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -60,7 +61,7 @@ public class MLDSABenchmark extends JMHBase {
 
     @Setup
     public void setup() throws Exception {
-        insertProvider(provider);
+        super.setup(provider);
 
         mldsa44KeyPairGenerator = KeyPairGenerator.getInstance("ML-DSA-44", provider);
         mldsa65KeyPairGenerator = KeyPairGenerator.getInstance("ML-DSA-65", provider);

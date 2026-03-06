@@ -12,14 +12,26 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Provider;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.openjdk.jmh.profile.ClassloaderProfiler;
 import org.openjdk.jmh.profile.CompilerProfiler;
 import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.profile.StackProfiler;
+import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 abstract public class JMHBase {
+    private static List<String> allowedProviders;
+
+    static {
+        String providers = System.getProperty("com.ibm.openjceplus.jmh.allowedProviders");
+        if (providers != null) {
+            allowedProviders = Arrays.asList(providers.split(","));
+        }
+    }
 
     static Options optionsBuild(String regexClassName, String logFileRoot) {
         // This is necessary to pass various classpath values to the forked JVM we are about to create.
@@ -86,6 +98,14 @@ abstract public class JMHBase {
         //Add these conditionally based on os and arch:
         //.addProfiler(DTraceAsmProfiler.class)
         return optionsBuilder.build();
+    }
+
+    protected void setup(String provider) throws Exception {
+        if ((allowedProviders != null) && !allowedProviders.contains(provider)) {
+            throw new RunnerException("Skipping provider: " + provider);
+        }
+
+        insertProvider(provider);
     }
 
     protected void insertProvider(String provider) throws Exception {
