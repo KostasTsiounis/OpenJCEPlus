@@ -103,6 +103,7 @@ abstract public class JMHBase {
 
     protected void setup(String provider) throws Exception {
         System.out.println("Checking provider " + provider);
+        System.out.println("Allowed providers: " + allowedProviders.toString());
         if ((allowedProviders != null) && !allowedProviders.contains(provider)) {
             System.out.println("Should throw exception in a bit.");
             throw new RunnerException("Skipping provider: " + provider);
