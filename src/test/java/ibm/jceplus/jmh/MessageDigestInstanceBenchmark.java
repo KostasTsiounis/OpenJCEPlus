@@ -11,7 +11,6 @@ package ibm.jceplus.jmh;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
-
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;

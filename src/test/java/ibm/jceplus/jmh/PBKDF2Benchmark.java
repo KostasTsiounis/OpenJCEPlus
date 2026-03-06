@@ -11,10 +11,8 @@ package ibm.jceplus.jmh;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
