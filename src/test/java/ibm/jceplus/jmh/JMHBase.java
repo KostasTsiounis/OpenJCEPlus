@@ -30,8 +30,11 @@ abstract public class JMHBase {
         String providers = System.getProperty("com.ibm.openjceplus.jmh.allowedProviders");
         if (providers != null) {
             System.out.println("Providers specified: " + providers);
-            allowedProviders.addAll(Arrays.asList(providers.split(",")));
-            System.out.println("Allowed providers: " + allowedProviders.toString());
+            for (String provider : providers.split(",")) {
+                allowedProviders.add(provider);
+            }
+            //allowedProviders.addAll(Arrays.asList(providers.split(",")));
+            //System.out.println("Allowed providers: " + allowedProviders.toString());
         }
     }
 
