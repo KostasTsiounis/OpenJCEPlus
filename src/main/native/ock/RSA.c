@@ -15,7 +15,6 @@
 #include "com_ibm_crypto_plus_provider_base_NativeInterface.h"
 #include "Utils.h"
 #include "RSAPadding.h"
-#include "RSA_temp.h"
 #include <stdint.h>
 
 static int rsaPaddingMap(int rsaPaddingId);
