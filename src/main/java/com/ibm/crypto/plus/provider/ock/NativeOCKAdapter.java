@@ -922,16 +922,6 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     }
 
     @Override
-    public byte[] SIGNATUREEdDSA_signOneShot(long pkeyId, byte[] bytes) throws OCKException {
-        return NativeOCKImplementation.SIGNATUREEdDSA_signOneShot(ockContext.getId(), pkeyId, bytes);
-    }
-
-    @Override
-    public boolean SIGNATUREEdDSA_verifyOneShot(long pkeyId, byte[] sigBytes, byte[] oneShot) throws OCKException {
-        return NativeOCKImplementation.SIGNATUREEdDSA_verifyOneShot(ockContext.getId(), pkeyId, sigBytes, oneShot);
-    }
-
-    @Override
     public int RSAPSS_signInit(long rsaPssId, long pkeyId, int saltlen, boolean convert) throws OCKException {
         return NativeOCKImplementation.RSAPSS_signInit(ockContext.getId(), rsaPssId, pkeyId, saltlen, convert);
     }
@@ -1191,64 +1181,5 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     public byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt, int iterations, int keyLength)
             throws OCKException {
         return NativeOCKImplementation.PBKDF2_derive(ockContext.getId(), hashAlgorithm, password, salt, iterations, keyLength);
-    }
-
-    @Override
-    public long MLKEY_generate(String cipherName)
-            throws OCKException {
-        return NativeOCKImplementation.MLKEY_generate(ockContext.getId(), cipherName);
-    }
-
-    @Override
-    public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
-            throws OCKException {
-        return NativeOCKImplementation.MLKEY_createPrivateKey(ockContext.getId(), cipherName, privateKeyBytes);
-    }
-
-    @Override
-    public long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
-            throws OCKException {
-        return NativeOCKImplementation.MLKEY_createPublicKey(ockContext.getId(), cipherName, publicKeyBytes);
-    }
-
-    @Override
-    public byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
-            throws OCKException {
-        return NativeOCKImplementation.MLKEY_getPrivateKeyBytes(ockContext.getId(), mlkeyId);
-    }
-
-    @Override
-    public byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
-            throws OCKException {
-        return NativeOCKImplementation.MLKEY_getPublicKeyBytes(ockContext.getId(), mlkeyId);
-    }
-
-    @Override
-    public void MLKEY_delete(long mlkeyId) {
-        NativeOCKImplementation.MLKEY_delete(ockContext.getId(), mlkeyId);
-    }
-
-    @Override
-    public void KEM_encapsulate(long ockPKeyId, byte[] wrappedKey, byte[] randomKey)
-            throws OCKException {
-        NativeOCKImplementation.KEM_encapsulate(ockContext.getId(), ockPKeyId, wrappedKey, randomKey);
-    }
-
-    @Override
-    public byte[] KEM_decapsulate(long ockPKeyId, byte[] wrappedKey)
-            throws OCKException {
-        return NativeOCKImplementation.KEM_decapsulate(ockContext.getId(), ockPKeyId, wrappedKey);
-    }
-
-    @Override
-    public byte[] PQC_SIGNATURE_sign(long ockPKeyId, byte[] data)
-            throws OCKException {
-        return NativeOCKImplementation.PQC_SIGNATURE_sign(ockContext.getId(), ockPKeyId, data);
-    }
-
-    @Override
-    public boolean PQC_SIGNATURE_verify(long ockPKeyId, byte[] sigBytes, byte[] data)
-            throws OCKException {
-        return NativeOCKImplementation.PQC_SIGNATURE_verify(ockContext.getId(), ockPKeyId, sigBytes, data);
     }
 }
