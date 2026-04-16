@@ -146,7 +146,7 @@ headers :
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/base/FastJNIBuffer.java \
 		${TOPDIR}/src/main/java/com/ibm/crypto/plus/provider/ock/NativeOCKImplementation.java; \
 		if  [ "${PLATFORM}" = "s390-zos64" ]; \
-			then chtag -t -c ISO8859-1 com_ibm_crypto_plus_provider_base_NativeInterface.h; \
+			then chtag -t -c ISO8859-1 com_ibm_crypto_plus_provider_ock_NativeOCKImplementation.h; \
 		fi
 
 endif # ! EXTERNAL_HEADERS
