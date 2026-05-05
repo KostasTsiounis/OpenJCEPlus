@@ -41,7 +41,7 @@ final class EdDSAPrivateKeyImpl extends PKCS8Key implements EdECPrivateKey {
 
     private void setFieldsFromXeckey() throws Exception {
         if (this.privKeyMaterial == null) {
-            this.privKeyMaterial = extractPrivateKeyFromOCK(xecKey.getPrivateKeyBytes()); // Extract key from GSKit and sets params
+            this.privKeyMaterial = extractPrivateKeyFromOCK(xecKey.getPrivateKeyBytes().clone()); // Extract key from GSKit and sets params
             DerInputStream derStream = new DerInputStream(this.privKeyMaterial);
             this.h = derStream.getOctetString();
             this.algid = CurveUtil.getAlgId(this.curve);

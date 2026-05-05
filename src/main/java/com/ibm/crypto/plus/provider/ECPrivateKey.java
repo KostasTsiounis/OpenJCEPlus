@@ -134,7 +134,7 @@ final class ECPrivateKey extends PKCS8Key implements java.security.interfaces.EC
             this.algid = AlgorithmId
                     .parse(new DerValue(DerValue.tag_Sequence, algidOut.toByteArray()));
             // Get private key encoding from ECKey.
-            this.privKeyMaterial = ecKey.getPrivateKeyBytes();
+            this.privKeyMaterial = ecKey.getPrivateKeyBytes().clone();
 
             // Get from the encoding:
             //    * the private key as a BigInteger (this.s)
