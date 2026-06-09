@@ -285,7 +285,7 @@ def getMaven(software) {
 }
 
 def getOpenSSL(hardware, software) {
-    def version = "openssl-3.5.6"
+    def version = "openssl-4.0.0"
     def platform = "${hardware}_${software}"
     //sh "git clone -b ${version} https://github.com/openssl/openssl.git"
 
@@ -301,15 +301,15 @@ def getOpenSSL(hardware, software) {
                 sh "ls -la"
             }
         } else {
-            /*stage('Trigger Parameterized Job') {
-                    build job: 'Security/job/OpenSSL-Build-Install-Compress',
+            stage('Trigger Parameterized Job') {
+                    build job: 'OpenSSL-Build-Install-Compress',
                         wait: true, // Set to true if you want this stage to block until the child job finishes
                         propagate: true, // Set to false so the parent job doesn't fail if the child job fails
                         parameters: [
                             string(name: 'TAGS', value: version),
                             booleanParam(name: 'PLATFORMS', value: platform)
                         ]
-            }*/
+            }
             error("OpenSSL version ${version} does not exist. Need to build.")
         }
     }
