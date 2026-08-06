@@ -22,19 +22,10 @@ public class OpenSSLException extends NativeException {
     /* These codes are overriding the ones specified in the superclass NativeException
      * and must match those defined in native/openssl/ExceptionCodes.h.
      */
-    public static final int GKR_FIPS_MODE_INVALID = 0x00000001;
-    public static final int GKR_OCK_ATTACH_FAILED = 0x00000002;
     public static final int GKR_DECRYPT_FINAL_BAD_PADDING_ERROR = 0x00000003;
     public static final int GKR_UNSPECIFIED = 0x80000000;
 
-    private static final Map<Integer, String> errorCodeMap = buildErrorCodeMap();
-
-    private static Map<Integer, String> buildErrorCodeMap() {
-        Hashtable<Integer, String> map = new Hashtable<Integer, String>();
-        map.put(GKR_FIPS_MODE_INVALID, "FIPS mode invalid");
-        map.put(GKR_OCK_ATTACH_FAILED, "ICC_Attach failed");
-        return map;
-    }
+    private static final Map<Integer, String> errorCodeMap = new Hashtable<Integer, String>();
 
     public OpenSSLException(String s) {
         super(s);

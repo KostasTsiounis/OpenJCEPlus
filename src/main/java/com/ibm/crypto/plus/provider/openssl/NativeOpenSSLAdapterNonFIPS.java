@@ -16,7 +16,6 @@ public class NativeOpenSSLAdapterNonFIPS extends NativeOpenSSLAdapter {
     }
 
     public static NativeOpenSSLAdapterNonFIPS getInstance() {
-        System.out.println("Using OpenSSL non-FIPS adapter.");
         if (instance == null) {
             instance = new NativeOpenSSLAdapterNonFIPS();
         }
