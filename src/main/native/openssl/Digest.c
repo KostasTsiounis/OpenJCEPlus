@@ -40,7 +40,7 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1cr
 
     if (!(digestAlgoChars = (const char *)(*env)->GetStringUTFChars(env, digestAlgo, NULL))) {
         throwOSSLException(env, 0, "DIGEST_create: GetStringUTFChars() failed");
-        goto cleanup;
+        return 0;
     }
 
     md = EVP_MD_fetch(NULL, digestAlgoChars, NULL);
