@@ -697,7 +697,7 @@ final class NativeOpenSSLImplementation extends NativeImplementation {
             long privEcKeyId) throws OpenSSLException;
 
     static public native byte[] XECKEY_computeECDHSecret(long osslContextId, long genCtx,
-            long pubEcKeyId, long privEcKeyId, int secrectBufferSize) throws OpenSSLException;
+            long pubEcKeyId, long privEcKeyId) throws OpenSSLException;
 
     static public native byte[] ECKEY_signDatawithECDSA(long osslContextId, byte[] digestBytes,
             int digestBytesLen, long ecPrivateKeyId) throws OpenSSLException;
