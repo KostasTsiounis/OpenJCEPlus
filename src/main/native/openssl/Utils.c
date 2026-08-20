@@ -33,7 +33,7 @@ int gslogError(const char *formatString, ...) {
     static char printBuffer[4096];
 
     va_start(formatArgs, formatString);
-    charsPrinted = vsprintf(printBuffer, formatString, formatArgs);
+    charsPrinted = vsnprintf(printBuffer, sizeof(printBuffer), formatString, formatArgs);
 
     fprintf(stderr, "[ERROR] %s\n", printBuffer);
 
@@ -51,7 +51,7 @@ int gslogMessage(const char *formatString, ...) {
     static char printBuffer[4096];
 
     va_start(formatArgs, formatString);
-    charsPrinted = vsprintf(printBuffer, formatString, formatArgs);
+    charsPrinted = vsnprintf(printBuffer, sizeof(printBuffer), formatString, formatArgs);
 
     fprintf(stderr, "[DEBUG] %s\n", printBuffer);
 
@@ -69,7 +69,7 @@ int gslogMessagePrefix(const char *formatString, ...) {
     static char printBuffer[4096];
 
     va_start(formatArgs, formatString);
-    charsPrinted = vsprintf(printBuffer, formatString, formatArgs);
+    charsPrinted = vsnprintf(printBuffer, sizeof(printBuffer), formatString, formatArgs);
 
     fprintf(stderr, "[DEBUG] %s", printBuffer);
 
@@ -117,7 +117,7 @@ int gslogFunctionExit(const char *functionName) {
 void osslCheckStatus(void) {
     unsigned long errCode;
 
-    while ((errCode = ERR_get_error()) == 1) {
+    while ((errCode = ERR_get_error()) != 0) {
         char *err;
         // gslogMessage("Generating error message");
         err = ERR_error_string(errCode, NULL);

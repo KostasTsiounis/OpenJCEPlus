@@ -25,7 +25,6 @@
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1create(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jstring digestAlgo) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_create";
 
     EVP_MD      *md              = NULL;
     EVP_MD_CTX  *mdCtx           = NULL;
@@ -96,7 +95,6 @@ cleanup:
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1copy(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_copy";
 
     EVP_MD_CTX *mdCtx       = (EVP_MD_CTX *)((intptr_t)digestId);
     EVP_MD_CTX *mdCtxCopy   = NULL;
@@ -164,7 +162,6 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1update(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId,
     jbyteArray data, jint offset, jint dataLen) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_update";
 
     EVP_MD_CTX     *mdCtx       = (EVP_MD_CTX *)((intptr_t)digestId);
     unsigned char  *dataNative  = NULL;
@@ -203,7 +200,6 @@ JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1updateFastJNI(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId,
     jlong dataBuffer, jint dataLen) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_updateFastJNI";
 
     EVP_MD_CTX     *mdCtx       = (EVP_MD_CTX *)((intptr_t)digestId);
     unsigned char   *dataNative = (unsigned char *)dataBuffer;
@@ -225,13 +221,13 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1up
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1digest(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_digest";
 
     EVP_MD_CTX     *mdCtx            = (EVP_MD_CTX *)((intptr_t)digestId);
     jbyteArray     digestBytes       = NULL;
     unsigned char *digestBytesNative = NULL;
     jboolean       isCopy            = 0;
-    int            digestLen         = 0;
+    int            signedDigestLen   = 0;
+    unsigned int   digestLen         = 0;
     int            rc                = 0;
     jbyteArray     retDigestBytes    = NULL;
 
@@ -240,14 +236,14 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1di
         return 0;
     }
 
-    rc = EVP_DigestFinal_ex(mdCtx, NULL, (unsigned int *)&digestLen);
-    if (1 != rc) {
+    signedDigestLen = EVP_MD_CTX_get_size(ctx);
+    if (0 >= signedDigestLen) {
         //osslCheckStatus(osslCtx);
-        throwOSSLException(env, 0, "DIGEST_digest: EVP_DigestFinal_ex failed");
-        goto cleanup;
+        throwOSSLException(env, 0, "DIGEST_digest: EVP_MD_CTX_get_size failed");
+        return 0;
     }
 
-    digestBytes = (*env)->NewByteArray(env, digestLen);
+    digestBytes = (*env)->NewByteArray(env, signedDigestLen);
     if (NULL == digestBytes) {
         throwOSSLException(env, 0, "DIGEST_digest: NewByteArray failed");
         return 0;
@@ -258,6 +254,8 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1di
         throwOSSLException(env, 0, "DIGEST_digest: GetPrimitiveArrayCritical failed");
         goto cleanup;
     }
+
+    digestLen = (unsigned int)signedDigestLen;
 
     rc = EVP_DigestFinal_ex(mdCtx, digestBytesNative, (unsigned int *)&digestLen);
     if (1 != rc) {
@@ -296,11 +294,6 @@ DIGEST_digest_and_reset_internal(JNIEnv *env, jlong osslContextId, EVP_MD_CTX *m
         return 0;
     }
 
-    if (digestLen < 0) {
-        throwOSSLException(env, 0, "DIGEST_digest_and_reset_internal: The specified data length is negative");
-        return 0;
-    }
-
     rc = EVP_DigestFinal_ex(mdCtx, digestBytesNative, &digestLen);
     if (1 != rc) {
         //osslCheckStatus(osslCtx);
@@ -320,13 +313,12 @@ DIGEST_digest_and_reset_internal(JNIEnv *env, jlong osslContextId, EVP_MD_CTX *m
 /*
  * Class:     com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation
  * Method:    DIGEST_digest_and_reset
- * Signature: (JJI)V
+ * Signature: (JJJI)V
  */
 JNIEXPORT void JNICALL
-Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1digest_1and_1reset__JJI(
+Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1digest_1and_1reset__JJJI(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId,
     jlong digestBytes, jint length) {
-    //static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
 
     EVP_MD_CTX     *mdCtx             = (EVP_MD_CTX *)((intptr_t)digestId);
     unsigned char  *digestBytesNative = (unsigned char *)((intptr_t)digestBytes);
@@ -344,7 +336,6 @@ JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1digest_1and_1reset__JJ_3B(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId,
     jbyteArray digestBytes) {
-    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_digest_and_reset";
 
     EVP_MD_CTX    *mdCtx             = (EVP_MD_CTX *)((intptr_t)digestId);
     unsigned char *digestBytesNative = NULL;
@@ -382,7 +373,6 @@ cleanup:
 JNIEXPORT jint JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1size(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId) {
-    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_size";
 
     EVP_MD_CTX *mdCtx    = (EVP_MD_CTX *)((intptr_t)digestId);
     int        digestLen = 0;
@@ -410,7 +400,6 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1si
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1reset(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId) {
-    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_reset";
 
     EVP_MD_CTX *mdCtx    = (EVP_MD_CTX *)((intptr_t)digestId);
     int        rc        = 0;
@@ -436,7 +425,6 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1re
 JNIEXPORT void JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_DIGEST_1delete(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong digestId) {
-    ////static const char *functionName = "NativeOSSLImplementation.DIGEST_delete";
     EVP_MD_CTX *mdCtx = (EVP_MD_CTX *)((intptr_t)digestId);
 
     if (NULL != mdCtx) {

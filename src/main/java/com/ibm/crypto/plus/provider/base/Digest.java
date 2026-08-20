@@ -86,6 +86,8 @@ public final class Digest implements Cloneable {
                     }
                     contextsPerBackend.put(this.nativeInterface, contexts);
                     runtimeContextNumPerBackend.put(this.nativeInterface, runtimeContextNum);
+                } else {
+                    runtimeContextNum = runtimeContextNumPerBackend.get(this.nativeInterface);
                 }
             }
         }
