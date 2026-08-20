@@ -262,7 +262,8 @@ public abstract class NativeOpenSSLAdapter implements NativeInterface {
     @Override
     public String getLibraryBuildDate() {
         if (libraryBuildDate == unobtainedValue) {
-            libraryBuildDate = NativeOpenSSLImplementation.getLibraryBuildDate();;
+            // libraryBuildDate = NativeOpenSSLImplementation.getLibraryBuildDate();
+            throw new UnsupportedOperationException("getLibraryBuildDate");
         }
         return libraryBuildDate;
     }
@@ -275,398 +276,463 @@ public abstract class NativeOpenSSLAdapter implements NativeInterface {
 
     @Override
     public String CTX_getValue(int valueId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CTX_getValue(osslContext.getId(), valueId);
+        // return NativeOpenSSLImplementation.CTX_getValue(osslContext.getId(), valueId);
+        throw new UnsupportedOperationException("CTX_getValue");
     }
 
     @Override
     public long getByteBufferPointer(ByteBuffer b) {
-        return NativeOpenSSLImplementation.getByteBufferPointer(b);
+        // return NativeOpenSSLImplementation.getByteBufferPointer(b);
+        throw new UnsupportedOperationException("getByteBufferPointer");
     }
 
     @Override
     public void RAND_nextBytes(byte[] buffer) throws OpenSSLException {
-        NativeOpenSSLImplementation.RAND_nextBytes(osslContext.getId(), buffer);
+        // NativeOpenSSLImplementation.RAND_nextBytes(osslContext.getId(), buffer);
+        throw new UnsupportedOperationException("RAND_nextBytes");
     }
 
     @Override
     public void RAND_setSeed(byte[] seed) throws OpenSSLException {
-        NativeOpenSSLImplementation.RAND_setSeed(osslContext.getId(), seed);
+        // NativeOpenSSLImplementation.RAND_setSeed(osslContext.getId(), seed);
+        throw new UnsupportedOperationException("RAND_setSeed");
     }
 
     @Override
     public void RAND_generateSeed(byte[] seed) throws OpenSSLException {
-        NativeOpenSSLImplementation.RAND_generateSeed(osslContext.getId(), seed);
+        // NativeOpenSSLImplementation.RAND_generateSeed(osslContext.getId(), seed);
+        throw new UnsupportedOperationException("RAND_generateSeed");
     }
 
     @Override
     public long EXTRAND_create(String algName) throws OpenSSLException {
-        return NativeOpenSSLImplementation.EXTRAND_create(osslContext.getId(), algName);
+        // return NativeOpenSSLImplementation.EXTRAND_create(osslContext.getId(), algName);
+        throw new UnsupportedOperationException("EXTRAND_create");
     }
 
     @Override
     public void EXTRAND_nextBytes(long PRNGContextId, byte[] buffer) throws OpenSSLException {
-        NativeOpenSSLImplementation.EXTRAND_nextBytes(osslContext.getId(), PRNGContextId, buffer);
+        // NativeOpenSSLImplementation.EXTRAND_nextBytes(osslContext.getId(), PRNGContextId, buffer);
+        throw new UnsupportedOperationException("EXTRAND_nextBytes");
     }
 
     @Override
     public void EXTRAND_setSeed(long PRNGContextId, byte[] seed) throws OpenSSLException {
-        NativeOpenSSLImplementation.EXTRAND_setSeed(osslContext.getId(), PRNGContextId, seed);
+        // NativeOpenSSLImplementation.EXTRAND_setSeed(osslContext.getId(), PRNGContextId, seed);
+        throw new UnsupportedOperationException("EXTRAND_setSeed");
     }
 
     @Override
     public void EXTRAND_delete(long PRNGContextId) throws OpenSSLException {
-        NativeOpenSSLImplementation.EXTRAND_delete(osslContext.getId(), PRNGContextId);
+        // NativeOpenSSLImplementation.EXTRAND_delete(osslContext.getId(), PRNGContextId);
+        throw new UnsupportedOperationException("EXTRAND_delete");
     }
 
     @Override
     public long CIPHER_create(String cipher) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_create(osslContext.getId(), cipher);
+        // return NativeOpenSSLImplementation.CIPHER_create(osslContext.getId(), cipher);
+        throw new UnsupportedOperationException("CIPHER_create");
     }
 
     @Override
     public void CIPHER_init(long cipherId, int isEncrypt, int paddingId, byte[] key, byte[] iv) throws OpenSSLException {
-        NativeOpenSSLImplementation.CIPHER_init(osslContext.getId(), cipherId, isEncrypt, paddingId, key, iv);
+        // NativeOpenSSLImplementation.CIPHER_init(osslContext.getId(), cipherId, isEncrypt, paddingId, key, iv);
+        throw new UnsupportedOperationException("CIPHER_init");
     }
 
     @Override
     public void CIPHER_clean(long cipherId) throws OpenSSLException {
-        NativeOpenSSLImplementation.CIPHER_clean(osslContext.getId(), cipherId);
+        // NativeOpenSSLImplementation.CIPHER_clean(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_clean");
     }
 
     @Override
     public void CIPHER_setPadding(long cipherId, int paddingId) throws OpenSSLException {
-        NativeOpenSSLImplementation.CIPHER_setPadding(osslContext.getId(), cipherId, paddingId);
+        // NativeOpenSSLImplementation.CIPHER_setPadding(osslContext.getId(), cipherId, paddingId);
+        throw new UnsupportedOperationException("CIPHER_setPadding");
     }
 
     @Override
     public int CIPHER_getBlockSize(long cipherId) {
-        return NativeOpenSSLImplementation.CIPHER_getBlockSize(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.CIPHER_getBlockSize(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_getBlockSize");
     }
 
     @Override
     public int CIPHER_getKeyLength(long cipherId) {
-        return NativeOpenSSLImplementation.CIPHER_getKeyLength(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.CIPHER_getKeyLength(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_getKeyLength");
     }
 
     @Override
     public int CIPHER_getIVLength(long cipherId) {
-        return NativeOpenSSLImplementation.CIPHER_getIVLength(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.CIPHER_getIVLength(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_getIVLength");
     }
 
     @Override
     public int CIPHER_getOID(long cipherId) {
-        return NativeOpenSSLImplementation.CIPHER_getOID(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.CIPHER_getOID(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_getOID");
     }
 
     @Override
     public int CIPHER_encryptUpdate(long cipherId, byte[] plaintext, int plaintextOffset, int plaintextLen,
             byte[] ciphertext, int ciphertextOffset, boolean needsReinit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_encryptUpdate(osslContext.getId(), cipherId,
-            plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, needsReinit);
+        // return NativeOpenSSLImplementation.CIPHER_encryptUpdate(osslContext.getId(), cipherId,
+        //     plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, needsReinit);
+        throw new UnsupportedOperationException("CIPHER_encryptUpdate");
     }
 
     @Override
     public int CIPHER_decryptUpdate(long cipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, boolean needsReinit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_decryptUpdate(osslContext.getId(), cipherId,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
+        // return NativeOpenSSLImplementation.CIPHER_decryptUpdate(osslContext.getId(), cipherId,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
+        throw new UnsupportedOperationException("CIPHER_decryptUpdate");
     }
 
     @Override
     public int CIPHER_encryptFinal(long cipherId, byte[] input, int inOffset, int inLen, byte[] ciphertext,
             int ciphertextOffset, boolean needsReinit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_encryptFinal(osslContext.getId(), cipherId,
-            input, inOffset, inLen, ciphertext, ciphertextOffset, needsReinit);
+        // return NativeOpenSSLImplementation.CIPHER_encryptFinal(osslContext.getId(), cipherId,
+        //     input, inOffset, inLen, ciphertext, ciphertextOffset, needsReinit);
+        throw new UnsupportedOperationException("CIPHER_encryptFinal");
     }
 
     @Override
     public int CIPHER_decryptFinal(long cipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, boolean needsReinit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_decryptFinal(osslContext.getId(), cipherId,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
+        // return NativeOpenSSLImplementation.CIPHER_decryptFinal(osslContext.getId(), cipherId,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, needsReinit);
+        throw new UnsupportedOperationException("CIPHER_decryptFinal");
     }
 
     @Override
     public long checkHardwareSupport() {
-        return NativeOpenSSLImplementation.checkHardwareSupport(osslContext.getId());
+        // return NativeOpenSSLImplementation.checkHardwareSupport(osslContext.getId());
+        throw new UnsupportedOperationException("checkHardwareSupport");
     }
 
     @Override
     public void CIPHER_delete(long cipherId) throws OpenSSLException {
-        NativeOpenSSLImplementation.CIPHER_delete(osslContext.getId(), cipherId);
+        // NativeOpenSSLImplementation.CIPHER_delete(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("CIPHER_delete");
     }
 
     @Override
     public byte[] CIPHER_KeyWraporUnwrap(byte[] key, byte[] KEK, int type)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.CIPHER_KeyWraporUnwrap(osslContext.getId(), key, KEK, type);
+        // return NativeOpenSSLImplementation.CIPHER_KeyWraporUnwrap(osslContext.getId(), key, KEK, type);
+        throw new UnsupportedOperationException("CIPHER_KeyWraporUnwrap");
     }
 
     @Override
     public int z_kmc_native(byte[] input, int inputOffset, byte[] output, int outputOffset, long paramPointer,
             int inputLength, int mode) {
-        return NativeOpenSSLImplementation.z_kmc_native(input, inputOffset, output, outputOffset, paramPointer, inputLength, mode);
+        // return NativeOpenSSLImplementation.z_kmc_native(input, inputOffset, output, outputOffset, paramPointer, inputLength, mode);
+        throw new UnsupportedOperationException("z_kmc_native");
     }
 
     @Override
     public long POLY1305CIPHER_create(String cipher) throws OpenSSLException {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_create(osslContext.getId(), cipher);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_create(osslContext.getId(), cipher);
+        throw new UnsupportedOperationException("POLY1305CIPHER_create");
     }
 
     @Override
     public void POLY1305CIPHER_init(long cipherId, int isEncrypt, byte[] key, byte[] iv) throws OpenSSLException {
-        NativeOpenSSLImplementation.POLY1305CIPHER_init(osslContext.getId(), cipherId, isEncrypt, key, iv);
+        // NativeOpenSSLImplementation.POLY1305CIPHER_init(osslContext.getId(), cipherId, isEncrypt, key, iv);
+        throw new UnsupportedOperationException("POLY1305CIPHER_init");
     }
 
     @Override
     public void POLY1305CIPHER_clean(long cipherId) throws OpenSSLException {
-        NativeOpenSSLImplementation.POLY1305CIPHER_clean(osslContext.getId(), cipherId);
+        // NativeOpenSSLImplementation.POLY1305CIPHER_clean(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_clean");
     }
 
     @Override
     public void POLY1305CIPHER_setPadding(long cipherId, int paddingId) throws OpenSSLException {
-        NativeOpenSSLImplementation.POLY1305CIPHER_setPadding(osslContext.getId(), cipherId, paddingId);
+        // NativeOpenSSLImplementation.POLY1305CIPHER_setPadding(osslContext.getId(), cipherId, paddingId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_setPadding");
     }
 
     @Override
     public int POLY1305CIPHER_getBlockSize(long cipherId) {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_getBlockSize(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_getBlockSize(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_getBlockSize");
     }
 
     @Override
     public int POLY1305CIPHER_getKeyLength(long cipherId) {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_getKeyLength(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_getKeyLength(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_getKeyLength");
     }
 
     @Override
     public int POLY1305CIPHER_getIVLength(long cipherId) {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_getIVLength(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_getIVLength(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_getIVLength");
     }
 
     @Override
     public int POLY1305CIPHER_getOID(long cipherId) {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_getOID(osslContext.getId(), cipherId);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_getOID(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_getOID");
     }
 
     @Override
     public int POLY1305CIPHER_encryptUpdate(long cipherId, byte[] plaintext, int plaintextOffset, int plaintextLen,
             byte[] ciphertext, int ciphertextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_encryptUpdate(osslContext.getId(), cipherId,
-            plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_encryptUpdate(osslContext.getId(), cipherId,
+        //     plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
+        throw new UnsupportedOperationException("POLY1305CIPHER_encryptUpdate");
     }
 
     @Override
     public int POLY1305CIPHER_decryptUpdate(long cipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_decryptUpdate(osslContext.getId(), cipherId,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_decryptUpdate(osslContext.getId(), cipherId,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
+        throw new UnsupportedOperationException("POLY1305CIPHER_decryptUpdate");
     }
 
     @Override
     public int POLY1305CIPHER_encryptFinal(long cipherId, byte[] input, int inOffset, int inLen, byte[] ciphertext,
             int ciphertextOffset, byte[] tag) throws OpenSSLException {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_encryptFinal(osslContext.getId(), cipherId,
-            input, inOffset, inLen, ciphertext, ciphertextOffset, tag);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_encryptFinal(osslContext.getId(), cipherId,
+        //     input, inOffset, inLen, ciphertext, ciphertextOffset, tag);
+        throw new UnsupportedOperationException("POLY1305CIPHER_encryptFinal");
     }
 
     @Override
     public int POLY1305CIPHER_decryptFinal(long cipherId, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, byte[] tag) throws OpenSSLException {
-        return NativeOpenSSLImplementation.POLY1305CIPHER_decryptFinal(osslContext.getId(), cipherId,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, tag);
+        // return NativeOpenSSLImplementation.POLY1305CIPHER_decryptFinal(osslContext.getId(), cipherId,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, tag);
+        throw new UnsupportedOperationException("POLY1305CIPHER_decryptFinal");
     }
 
     @Override
     public void POLY1305CIPHER_delete(long cipherId) throws OpenSSLException {
-        NativeOpenSSLImplementation.POLY1305CIPHER_delete(osslContext.getId(), cipherId);
+        // NativeOpenSSLImplementation.POLY1305CIPHER_delete(osslContext.getId(), cipherId);
+        throw new UnsupportedOperationException("POLY1305CIPHER_delete");
     }
 
     @Override
     public long do_GCM_checkHardwareGCMSupport() {
-        return NativeOpenSSLImplementation.do_GCM_checkHardwareGCMSupport(osslContext.getId());
+        // return NativeOpenSSLImplementation.do_GCM_checkHardwareGCMSupport(osslContext.getId());
+        throw new UnsupportedOperationException("do_GCM_checkHardwareGCMSupport");
     }
 
     @Override
     public int do_GCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
             byte[] output, int outputOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen,
-            inOffset, inLen, ciphertextOffset, aadLen, tagLen, parameterBuffer,
-            input, inputOffset, output, outputOffset);
+        // return NativeOpenSSLImplementation.do_GCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen,
+        //     inOffset, inLen, ciphertextOffset, aadLen, tagLen, parameterBuffer,
+        //     input, inputOffset, output, outputOffset);
+        throw new UnsupportedOperationException("do_GCM_encryptFastJNI_WithHardwareSupport");
     }
 
     @Override
     public int do_GCM_encryptFastJNI(long gcmCtx, int keyLen, int ivLen, int inOffset, int inLen, int ciphertextOffset,
             int aadLen, int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_encryptFastJNI(osslContext.getId(), gcmCtx, keyLen, ivLen, inOffset, inLen,
-            ciphertextOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        // return NativeOpenSSLImplementation.do_GCM_encryptFastJNI(osslContext.getId(), gcmCtx, keyLen, ivLen, inOffset, inLen,
+        //     ciphertextOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        throw new UnsupportedOperationException("do_GCM_encryptFastJNI");
     }
 
     @Override
     public int do_GCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
             byte[] output, int outputOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
-            ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        // return NativeOpenSSLImplementation.do_GCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
+        //     ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        throw new UnsupportedOperationException("do_GCM_decryptFastJNI_WithHardwareSupport");
     }
 
     @Override
     public int do_GCM_decryptFastJNI(long gcmCtx, int keyLen, int ivLen, int ciphertextOffset, int ciphertextLen,
             int plainOffset, int aadLen, int tagLen, long parameterBuffer, long inputBuffer, long outputBuffer)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_decryptFastJNI(osslContext.getId(), gcmCtx, keyLen, ivLen,
-            ciphertextOffset, ciphertextLen, plainOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        // return NativeOpenSSLImplementation.do_GCM_decryptFastJNI(osslContext.getId(), gcmCtx, keyLen, ivLen,
+        //     ciphertextOffset, ciphertextLen, plainOffset, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        throw new UnsupportedOperationException("do_GCM_decryptFastJNI");
     }
 
     @Override
     public int do_GCM_encrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] input, int inOffset,
             int inLen, byte[] ciphertext, int ciphertextOffset, byte[] aad, int aadLen, byte[] tag, int tagLen)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_encrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
-            input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
+        // return NativeOpenSSLImplementation.do_GCM_encrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
+        //     input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
+        throw new UnsupportedOperationException("do_GCM_encrypt");
     }
 
     @Override
     public int do_GCM_decrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] ciphertext,
             int cipherOffset, int cipherLen, byte[] plaintext, int plaintextOffset, byte[] aad, int aadLen, int tagLen)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_decrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, aad, aadLen, tagLen);
+        // return NativeOpenSSLImplementation.do_GCM_decrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, aad, aadLen, tagLen);
+        throw new UnsupportedOperationException("do_GCM_decrypt");
     }
 
     @Override
     public int do_GCM_FinalForUpdateEncrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] input,
             int inOffset, int inLen, byte[] ciphertext, int ciphertextOffset, byte[] aad, int aadLen, byte[] tag,
             int tagLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_FinalForUpdateEncrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
-            input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
+        // return NativeOpenSSLImplementation.do_GCM_FinalForUpdateEncrypt(osslContext.getId(), gcmCtx, key, keyLen, iv, ivLen,
+        //     input, inOffset, inLen, ciphertext, ciphertextOffset, aad, aadLen, tag, tagLen);
+        throw new UnsupportedOperationException("do_GCM_FinalForUpdateEncrypt");
     }
 
     @Override
     public int do_GCM_FinalForUpdateDecrypt(long gcmCtx, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset, int plaintextlen, byte[] aad, int aadLen, int tagLen)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_FinalForUpdateDecrypt(osslContext.getId(), gcmCtx,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, plaintextlen, aad, aadLen, tagLen);
+        // return NativeOpenSSLImplementation.do_GCM_FinalForUpdateDecrypt(osslContext.getId(), gcmCtx,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset, plaintextlen, aad, aadLen, tagLen);
+        throw new UnsupportedOperationException("do_GCM_FinalForUpdateDecrypt");
     }
 
     @Override
     public int do_GCM_UpdForUpdateEncrypt(long gcmCtx, byte[] input, int inOffset, int inLen, byte[] ciphertext,
             int ciphertextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_UpdForUpdateEncrypt(osslContext.getId(), gcmCtx,
-            input, inOffset, inLen, ciphertext, ciphertextOffset);
+        // return NativeOpenSSLImplementation.do_GCM_UpdForUpdateEncrypt(osslContext.getId(), gcmCtx,
+        //     input, inOffset, inLen, ciphertext, ciphertextOffset);
+        throw new UnsupportedOperationException("do_GCM_UpdForUpdateEncrypt");
     }
 
     @Override
     public int do_GCM_UpdForUpdateDecrypt(long gcmCtx, byte[] ciphertext, int cipherOffset, int cipherLen,
             byte[] plaintext, int plaintextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_UpdForUpdateDecrypt(osslContext.getId(), gcmCtx,
-            ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
+        // return NativeOpenSSLImplementation.do_GCM_UpdForUpdateDecrypt(osslContext.getId(), gcmCtx,
+        //     ciphertext, cipherOffset, cipherLen, plaintext, plaintextOffset);
+        throw new UnsupportedOperationException("do_GCM_UpdForUpdateDecrypt");
     }
 
     @Override
     public int do_GCM_InitForUpdateEncrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] aad,
             int aadLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_InitForUpdateEncrypt(osslContext.getId(), gcmCtx,
-            key, keyLen, iv, ivLen, aad, aadLen);
+        // return NativeOpenSSLImplementation.do_GCM_InitForUpdateEncrypt(osslContext.getId(), gcmCtx,
+        //     key, keyLen, iv, ivLen, aad, aadLen);
+        throw new UnsupportedOperationException("do_GCM_InitForUpdateEncrypt");
     }
 
     @Override
     public int do_GCM_InitForUpdateDecrypt(long gcmCtx, byte[] key, int keyLen, byte[] iv, int ivLen, byte[] aad,
             int aadLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_GCM_InitForUpdateDecrypt(osslContext.getId(), gcmCtx,
-            key, keyLen, iv, ivLen, aad, aadLen);
+        // return NativeOpenSSLImplementation.do_GCM_InitForUpdateDecrypt(osslContext.getId(), gcmCtx,
+        //     key, keyLen, iv, ivLen, aad, aadLen);
+        throw new UnsupportedOperationException("do_GCM_InitForUpdateDecrypt");
     }
 
     @Override
     public void do_GCM_delete() throws OpenSSLException {
-        NativeOpenSSLImplementation.do_GCM_delete(osslContext.getId());
+        // NativeOpenSSLImplementation.do_GCM_delete(osslContext.getId());
+        throw new UnsupportedOperationException("do_GCM_delete");
     }
 
     @Override
     public void free_GCM_ctx(long gcmContextId) throws OpenSSLException {
-        NativeOpenSSLImplementation.free_GCM_ctx(osslContext.getId(), gcmContextId);
+        // NativeOpenSSLImplementation.free_GCM_ctx(osslContext.getId(), gcmContextId);
+        throw new UnsupportedOperationException("free_GCM_ctx");
     }
 
     @Override
     public long create_GCM_context() throws OpenSSLException {
-        return NativeOpenSSLImplementation.create_GCM_context(osslContext.getId());
+        // return NativeOpenSSLImplementation.create_GCM_context(osslContext.getId());
+        throw new UnsupportedOperationException("create_GCM_context");
     }
 
     @Override
     public long do_CCM_checkHardwareCCMSupport() {
-        return NativeOpenSSLImplementation.do_CCM_checkHardwareCCMSupport(osslContext.getId());
+        // return NativeOpenSSLImplementation.do_CCM_checkHardwareCCMSupport(osslContext.getId());
+        throw new UnsupportedOperationException("do_CCM_checkHardwareCCMSupport");
     }
 
     @Override
     public int do_CCM_encryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
             byte[] output, int outputOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
-            ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        // return NativeOpenSSLImplementation.do_CCM_encryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
+        //     ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        throw new UnsupportedOperationException("do_CCM_encryptFastJNI_WithHardwareSupport");
     }
 
     @Override
     public int do_CCM_encryptFastJNI(int keyLen, int ivLen, int inLen, int ciphertextLen, int aadLen, int tagLen,
             long parameterBuffer, long inputBuffer, long outputBuffer) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_encryptFastJNI(osslContext.getId(), keyLen, ivLen, inLen,
-            ciphertextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        // return NativeOpenSSLImplementation.do_CCM_encryptFastJNI(osslContext.getId(), keyLen, ivLen, inLen,
+        //     ciphertextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        throw new UnsupportedOperationException("do_CCM_encryptFastJNI");
     }
 
     @Override
     public int do_CCM_decryptFastJNI_WithHardwareSupport(int keyLen, int ivLen, int inOffset, int inLen,
             int ciphertextOffset, int aadLen, int tagLen, long parameterBuffer, byte[] input, int inputOffset,
             byte[] output, int outputOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
-            ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        // return NativeOpenSSLImplementation.do_CCM_decryptFastJNI_WithHardwareSupport(keyLen, ivLen, inOffset, inLen,
+        //     ciphertextOffset, aadLen, tagLen, parameterBuffer, input, inputOffset, output, outputOffset);
+        throw new UnsupportedOperationException("do_CCM_decryptFastJNI_WithHardwareSupport");
     }
 
     @Override
     public int do_CCM_decryptFastJNI(int keyLen, int ivLen, int ciphertextLen, int plaintextLen, int aadLen, int tagLen,
             long parameterBuffer, long inputBuffer, long outputBuffer) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_decryptFastJNI(osslContext.getId(), keyLen, ivLen, ciphertextLen,
-            plaintextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        // return NativeOpenSSLImplementation.do_CCM_decryptFastJNI(osslContext.getId(), keyLen, ivLen, ciphertextLen,
+        //     plaintextLen, aadLen, tagLen, parameterBuffer, inputBuffer, outputBuffer);
+        throw new UnsupportedOperationException("do_CCM_decryptFastJNI");
     }
 
     @Override
     public int do_CCM_encrypt(byte[] iv, int ivLen, byte[] key, int keyLen, byte[] aad, int aadLen, byte[] input,
             int inLen, byte[] ciphertext, int ciphertextLen, int tagLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_encrypt(osslContext.getId(), iv, ivLen, key, keyLen,
-            aad, aadLen, input, inLen, ciphertext, ciphertextLen, tagLen);
+        // return NativeOpenSSLImplementation.do_CCM_encrypt(osslContext.getId(), iv, ivLen, key, keyLen,
+        //     aad, aadLen, input, inLen, ciphertext, ciphertextLen, tagLen);
+        throw new UnsupportedOperationException("do_CCM_encrypt");
     }
 
     @Override
     public int do_CCM_decrypt(byte[] iv, int ivLen, byte[] key, int keyLen, byte[] aad, int aadLen, byte[] ciphertext,
             int ciphertextLength, byte[] plaintext, int plaintextLength, int tagLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.do_CCM_decrypt(osslContext.getId(), iv, ivLen, key, keyLen,
-            aad, aadLen, ciphertext, ciphertextLength, plaintext, plaintextLength, tagLen);
+        // return NativeOpenSSLImplementation.do_CCM_decrypt(osslContext.getId(), iv, ivLen, key, keyLen,
+        //     aad, aadLen, ciphertext, ciphertextLength, plaintext, plaintextLength, tagLen);
+        throw new UnsupportedOperationException("do_CCM_decrypt");
     }
 
     @Override
     public void do_CCM_delete() throws OpenSSLException {
-        NativeOpenSSLImplementation.do_CCM_delete(osslContext.getId());
+        // NativeOpenSSLImplementation.do_CCM_delete(osslContext.getId());
+        throw new UnsupportedOperationException("do_CCM_delete");
     }
 
     @Override
     public int RSACIPHER_public_encrypt(long rsaKeyId,
             int rsaPaddingId, int mdId, int mgf1Id, byte[] plaintext, int plaintextOffset,
             int plaintextLen, byte[] ciphertext, int ciphertextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSACIPHER_public_encrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
-            mdId, mgf1Id, plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
+        // return NativeOpenSSLImplementation.RSACIPHER_public_encrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
+        //     mdId, mgf1Id, plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset);
+        throw new UnsupportedOperationException("RSACIPHER_public_encrypt");
     }
 
     @Override
     public int RSACIPHER_private_encrypt(long rsaKeyId, int rsaPaddingId, byte[] plaintext, int plaintextOffset,
             int plaintextLen, byte[] ciphertext, int ciphertextOffset, boolean convertKey) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSACIPHER_private_encrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
-            plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, convertKey);
+        // return NativeOpenSSLImplementation.RSACIPHER_private_encrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
+        //     plaintext, plaintextOffset, plaintextLen, ciphertext, ciphertextOffset, convertKey);
+        throw new UnsupportedOperationException("RSACIPHER_private_encrypt");
     }
 
     @Override
     public int RSACIPHER_public_decrypt(long rsaKeyId, int rsaPaddingId, byte[] ciphertext, int ciphertextOffset,
             int ciphertextLen, byte[] plaintext, int plaintextOffset) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSACIPHER_public_decrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
-            ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset);
+        // return NativeOpenSSLImplementation.RSACIPHER_public_decrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
+        //     ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset);
+        throw new UnsupportedOperationException("RSACIPHER_public_decrypt");
     }
 
     @Override
@@ -674,153 +740,183 @@ public abstract class NativeOpenSSLAdapter implements NativeInterface {
             int rsaPaddingId, int mdId, int mgf1Id, byte[] ciphertext, int ciphertextOffset,
             int ciphertextLen, byte[] plaintext, int plaintextOffset, boolean convertKey)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSACIPHER_private_decrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
-            mdId, mgf1Id, ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset, convertKey);
+        // return NativeOpenSSLImplementation.RSACIPHER_private_decrypt(osslContext.getId(), rsaKeyId, rsaPaddingId,
+        //     mdId, mgf1Id, ciphertext, ciphertextOffset, ciphertextLen, plaintext, plaintextOffset, convertKey);
+        throw new UnsupportedOperationException("RSACIPHER_private_decrypt");
     }
 
     @Override
     public long DHKEY_generate(int numBits) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_generate(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.DHKEY_generate(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("DHKEY_generate");
     }
 
     @Override
     public byte[] DHKEY_generateParameters(int numBits) {
-        return NativeOpenSSLImplementation.DHKEY_generateParameters(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.DHKEY_generateParameters(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("DHKEY_generateParameters");
     }
 
     @Override
     public long DHKEY_generate(byte[] dhParameters) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_generate(osslContext.getId(), dhParameters);
+        // return NativeOpenSSLImplementation.DHKEY_generate(osslContext.getId(), dhParameters);
+        throw new UnsupportedOperationException("DHKEY_generate");
     }
 
     @Override
     public long DHKEY_createPrivateKey(byte[] privateKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        // return NativeOpenSSLImplementation.DHKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        throw new UnsupportedOperationException("DHKEY_createPrivateKey");
     }
 
     @Override
     public long DHKEY_createPublicKey(byte[] publicKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        // return NativeOpenSSLImplementation.DHKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        throw new UnsupportedOperationException("DHKEY_createPublicKey");
     }
 
     @Override
     public byte[] DHKEY_getParameters(long dhKeyId) {
-        return NativeOpenSSLImplementation.DHKEY_getParameters(osslContext.getId(), dhKeyId);
+        // return NativeOpenSSLImplementation.DHKEY_getParameters(osslContext.getId(), dhKeyId);
+        throw new UnsupportedOperationException("DHKEY_getParameters");
     }
 
     @Override
     public byte[] DHKEY_getPrivateKeyBytes(long dhKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_getPrivateKeyBytes(osslContext.getId(), dhKeyId);
+        // return NativeOpenSSLImplementation.DHKEY_getPrivateKeyBytes(osslContext.getId(), dhKeyId);
+        throw new UnsupportedOperationException("DHKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] DHKEY_getPublicKeyBytes(long dhKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_getPublicKeyBytes(osslContext.getId(), dhKeyId);
+        // return NativeOpenSSLImplementation.DHKEY_getPublicKeyBytes(osslContext.getId(), dhKeyId);
+        throw new UnsupportedOperationException("DHKEY_getPublicKeyBytes");
     }
 
     @Override
     public long DHKEY_createPKey(long dhKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_createPKey(osslContext.getId(), dhKeyId);
+        // return NativeOpenSSLImplementation.DHKEY_createPKey(osslContext.getId(), dhKeyId);
+        throw new UnsupportedOperationException("DHKEY_createPKey");
     }
 
     @Override
     public byte[] DHKEY_computeDHSecret(long pubKeyId, long privKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DHKEY_computeDHSecret(osslContext.getId(), pubKeyId, privKeyId);
+        // return NativeOpenSSLImplementation.DHKEY_computeDHSecret(osslContext.getId(), pubKeyId, privKeyId);
+        throw new UnsupportedOperationException("DHKEY_computeDHSecret");
     }
 
     @Override
     public void DHKEY_delete(long dhKeyId) throws OpenSSLException {
-        NativeOpenSSLImplementation.DHKEY_delete(osslContext.getId(), dhKeyId);
+        // NativeOpenSSLImplementation.DHKEY_delete(osslContext.getId(), dhKeyId);
+        throw new UnsupportedOperationException("DHKEY_delete");
     }
 
     @Override
     public long RSAKEY_generate(int numBits, long e) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAKEY_generate(osslContext.getId(), numBits, e);
+        // return NativeOpenSSLImplementation.RSAKEY_generate(osslContext.getId(), numBits, e);
+        throw new UnsupportedOperationException("RSAKEY_generate");
     }
 
     @Override
     public long RSAKEY_createPrivateKey(byte[] privateKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        // return NativeOpenSSLImplementation.RSAKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        throw new UnsupportedOperationException("RSAKEY_createPrivateKey");
     }
 
     @Override
     public long RSAKEY_createPublicKey(byte[] publicKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        // return NativeOpenSSLImplementation.RSAKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        throw new UnsupportedOperationException("RSAKEY_createPublicKey");
     }
 
     @Override
     public byte[] RSAKEY_getPrivateKeyBytes(long rsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAKEY_getPrivateKeyBytes(osslContext.getId(), rsaKeyId);
+        // return NativeOpenSSLImplementation.RSAKEY_getPrivateKeyBytes(osslContext.getId(), rsaKeyId);
+        throw new UnsupportedOperationException("RSAKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] RSAKEY_getPublicKeyBytes(long rsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAKEY_getPublicKeyBytes(osslContext.getId(), rsaKeyId);
+        // return NativeOpenSSLImplementation.RSAKEY_getPublicKeyBytes(osslContext.getId(), rsaKeyId);
+        throw new UnsupportedOperationException("RSAKEY_getPublicKeyBytes");
     }
 
     @Override
     public int RSAKEY_size(long rsaKeyId) {
-        return NativeOpenSSLImplementation.RSAKEY_size(osslContext.getId(), rsaKeyId);
+        // return NativeOpenSSLImplementation.RSAKEY_size(osslContext.getId(), rsaKeyId);
+        throw new UnsupportedOperationException("RSAKEY_size");
     }
 
     @Override
     public void RSAKEY_delete(long rsaKeyId) {
-        NativeOpenSSLImplementation.RSAKEY_delete(osslContext.getId(), rsaKeyId);
+        // NativeOpenSSLImplementation.RSAKEY_delete(osslContext.getId(), rsaKeyId);
+        throw new UnsupportedOperationException("RSAKEY_delete");
     }
 
     @Override
     public long DSAKEY_generate(int numBits) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_generate(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.DSAKEY_generate(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("DSAKEY_generate");
     }
 
     @Override
     public byte[] DSAKEY_generateParameters(int numBits) {
-        return NativeOpenSSLImplementation.DSAKEY_generateParameters(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.DSAKEY_generateParameters(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("DSAKEY_generateParameters");
     }
 
     @Override
     public long DSAKEY_generate(byte[] dsaParameters) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_generate(osslContext.getId(), dsaParameters);
+        // return NativeOpenSSLImplementation.DSAKEY_generate(osslContext.getId(), dsaParameters);
+        throw new UnsupportedOperationException("DSAKEY_generate");
     }
 
     @Override
     public long DSAKEY_createPrivateKey(byte[] privateKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        // return NativeOpenSSLImplementation.DSAKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        throw new UnsupportedOperationException("DSAKEY_createPrivateKey");
     }
 
     @Override
     public long DSAKEY_createPublicKey(byte[] publicKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        // return NativeOpenSSLImplementation.DSAKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        throw new UnsupportedOperationException("DSAKEY_createPublicKey");
     }
 
     @Override
     public byte[] DSAKEY_getParameters(long dsaKeyId) {
-        return NativeOpenSSLImplementation.DSAKEY_getParameters(osslContext.getId(), dsaKeyId);
+        // return NativeOpenSSLImplementation.DSAKEY_getParameters(osslContext.getId(), dsaKeyId);
+        throw new UnsupportedOperationException("DSAKEY_getParameters");
     }
 
     @Override
     public byte[] DSAKEY_getPrivateKeyBytes(long dsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_getPrivateKeyBytes(osslContext.getId(), dsaKeyId);
+        // return NativeOpenSSLImplementation.DSAKEY_getPrivateKeyBytes(osslContext.getId(), dsaKeyId);
+        throw new UnsupportedOperationException("DSAKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] DSAKEY_getPublicKeyBytes(long dsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_getPublicKeyBytes(osslContext.getId(), dsaKeyId);
+        // return NativeOpenSSLImplementation.DSAKEY_getPublicKeyBytes(osslContext.getId(), dsaKeyId);
+        throw new UnsupportedOperationException("DSAKEY_getPublicKeyBytes");
     }
 
     @Override
     public long DSAKEY_createPKey(long dsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSAKEY_createPKey(osslContext.getId(), dsaKeyId);
+        // return NativeOpenSSLImplementation.DSAKEY_createPKey(osslContext.getId(), dsaKeyId);
+        throw new UnsupportedOperationException("DSAKEY_createPKey");
     }
 
     @Override
     public void DSAKEY_delete(long dsaKeyId) throws OpenSSLException {
-        NativeOpenSSLImplementation.DSAKEY_delete(osslContext.getId(), dsaKeyId);
+        // NativeOpenSSLImplementation.DSAKEY_delete(osslContext.getId(), dsaKeyId);
+        throw new UnsupportedOperationException("DSAKEY_delete");
     }
 
     @Override
     public void PKEY_delete(long pkeyId) throws OpenSSLException {
-        NativeOpenSSLImplementation.PKEY_delete(osslContext.getId(), pkeyId);
+        // NativeOpenSSLImplementation.PKEY_delete(osslContext.getId(), pkeyId);
+        throw new UnsupportedOperationException("PKEY_delete");
     }
 
     @Override
@@ -876,349 +972,414 @@ public abstract class NativeOpenSSLAdapter implements NativeInterface {
     @Override
     public int DIGEST_PKCS12KeyDeriveHelp(long digestId, byte[] input,
             int offset, int length, int iterationCount) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DIGEST_PKCS12KeyDeriveHelp(osslContext.getId(),
-                digestId, input, offset, length, iterationCount);
+        // return NativeOpenSSLImplementation.DIGEST_PKCS12KeyDeriveHelp(osslContext.getId(),
+        //         digestId, input, offset, length, iterationCount);
+        throw new UnsupportedOperationException("DIGEST_PKCS12KeyDeriveHelp");
     }
 
     @Override
     public byte[] SIGNATURE_sign(long digestId, long pkeyId, boolean convert) throws OpenSSLException {
-        return NativeOpenSSLImplementation.SIGNATURE_sign(osslContext.getId(), digestId, pkeyId, convert);
+        // return NativeOpenSSLImplementation.SIGNATURE_sign(osslContext.getId(), digestId, pkeyId, convert);
+        throw new UnsupportedOperationException("SIGNATURE_sign");
     }
 
     @Override
     public boolean SIGNATURE_verify(long digestId, long pkeyId, byte[] sigBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.SIGNATURE_verify(osslContext.getId(), digestId, pkeyId, sigBytes);
+        // return NativeOpenSSLImplementation.SIGNATURE_verify(osslContext.getId(), digestId, pkeyId, sigBytes);
+        throw new UnsupportedOperationException("SIGNATURE_verify");
     }
 
     @Override
     public byte[] SIGNATUREEdDSA_signOneShot(long pkeyId, byte[] bytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.SIGNATUREEdDSA_signOneShot(osslContext.getId(), pkeyId, bytes);
+        // return NativeOpenSSLImplementation.SIGNATUREEdDSA_signOneShot(osslContext.getId(), pkeyId, bytes);
+        throw new UnsupportedOperationException("SIGNATUREEdDSA_signOneShot");
     }
 
     @Override
     public boolean SIGNATUREEdDSA_verifyOneShot(long pkeyId, byte[] sigBytes, byte[] oneShot) throws OpenSSLException {
-        return NativeOpenSSLImplementation.SIGNATUREEdDSA_verifyOneShot(osslContext.getId(), pkeyId, sigBytes, oneShot);
+        // return NativeOpenSSLImplementation.SIGNATUREEdDSA_verifyOneShot(osslContext.getId(), pkeyId, sigBytes, oneShot);
+        throw new UnsupportedOperationException("SIGNATUREEdDSA_verifyOneShot");
     }
 
     @Override
     public int RSAPSS_signInit(long rsaPssId, long pkeyId, int saltlen, boolean convert) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAPSS_signInit(osslContext.getId(), rsaPssId, pkeyId, saltlen, convert);
+        // return NativeOpenSSLImplementation.RSAPSS_signInit(osslContext.getId(), rsaPssId, pkeyId, saltlen, convert);
+        throw new UnsupportedOperationException("RSAPSS_signInit");
     }
 
     @Override
     public int RSAPSS_verifyInit(long rsaPssId, long pkeyId, int saltlen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAPSS_verifyInit(osslContext.getId(), rsaPssId, pkeyId, saltlen);
+        // return NativeOpenSSLImplementation.RSAPSS_verifyInit(osslContext.getId(), rsaPssId, pkeyId, saltlen);
+        throw new UnsupportedOperationException("RSAPSS_verifyInit");
     }
 
     @Override
     public int RSAPSS_getSigLen(long rsaPssId) {
-        return NativeOpenSSLImplementation.RSAPSS_getSigLen(osslContext.getId(), rsaPssId);
+        // return NativeOpenSSLImplementation.RSAPSS_getSigLen(osslContext.getId(), rsaPssId);
+        throw new UnsupportedOperationException("RSAPSS_getSigLen");
     }
 
     @Override
     public void RSAPSS_signFinal(long rsaPssId, byte[] signature, int length) throws OpenSSLException {
-        NativeOpenSSLImplementation.RSAPSS_signFinal(osslContext.getId(), rsaPssId, signature, length);
+        // NativeOpenSSLImplementation.RSAPSS_signFinal(osslContext.getId(), rsaPssId, signature, length);
+        throw new UnsupportedOperationException("RSAPSS_signFinal");
     }
 
     @Override
     public boolean RSAPSS_verifyFinal(long rsaPssId, byte[] sigBytes, int length) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAPSS_verifyFinal(osslContext.getId(), rsaPssId, sigBytes, length);
+        // return NativeOpenSSLImplementation.RSAPSS_verifyFinal(osslContext.getId(), rsaPssId, sigBytes, length);
+        throw new UnsupportedOperationException("RSAPSS_verifyFinal");
     }
 
     @Override
     public long RSAPSS_createContext(String digestAlgo, String mgf1SpecAlgo) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSAPSS_createContext(osslContext.getId(), digestAlgo, mgf1SpecAlgo);
+        // return NativeOpenSSLImplementation.RSAPSS_createContext(osslContext.getId(), digestAlgo, mgf1SpecAlgo);
+        throw new UnsupportedOperationException("RSAPSS_createContext");
     }
 
     @Override
     public void RSAPSS_releaseContext(long rsaPssId) throws OpenSSLException {
-        NativeOpenSSLImplementation.RSAPSS_releaseContext(osslContext.getId(), rsaPssId);
+        // NativeOpenSSLImplementation.RSAPSS_releaseContext(osslContext.getId(), rsaPssId);
+        throw new UnsupportedOperationException("RSAPSS_releaseContext");
     }
 
     @Override
     public void RSAPSS_digestUpdate(long rsaPssId, byte[] input, int offset, int length) throws OpenSSLException {
-        NativeOpenSSLImplementation.RSAPSS_digestUpdate(osslContext.getId(), rsaPssId, input, offset, length);
+        // NativeOpenSSLImplementation.RSAPSS_digestUpdate(osslContext.getId(), rsaPssId, input, offset, length);
+        throw new UnsupportedOperationException("RSAPSS_digestUpdate");
     }
 
     @Override
     public void RSAPSS_reset(long digestId) throws OpenSSLException {
-        NativeOpenSSLImplementation.RSAPSS_reset(osslContext.getId(), digestId);
+        // NativeOpenSSLImplementation.RSAPSS_reset(osslContext.getId(), digestId);
+        throw new UnsupportedOperationException("RSAPSS_reset");
     }
 
     @Override
     public void RSAPSS_resetDigest(long rsaPssId) throws OpenSSLException {
-        NativeOpenSSLImplementation.RSAPSS_resetDigest(osslContext.getId(), rsaPssId);
+        // NativeOpenSSLImplementation.RSAPSS_resetDigest(osslContext.getId(), rsaPssId);
+        throw new UnsupportedOperationException("RSAPSS_resetDigest");
     }
 
     @Override
     public byte[] DSANONE_SIGNATURE_sign(byte[] digest, long dsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSANONE_SIGNATURE_sign(osslContext.getId(), digest, dsaKeyId);
+        // return NativeOpenSSLImplementation.DSANONE_SIGNATURE_sign(osslContext.getId(), digest, dsaKeyId);
+        throw new UnsupportedOperationException("DSANONE_SIGNATURE_sign");
     }
 
     @Override
     public boolean DSANONE_SIGNATURE_verify(byte[] digest, long dsaKeyId, byte[] sigBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.DSANONE_SIGNATURE_verify(osslContext.getId(), digest, dsaKeyId, sigBytes);
+        // return NativeOpenSSLImplementation.DSANONE_SIGNATURE_verify(osslContext.getId(), digest, dsaKeyId, sigBytes);
+        throw new UnsupportedOperationException("DSANONE_SIGNATURE_verify");
     }
 
     @Override
     public byte[] RSASSL_SIGNATURE_sign(byte[] digest, long rsaKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSASSL_SIGNATURE_sign(osslContext.getId(), digest, rsaKeyId);
+        // return NativeOpenSSLImplementation.RSASSL_SIGNATURE_sign(osslContext.getId(), digest, rsaKeyId);
+        throw new UnsupportedOperationException("RSASSL_SIGNATURE_sign");
     }
 
     @Override
     public boolean RSASSL_SIGNATURE_verify(byte[] digest, long rsaKeyId, byte[] sigBytes, boolean convert)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.RSASSL_SIGNATURE_verify(osslContext.getId(), digest, rsaKeyId, sigBytes, convert);
+        // return NativeOpenSSLImplementation.RSASSL_SIGNATURE_verify(osslContext.getId(), digest, rsaKeyId, sigBytes, convert);
+        throw new UnsupportedOperationException("RSASSL_SIGNATURE_verify");
     }
 
     @Override
     public long HMAC_create(String digestAlgo) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HMAC_create(osslContext.getId(), digestAlgo);
+        // return NativeOpenSSLImplementation.HMAC_create(osslContext.getId(), digestAlgo);
+        throw new UnsupportedOperationException("HMAC_create");
     }
 
     @Override
     public int HMAC_update(long hmacId, byte[] key, int keyLength, byte[] input, int inputOffset, int inputLength,
             boolean needInit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HMAC_update(osslContext.getId(), hmacId, key, keyLength,
-            input, inputOffset, inputLength, needInit);
+        // return NativeOpenSSLImplementation.HMAC_update(osslContext.getId(), hmacId, key, keyLength,
+        //     input, inputOffset, inputLength, needInit);
+        throw new UnsupportedOperationException("HMAC_update");
     }
 
     @Override
     public int HMAC_doFinal(long hmacId, byte[] key, int keyLength, byte[] hmac, boolean needInit) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HMAC_doFinal(osslContext.getId(), hmacId, key, keyLength, hmac, needInit);
+        // return NativeOpenSSLImplementation.HMAC_doFinal(osslContext.getId(), hmacId, key, keyLength, hmac, needInit);
+        throw new UnsupportedOperationException("HMAC_doFinal");
     }
 
     @Override
     public int HMAC_size(long hmacId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HMAC_size(osslContext.getId(), hmacId);
+        // return NativeOpenSSLImplementation.HMAC_size(osslContext.getId(), hmacId);
+        throw new UnsupportedOperationException("HMAC_size");
     }
 
     @Override
     public void HMAC_delete(long hmacId) throws OpenSSLException {
-        NativeOpenSSLImplementation.HMAC_delete(osslContext.getId(), hmacId);
+        // NativeOpenSSLImplementation.HMAC_delete(osslContext.getId(), hmacId);
+        throw new UnsupportedOperationException("HMAC_delete");
     }
 
     @Override
     public long ECKEY_generate(int numBits) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("ECKEY_generate");
     }
 
     @Override
     public long ECKEY_generate(String curveOid) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), curveOid);
+        // return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), curveOid);
+        throw new UnsupportedOperationException("ECKEY_generate");
     }
 
     @Override
     public long XECKEY_generate(int option, long bufferPtr) throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_generate(osslContext.getId(), option, bufferPtr);
+        // return NativeOpenSSLImplementation.XECKEY_generate(osslContext.getId(), option, bufferPtr);
+        throw new UnsupportedOperationException("XECKEY_generate");
     }
 
     @Override
     public byte[] ECKEY_generateParameters(int numBits) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_generateParameters(osslContext.getId(), numBits);
+        // return NativeOpenSSLImplementation.ECKEY_generateParameters(osslContext.getId(), numBits);
+        throw new UnsupportedOperationException("ECKEY_generateParameters");
     }
 
     @Override
     public byte[] ECKEY_generateParameters(String curveOid) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_generateParameters(osslContext.getId(), curveOid);
+        // return NativeOpenSSLImplementation.ECKEY_generateParameters(osslContext.getId(), curveOid);
+        throw new UnsupportedOperationException("ECKEY_generateParameters");
     }
 
     @Override
     public long ECKEY_generate(byte[] ecParameters) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), ecParameters);
+        // return NativeOpenSSLImplementation.ECKEY_generate(osslContext.getId(), ecParameters);
+        throw new UnsupportedOperationException("ECKEY_generate");
     }
 
     @Override
     public long ECKEY_createPrivateKey(byte[] privateKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        // return NativeOpenSSLImplementation.ECKEY_createPrivateKey(osslContext.getId(), privateKeyBytes);
+        throw new UnsupportedOperationException("ECKEY_createPrivateKey");
     }
 
     @Override
     public long XECKEY_createPrivateKey(byte[] privateKeyBytes, long bufferPtr) throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_createPrivateKey(osslContext.getId(), privateKeyBytes, bufferPtr);
+        // return NativeOpenSSLImplementation.XECKEY_createPrivateKey(osslContext.getId(), privateKeyBytes, bufferPtr);
+        throw new UnsupportedOperationException("XECKEY_createPrivateKey");
     }
 
     @Override
     public long ECKEY_createPublicKey(byte[] publicKeyBytes, byte[] parameterBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_createPublicKey(osslContext.getId(), publicKeyBytes, parameterBytes);
+        // return NativeOpenSSLImplementation.ECKEY_createPublicKey(osslContext.getId(), publicKeyBytes, parameterBytes);
+        throw new UnsupportedOperationException("ECKEY_createPublicKey");
     }
 
     @Override
     public long XECKEY_createPublicKey(byte[] publicKeyBytes) throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        // return NativeOpenSSLImplementation.XECKEY_createPublicKey(osslContext.getId(), publicKeyBytes);
+        throw new UnsupportedOperationException("XECKEY_createPublicKey");
     }
 
     @Override
     public byte[] ECKEY_getParameters(long ecKeyId) {
-        return NativeOpenSSLImplementation.ECKEY_getParameters(osslContext.getId(), ecKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_getParameters(osslContext.getId(), ecKeyId);
+        throw new UnsupportedOperationException("ECKEY_getParameters");
     }
 
     @Override
     public byte[] ECKEY_getPrivateKeyBytes(long ecKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_getPrivateKeyBytes(osslContext.getId(), ecKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_getPrivateKeyBytes(osslContext.getId(), ecKeyId);
+        throw new UnsupportedOperationException("ECKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] XECKEY_getPrivateKeyBytes(long xecKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_getPrivateKeyBytes(osslContext.getId(), xecKeyId);
+        // return NativeOpenSSLImplementation.XECKEY_getPrivateKeyBytes(osslContext.getId(), xecKeyId);
+        throw new UnsupportedOperationException("XECKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] ECKEY_getPublicKeyBytes(long ecKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_getPublicKeyBytes(osslContext.getId(), ecKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_getPublicKeyBytes(osslContext.getId(), ecKeyId);
+        throw new UnsupportedOperationException("ECKEY_getPublicKeyBytes");
     }
 
     @Override
     public byte[] XECKEY_getPublicKeyBytes(long xecKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_getPublicKeyBytes(osslContext.getId(), xecKeyId);
+        // return NativeOpenSSLImplementation.XECKEY_getPublicKeyBytes(osslContext.getId(), xecKeyId);
+        throw new UnsupportedOperationException("XECKEY_getPublicKeyBytes");
     }
 
     @Override
     public long ECKEY_createPKey(long ecKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_createPKey(osslContext.getId(), ecKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_createPKey(osslContext.getId(), ecKeyId);
+        throw new UnsupportedOperationException("ECKEY_createPKey");
     }
 
     @Override
     public void ECKEY_delete(long ecKeyId) throws OpenSSLException {
-        NativeOpenSSLImplementation.ECKEY_delete(osslContext.getId(), ecKeyId);
+        // NativeOpenSSLImplementation.ECKEY_delete(osslContext.getId(), ecKeyId);
+        throw new UnsupportedOperationException("ECKEY_delete");
     }
 
     @Override
     public void XECKEY_delete(long xecKeyId) throws OpenSSLException {
-        NativeOpenSSLImplementation.XECKEY_delete(osslContext.getId(), xecKeyId);
+        // NativeOpenSSLImplementation.XECKEY_delete(osslContext.getId(), xecKeyId);
+        throw new UnsupportedOperationException("XECKEY_delete");
     }
 
     @Override
     public long XDHKeyAgreement_init(long privId) {
-        return NativeOpenSSLImplementation.XDHKeyAgreement_init(osslContext.getId(), privId);
+        // return NativeOpenSSLImplementation.XDHKeyAgreement_init(osslContext.getId(), privId);
+        throw new UnsupportedOperationException("XDHKeyAgreement_init");
     }
 
     @Override
     public void XDHKeyAgreement_setPeer(long genCtx, long pubId) {
-        NativeOpenSSLImplementation.XDHKeyAgreement_setPeer(osslContext.getId(), genCtx, pubId);
+        // NativeOpenSSLImplementation.XDHKeyAgreement_setPeer(osslContext.getId(), genCtx, pubId);
+        throw new UnsupportedOperationException("XDHKeyAgreement_setPeer");
     }
 
     @Override
     public byte[] ECKEY_computeECDHSecret(long pubEcKeyId, long privEcKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_computeECDHSecret(osslContext.getId(), pubEcKeyId, privEcKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_computeECDHSecret(osslContext.getId(), pubEcKeyId, privEcKeyId);
+        throw new UnsupportedOperationException("ECKEY_computeECDHSecret");
     }
 
     @Override
     public byte[] XECKEY_computeECDHSecret(long genCtx, long pubEcKeyId, long privEcKeyId)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.XECKEY_computeECDHSecret(osslContext.getId(), genCtx, pubEcKeyId, privEcKeyId);
+        // return NativeOpenSSLImplementation.XECKEY_computeECDHSecret(osslContext.getId(), genCtx, pubEcKeyId, privEcKeyId);
+        throw new UnsupportedOperationException("XECKEY_computeECDHSecret");
     }
 
     @Override
     public byte[] ECKEY_signDatawithECDSA(byte[] digestBytes, int digestBytesLen, long ecPrivateKeyId)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_signDatawithECDSA(osslContext.getId(), digestBytes, digestBytesLen, ecPrivateKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_signDatawithECDSA(osslContext.getId(), digestBytes, digestBytesLen, ecPrivateKeyId);
+        throw new UnsupportedOperationException("ECKEY_signDatawithECDSA");
     }
 
     @Override
     public boolean ECKEY_verifyDatawithECDSA(byte[] digestBytes, int digestBytesLen, byte[] sigBytes, int sigBytesLen,
             long ecPublicKeyId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.ECKEY_verifyDatawithECDSA(osslContext.getId(), digestBytes, digestBytesLen,
-            sigBytes, sigBytesLen, ecPublicKeyId);
+        // return NativeOpenSSLImplementation.ECKEY_verifyDatawithECDSA(osslContext.getId(), digestBytes, digestBytesLen,
+        //     sigBytes, sigBytesLen, ecPublicKeyId);
+        throw new UnsupportedOperationException("ECKEY_verifyDatawithECDSA");
     }
 
     @Override
     public long HKDF_create(String digestAlgo) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HKDF_create(osslContext.getId(), digestAlgo);
+        // return NativeOpenSSLImplementation.HKDF_create(osslContext.getId(), digestAlgo);
+        throw new UnsupportedOperationException("HKDF_create");
     }
 
     @Override
     public byte[] HKDF_extract(long hkdfId, byte[] saltBytes, long saltLen, byte[] inKey, long inKeyLen)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.HKDF_extract(osslContext.getId(), hkdfId, saltBytes, saltLen, inKey, inKeyLen);
+        // return NativeOpenSSLImplementation.HKDF_extract(osslContext.getId(), hkdfId, saltBytes, saltLen, inKey, inKeyLen);
+        throw new UnsupportedOperationException("HKDF_extract");
     }
 
     @Override
     public byte[] HKDF_expand(long hkdfId, byte[] prkBytes, long prkBytesLen, byte[] info, long infoLen, long okmLen)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.HKDF_expand(osslContext.getId(), hkdfId, prkBytes, prkBytesLen, info, infoLen, okmLen);
+        // return NativeOpenSSLImplementation.HKDF_expand(osslContext.getId(), hkdfId, prkBytes, prkBytesLen, info, infoLen, okmLen);
+        throw new UnsupportedOperationException("HKDF_expand");
     }
 
     @Override
     public byte[] HKDF_derive(long hkdfId, byte[] saltBytes, long saltLen, byte[] inKey, long inKeyLen, byte[] info,
             long infoLen, long okmLen) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HKDF_derive(osslContext.getId(), hkdfId,
-            saltBytes, saltLen, inKey, inKeyLen, info, infoLen, okmLen);
+        // return NativeOpenSSLImplementation.HKDF_derive(osslContext.getId(), hkdfId,
+        //     saltBytes, saltLen, inKey, inKeyLen, info, infoLen, okmLen);
+        throw new UnsupportedOperationException("HKDF_derive");
     }
 
     @Override
     public void HKDF_delete(long hkdfId) throws OpenSSLException {
-        NativeOpenSSLImplementation.HKDF_delete(osslContext.getId(), hkdfId);
+        // NativeOpenSSLImplementation.HKDF_delete(osslContext.getId(), hkdfId);
+        throw new UnsupportedOperationException("HKDF_delete");
     }
 
     @Override
     public int HKDF_size(long hkdfId) throws OpenSSLException {
-        return NativeOpenSSLImplementation.HKDF_size(osslContext.getId(), hkdfId);
+        // return NativeOpenSSLImplementation.HKDF_size(osslContext.getId(), hkdfId);
+        throw new UnsupportedOperationException("HKDF_size");
     }
 
     @Override
     public byte[] PBKDF2_derive(String hashAlgorithm, byte[] password, byte[] salt, int iterations, int keyLength)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.PBKDF2_derive(osslContext.getId(), hashAlgorithm, password, salt, iterations, keyLength);
+        // return NativeOpenSSLImplementation.PBKDF2_derive(osslContext.getId(), hashAlgorithm, password, salt, iterations, keyLength);
+        throw new UnsupportedOperationException("PBKDF2_derive");
     }
 
     @Override
     public long MLKEY_generate(String cipherName)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.MLKEY_generate(osslContext.getId(), cipherName);
+        // return NativeOpenSSLImplementation.MLKEY_generate(osslContext.getId(), cipherName);
+        throw new UnsupportedOperationException("MLKEY_generate");
     }
 
     @Override
     public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.MLKEY_createPrivateKey(osslContext.getId(), cipherName, privateKeyBytes);
+        // return NativeOpenSSLImplementation.MLKEY_createPrivateKey(osslContext.getId(), cipherName, privateKeyBytes);
+        throw new UnsupportedOperationException("MLKEY_createPrivateKey");
     }
 
     @Override
     public long MLKEY_createPublicKey(String cipherName, byte[] publicKeyBytes)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.MLKEY_createPublicKey(osslContext.getId(), cipherName, publicKeyBytes);
+        // return NativeOpenSSLImplementation.MLKEY_createPublicKey(osslContext.getId(), cipherName, publicKeyBytes);
+        throw new UnsupportedOperationException("MLKEY_createPublicKey");
     }
 
     @Override
     public byte[] MLKEY_getPrivateKeyBytes(long mlkeyId)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.MLKEY_getPrivateKeyBytes(osslContext.getId(), mlkeyId);
+        // return NativeOpenSSLImplementation.MLKEY_getPrivateKeyBytes(osslContext.getId(), mlkeyId);
+        throw new UnsupportedOperationException("MLKEY_getPrivateKeyBytes");
     }
 
     @Override
     public byte[] MLKEY_getPublicKeyBytes(long mlkeyId)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.MLKEY_getPublicKeyBytes(osslContext.getId(), mlkeyId);
+        // return NativeOpenSSLImplementation.MLKEY_getPublicKeyBytes(osslContext.getId(), mlkeyId);
+        throw new UnsupportedOperationException("MLKEY_getPublicKeyBytes");
     }
 
     @Override
     public void MLKEY_delete(long mlkeyId) {
-        NativeOpenSSLImplementation.MLKEY_delete(osslContext.getId(), mlkeyId);
+        // NativeOpenSSLImplementation.MLKEY_delete(osslContext.getId(), mlkeyId);
+        throw new UnsupportedOperationException("MLKEY_delete");
     }
 
     @Override
     public void KEM_encapsulate(long pKeyId, byte[] wrappedKey, byte[] randomKey)
             throws OpenSSLException {
-        NativeOpenSSLImplementation.KEM_encapsulate(osslContext.getId(), pKeyId, wrappedKey, randomKey);
+        // NativeOpenSSLImplementation.KEM_encapsulate(osslContext.getId(), pKeyId, wrappedKey, randomKey);
+        throw new UnsupportedOperationException("KEM_encapsulate");
     }
 
     @Override
     public byte[] KEM_decapsulate(long pKeyId, byte[] wrappedKey)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.KEM_decapsulate(osslContext.getId(), pKeyId, wrappedKey);
+        // return NativeOpenSSLImplementation.KEM_decapsulate(osslContext.getId(), pKeyId, wrappedKey);
+        throw new UnsupportedOperationException("KEM_decapsulate");
     }
 
     @Override
     public byte[] PQC_SIGNATURE_sign(long pKeyId, byte[] data)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.PQC_SIGNATURE_sign(osslContext.getId(), pKeyId, data);
+        // return NativeOpenSSLImplementation.PQC_SIGNATURE_sign(osslContext.getId(), pKeyId, data);
+        throw new UnsupportedOperationException("PQC_SIGNATURE_sign");
     }
 
     @Override
     public boolean PQC_SIGNATURE_verify(long pKeyId, byte[] sigBytes, byte[] data)
             throws OpenSSLException {
-        return NativeOpenSSLImplementation.PQC_SIGNATURE_verify(osslContext.getId(), pKeyId, sigBytes, data);
+        // return NativeOpenSSLImplementation.PQC_SIGNATURE_verify(osslContext.getId(), pKeyId, sigBytes, data);
+        throw new UnsupportedOperationException("PQC_SIGNATURE_verify");
     }
 }
 
