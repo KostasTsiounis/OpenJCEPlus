@@ -20,7 +20,7 @@ public class TestRSACipherInterop extends BaseTestRSACipherInterop {
     public void beforeAll() {
         Utils.loadProviderTestSuite();
         setProviderName(Utils.TEST_SUITE_PROVIDER_NAME);
-        setInteropProviderName(Utils.PROVIDER_SunJCE);
+        setInteropProviderName(Utils.PROVIDER_BC);
         setKeySize(2048);
     }
 }
