@@ -17,8 +17,9 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 public class TestRSACipherInterop extends BaseTestRSACipherInterop {
 
     @BeforeAll
-    public void beforeAll() {
+    public void beforeAll() throws Exception {
         Utils.loadProviderTestSuite();
+        Utils.loadProviderBC();
         setProviderName(Utils.TEST_SUITE_PROVIDER_NAME);
         setInteropProviderName(Utils.PROVIDER_BC);
         setKeySize(2048);
