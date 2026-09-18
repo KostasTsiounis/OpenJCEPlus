@@ -1179,6 +1179,13 @@ public abstract class NativeOCKAdapter implements NativeInterface {
     @Override
     public long MLKEY_createPrivateKey(String cipherName, byte[] privateKeyBytes)
             throws OCKException {
+        // OCK only supports the expandedKey CHOICE (0x04 tag). Seed and both
+        // formats require OpenSSL 3.x APIs that ICC does not expose.
+        if (privateKeyBytes == null || privateKeyBytes.length == 0
+                || (privateKeyBytes[0] & 0xFF) != 0x04) {
+            throw new OCKException(
+                    "OCK backend only accepts expandedKey-encoded private keys (tag 0x04)");
+        }
         return NativeOCKImplementation.MLKEY_createPrivateKey(ockContext.getId(), cipherName, privateKeyBytes);
     }
 
