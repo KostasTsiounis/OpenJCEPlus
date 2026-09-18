@@ -151,8 +151,6 @@ public final class PQCKey implements AsymmetricKey {
             if (!validId(pkeyId)) {
                 throw new NativeException(badIdMsg);
             }
-        
-            System.out.println("getPrivKeyBytes - pkeyId :" + pkeyId);
             this.privateKeyBytes = this.nativeInterface.MLKEY_getPrivateKeyBytes(pkeyId);
         }
     }

@@ -11,7 +11,6 @@ package com.ibm.crypto.plus.provider;
 import com.ibm.crypto.plus.provider.base.PQCKey;
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.security.ProviderException;
 import java.util.Arrays;
 import javax.security.auth.DestroyFailedException;
 import sun.security.pkcs.PKCS8Key;
@@ -47,27 +46,10 @@ final class PQCPrivateKey extends PKCS8Key {
         this.paramSetName = PQCKnownOIDs.findMatch(this.algid.getName()).stdName();
         this.familyName = familyName(this.paramSetName);
         this.provider = provider;
-        byte[] key = null;
-        DerValue pkOct = null;
-        
-        //Check to determine if the key bytes already have the Octet tag.
-        if (OctectStringEncoded(keyBytes)) {
-            //Remove encoding OctetString encoding.
-            key = Arrays.copyOfRange(keyBytes, 4, keyBytes.length);
-        } else {
-            key = keyBytes;
-        }
-
-        // Currently the ICC expects the raw keys in an OctetString
         try {
-            try {
-                pkOct = new DerValue(DerValue.tag_OctetString, key);
-                this.pqcKey = PQCKey.createPrivateKey(
-                                this.paramSetName, pkOct.toByteArray(), provider, "KeyFactory");
-                this.privKeyMaterial = pkOct.toByteArray();
-            } finally {
-                pkOct.clear();
-            }
+            this.privKeyMaterial = normaliseKeyMaterial(keyBytes, this.paramSetName);
+            this.pqcKey = PQCKey.createPrivateKey(
+                    this.paramSetName, this.privKeyMaterial, provider, "KeyFactory");
         } catch (Exception e) {
             throw new InvalidKeyException("Invalid key " + e.getMessage(), e);
         }
@@ -82,30 +64,10 @@ final class PQCPrivateKey extends PKCS8Key {
         try {
             this.provider = provider;
             this.pqcKey = pqcKey;
-            // Resolve the specific param-set name first so that isExpandedChoice
-            // and getExpandedKeyLength receive a concrete name like "ML-KEM-512",
-            // not the family name "ML-KEM".
             this.paramSetName = PQCKnownOIDs.findMatch(pqcKey.getAlgorithm()).stdName();
             this.familyName = familyName(this.paramSetName);
             this.algid = new AlgorithmId(PQCAlgorithmId.getOID(this.paramSetName));
-
-            validateKeyLength(pqcKey.getPrivateKeyBytes());
-            if (!isExpandedChoice(this.paramSetName, pqcKey.getPrivateKeyBytes())) {
-                throw new InvalidKeyException("Only expanded keys are supported by OpenJCEPlus");
-            }
-            //Check to determine if the key bytes have the Octet tag.
-            if (OctectStringEncoded(pqcKey.getPrivateKeyBytes())) {
-                this.privKeyMaterial = pqcKey.getPrivateKeyBytes();
-            } else {
-                DerValue pkOct = null;
-                try {
-                    pkOct = new DerValue(DerValue.tag_OctetString, pqcKey.getPrivateKeyBytes());
-
-                    this.privKeyMaterial = pkOct.toByteArray();
-                } finally {
-                    pkOct.clear();
-                }
-            }
+            this.privKeyMaterial = normaliseKeyMaterial(pqcKey.getPrivateKeyBytes(), this.paramSetName);
         } catch (Exception exception) {
             throw provider.providerException("Failure in PQCPrivateKey" + exception.getMessage(), exception);
         }
@@ -119,27 +81,12 @@ final class PQCPrivateKey extends PKCS8Key {
     PQCPrivateKey(OpenJCEPlusProvider provider, byte[] encoded) throws InvalidKeyException {
         super(encoded);
         this.provider = provider;
-
         this.paramSetName = PQCKnownOIDs.findMatch(this.algid.getName()).stdName();
         this.familyName = familyName(this.paramSetName);
-        validateKeyLength(this.privKeyMaterial);
-        if (!isExpandedChoice(this.paramSetName, this.privKeyMaterial)) {
-            throw new InvalidKeyException("Only expanded keys are supported by OpenJCEPlus");
-        }
-        //Check to determine if the key bytes have the Octet tag.
-        if (!(OctectStringEncoded(this.privKeyMaterial))) {
-            DerValue pkOct = null;
-            try {
-                pkOct = new DerValue(DerValue.tag_OctetString, this.privKeyMaterial);
-
-                this.privKeyMaterial = pkOct.toByteArray();
-            } finally {
-                pkOct.clear();
-            }
-        }
         try {
+            this.privKeyMaterial = normaliseKeyMaterial(this.privKeyMaterial, this.paramSetName);
             this.pqcKey = PQCKey.createPrivateKey(
-                                this.paramSetName, this.privKeyMaterial, provider, "KeyFactory");
+                    this.paramSetName, this.privKeyMaterial, provider, "KeyFactory");
         } catch (Exception e) {
             throw new InvalidKeyException("Invalid key " + e.getMessage(), e);
         }
@@ -256,100 +203,126 @@ final class PQCPrivateKey extends PKCS8Key {
                 "Unrecognized PQC algorithm family for parameter set: " + paramSetName);
     }
 
-    private boolean OctectStringEncoded(byte[] key) {
-        try {
-            //Check and see if this is an encoded OctetString
-            if (key[0] == 0x04) {
-                //This might be encoded
-                StringBuilder sb = new StringBuilder();
-                for (int i = 2; i < 4; i++) {
-                    sb.append(String.format("%02X", key[i]));
-                }
-                String s = sb.toString();
-                int b =  Integer.parseInt(s, 16);
-                if (b == (key.length - 4)) {
-                    //This is an encoding
-                    return true;
-                }
-            } 
-            return false;
-        } catch (Exception e) {
-            return false;
+    /**
+     * Returns the expected byte length of the expanded private key for the
+     * given PQC algorithm parameter-set name (e.g. "ML-DSA-44").
+     */
+    private static int getExpandedKeyLength(String algName) throws InvalidKeyException {
+        switch (algName) {
+            case "ML-DSA-44":  return 2560;
+            case "ML-DSA-65":  return 4032;
+            case "ML-DSA-87":  return 4896;
+            case "ML-KEM-512": return 1632;
+            case "ML-KEM-768": return 2400;
+            case "ML-KEM-1024":return 3168;
+            default: throw new InvalidKeyException("Unexpected PQC algorithm: " + algName);
         }
     }
 
     /**
-     * Validates that the supplied key bytes are non-null and long enough to
-     * contain a valid DER-encoded expanded PQC private key (at least 4 bytes).
-     *
-     * @param key the raw key bytes to validate
-     * @throws InvalidKeyException if {@code key} is {@code null} or has fewer
-     *         than 4 bytes
+     * Returns the expected seed length in bytes for the given algorithm.
+     * Per RFC 9881 (ML-DSA) the seed is always 32 bytes; per RFC 9935
+     * (ML-KEM) the seed is always 64 bytes.
      */
-    private static void validateKeyLength(byte[] key) throws InvalidKeyException {
+    private static int getSeedLength(String algName) throws InvalidKeyException {
+        if (algName.startsWith("ML-DSA-")) return 32;
+        if (algName.startsWith("ML-KEM-")) return 64;
+        throw new InvalidKeyException("Unexpected PQC algorithm: " + algName);
+    }
+
+    /**
+     * Normalises private key material to a canonical CHOICE-encoded form
+     * and validates structural correctness per RFC 9881 / RFC 9935.
+     *
+     * <p>Accepted inputs:
+     * <ul>
+     *   <li><b>seed</b> – {@code 0x80 LL <seed>} where LL is the seed length
+     *       (32 for ML-DSA, 64 for ML-KEM).  Passed through as-is.</li>
+     *   <li><b>expandedKey (encoded)</b> – {@code 0x04 0x82 HH LL <expanded>}.
+     *       Passed through as-is.</li>
+     *   <li><b>expandedKey (raw)</b> – bare expanded bytes with no DER header.
+     *       Wrapped into {@code 0x04 0x82 HH LL <expanded>}.</li>
+     *   <li><b>both</b> – {@code 0x30 0x82 MM MM ...}.  Passed through as-is
+     *       after verifying the outer SEQUENCE length.</li>
+     * </ul>
+     *
+     * <p>The tag byte unambiguously identifies the CHOICE per RFC 9881 §6:
+     * {@code 0x80} = seed, {@code 0x04} = expandedKey, {@code 0x30} = both.
+     * Any other first byte is rejected unless the total length exactly matches
+     * the raw expanded key size, in which case it is treated as raw expanded.
+     *
+     * @param key      the key material to normalise
+     * @param algName  the concrete parameter-set name (e.g. "ML-DSA-44")
+     * @return         normalised CHOICE-encoded key material
+     * @throws InvalidKeyException if the material does not match any valid format
+     */
+    private static byte[] normaliseKeyMaterial(byte[] key, String algName)
+            throws InvalidKeyException {
         if (key == null) {
             throw new InvalidKeyException("Private key material is null");
         }
-        if (key.length < 4) {
-            throw new InvalidKeyException(
-                    "Private key material is too short: expected at least 4 bytes, got " + key.length);
+        if (key.length == 0) {
+            throw new InvalidKeyException("Private key material is empty");
         }
-    }
 
-    /**
-     * Returns the expected byte length of the expanded private key for the
-     * given PQC algorithm name.
-     *
-     * @param algName the standard PQC algorithm name (e.g. {@code "ML-DSA-44"})
-     * @return the expected expanded private key length in bytes
-     * @throws ProviderException if {@code algName} is not a recognised PQC
-     *                           algorithm
-     */
-    private static int getExpandedKeyLength(String algName) {
-        if ("ML-DSA-44".equals(algName)) {
-            return 2560;
-        } else if ("ML-DSA-65".equals(algName)) {
-            return 4032;
-        } else if ("ML-DSA-87".equals(algName)) {
-            return 4896;
-        } else if ("ML-KEM-512".equals(algName)) {
-            return 1632;
-        } else if ("ML-KEM-768".equals(algName)) {
-            return 2400;
-        } else if ("ML-KEM-1024".equals(algName)) {
-            return 3168;
-        } else {
-            throw new ProviderException("Unexpected PQC algorithm: " + algName);
-        }
-    }
-
-    /**
-     * Determines whether the supplied private key material represents an
-     * expanded PQC private key.
-     *
-     * <p>RFC 9881 and RFC 9935 define PQC private key material as a CHOICE.
-     * An expanded key is encoded as an OCTET STRING. For the currently
-     * supported ML-DSA and ML-KEM parameter sets, the expanded key lengths
-     * are large enough that the DER OCTET STRING encoding uses long-form
-     * length encoding.</p>
-     *
-     * <p>This method checks the private key material contained in the PKCS#8
-     * privateKey OCTET STRING, not the complete PKCS#8 encoding.</p>
-     *
-     * @param algName the standard PQC algorithm name
-     * @param key the private key material to check
-     *
-     * @return true if the key material is an expanded private key encoding;
-     *         false otherwise
-     */
-    private boolean isExpandedChoice(String algName, byte[] key) {
         int expandedLen = getExpandedKeyLength(algName);
+        int seedLen     = getSeedLength(algName);
+        int tag         = key[0] & 0xFF;
 
-        int derLen = ((key[2] & 0xFF) << 8) | (key[3] & 0xFF);
+        // --- seed: 0x80 LL <seed> ---
+        // RFC 9881 §6: "fixed 32-byte OCTET STRING (34 bytes total with the 0x8020 tag and length)"
+        // RFC 9935 §6: "fixed 64-byte OCTET STRING (66 bytes total with the 0x8040 tag and length)"
+        if (tag == 0x80) {
+            int expectedLen = seedLen + 2; // tag + 1-byte length + seed bytes
+            if (key.length != expectedLen || (key[1] & 0xFF) != seedLen) {
+                throw new InvalidKeyException(
+                        "Invalid seed CHOICE encoding for " + algName
+                        + ": expected " + expectedLen + " bytes, got " + key.length);
+            }
+            return key.clone();
+        }
 
-        return key.length == expandedLen + 4
-                && ((key[0] & 0xFF) == 0x04)
-                && ((key[1] & 0xFF) == 0x82)
-                && derLen == expandedLen;
+        // --- expandedKey (encoded): 0x04 0x82 HH LL <expanded> ---
+        if (tag == 0x04) {
+            if (key.length < 4) {
+                throw new InvalidKeyException("expandedKey CHOICE too short for " + algName);
+            }
+            int derLen = ((key[2] & 0xFF) << 8) | (key[3] & 0xFF);
+            if ((key[1] & 0xFF) != 0x82 || derLen != expandedLen || key.length != expandedLen + 4) {
+                throw new InvalidKeyException(
+                        "Invalid expandedKey CHOICE encoding for " + algName);
+            }
+            return key.clone();
+        }
+
+        // --- both: 0x30 0x82 MM MM <seed-octetstring> <expanded-octetstring> ---
+        if (tag == 0x30) {
+            if (key.length < 4) {
+                throw new InvalidKeyException("both CHOICE too short for " + algName);
+            }
+            // Inner content: 0x04 LL <seed> + 0x04 0x82 HH LL <expanded>
+            int innerLen = 2 + seedLen + 4 + expandedLen; // seed-TLV + expanded-TLV
+            int derLen   = ((key[2] & 0xFF) << 8) | (key[3] & 0xFF);
+            if ((key[1] & 0xFF) != 0x82 || derLen != innerLen || key.length != innerLen + 4) {
+                throw new InvalidKeyException(
+                        "Invalid both CHOICE encoding for " + algName);
+            }
+            return key.clone();
+        }
+
+        // --- raw expanded: no header, exact length match ---
+        if (key.length == expandedLen) {
+            DerValue pkOct = null;
+            try {
+                pkOct = new DerValue(DerValue.tag_OctetString, key);
+                return pkOct.toByteArray();
+            } finally {
+                if (pkOct != null) pkOct.clear();
+            }
+        }
+
+        throw new InvalidKeyException(
+                "Unrecognised private key format for " + algName
+                + " (length=" + key.length + ", tag=0x" + Integer.toHexString(tag) + ")");
     }
 }
