@@ -41,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-@Tag(Tags.OPENJCEPLUS_NAME)
+@Tag(Tags.OPENJCEPLUS_OPENSSL_NAME)
+@Tag(Tags.OPENJCEPLUS_OCK_NAME)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ParameterizedClass
 @MethodSource("ibm.jceplus.junit.tests.TestArguments#getEnabledProviders")
@@ -599,12 +600,18 @@ public class TestPQCKeys extends BaseTest {
         KeyFactory openjceplusKeyFactory = KeyFactory.getInstance(algorithm, getProviderName());
         byte[] rfcPrivateKeyEncoded = decodePEM(privateKeyPem);
 
-        String expectedMessage = "Only expanded keys are supported by OpenJCEPlus";
-        try {
+        if ("OpenJCEPlus-OpenSSL".equals(getProviderName())) {
+            // OpenSSL backend supports seed format — import must succeed
             openjceplusKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(rfcPrivateKeyEncoded));
-            fail("Expected InvalidKeySpecException for seed-only private key.");
-        } catch (InvalidKeySpecException e) {
-            assertEquals(expectedMessage, e.getCause().getMessage());
+        } else {
+            // OCK backend only accepts expandedKey format — seed must be rejected
+            try {
+                openjceplusKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(rfcPrivateKeyEncoded));
+                fail("Expected InvalidKeySpecException for seed-only private key.");
+            } catch (InvalidKeySpecException e) {
+                assertEquals("OCK backend only accepts expandedKey-encoded private keys (tag 0x04)",
+                        e.getCause().getMessage());
+            }
         }
     }
 
