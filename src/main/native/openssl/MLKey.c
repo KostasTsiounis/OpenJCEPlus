@@ -27,10 +27,10 @@ JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1generate(
     JNIEnv *env, jclass thisObj, jlong osslContextId, jstring cipherName) {
 
-    EVP_PKEY_CTX *ctx         = NULL;
-    EVP_PKEY     *pkey        = NULL;
-    const char   *algoChars   = NULL;
-    jlong         mlkeyId     = 0;
+    EVP_PKEY_CTX  *ctx       = NULL;
+    EVP_PKEY      *pkey      = NULL;
+    const char    *algoChars = NULL;
+    jlong         mlkeyId    = 0;
 
     if (cipherName == NULL) {
         throwOSSLException(env, 0, "MLKEY_generate: cipherName is null");
@@ -69,6 +69,7 @@ cleanup:
     if (pkey != NULL) {
         EVP_PKEY_free(pkey);
     }
+
     return mlkeyId;
 }
 
@@ -85,22 +86,17 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
     JNIEnv *env, jclass thisObj, jlong osslContextId, jstring cipherName,
     jbyteArray privateKeyBytes) {
 
-    EVP_PKEY          *pkey         = NULL;
-    unsigned char     *encNative    = NULL;
-    unsigned char     *rawKey       = NULL;
-    const char        *algoChars    = NULL;
-    jboolean           isCopy       = 0;
-    jlong              mlkeyId      = 0;
-    size_t             encLen       = 0;
-    size_t             rawLen       = 0;
+    EVP_PKEY           *pkey      = NULL;
+    unsigned char      *encNative = NULL;
+    unsigned char      *rawKey    = NULL;
+    const char         *algoChars = NULL;
+    jboolean           isCopy     = 0;
+    jlong              mlkeyId    = 0;
+    size_t             encLen     = 0;
+    size_t             rawLen     = 0;
 
     if (privateKeyBytes == NULL) {
         throwOSSLException(env, 0, "MLKEY_createPrivateKey: privateKeyBytes is null");
-        return 0;
-    }
-
-    if (!(algoChars = (*env)->GetStringUTFChars(env, cipherName, NULL))) {
-        throwOSSLException(env, 0, "MLKEY_createPrivateKey: GetStringUTFChars failed");
         return 0;
     }
 
@@ -121,6 +117,11 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
         goto cleanup;
     }
 
+    if (!(algoChars = (*env)->GetStringUTFChars(env, cipherName, NULL))) {
+        throwOSSLException(env, 0, "MLKEY_createPrivateKey: GetStringUTFChars failed");
+        goto cleanup;
+    }
+
     pkey = EVP_PKEY_new_raw_private_key_ex(NULL, algoChars, NULL, rawKey, rawLen);
     if (pkey == NULL) {
         throwOSSLException(env, 0, "MLKEY_createPrivateKey: EVP_PKEY_new_raw_private_key_ex failed");
@@ -131,14 +132,17 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
     pkey = NULL;
 
 cleanup:
-    (*env)->ReleaseStringUTFChars(env, cipherName, algoChars);
+    if (pkey != NULL) {
+        EVP_PKEY_free(pkey);
+    }
+    if (algoChars != NULL) {
+        (*env)->ReleaseStringUTFChars(env, cipherName, algoChars);
+    }
     if (rawKey != NULL) {
         memset(rawKey, 0, rawLen);
         free(rawKey);
     }
-    if (pkey != NULL) {
-        EVP_PKEY_free(pkey);
-    }
+
     return mlkeyId;
 }
 
@@ -169,11 +173,6 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
         return 0;
     }
 
-    if (!(algoChars = (*env)->GetStringUTFChars(env, cipherName, NULL))) {
-        throwOSSLException(env, 0, "MLKEY_createPublicKey: GetStringUTFChars failed");
-        return 0;
-    }
-
     encLen    = (size_t)((*env)->GetArrayLength(env, publicKeyBytes));
     encNative = (unsigned char *)((*env)->GetPrimitiveArrayCritical(env, publicKeyBytes, &isCopy));
     if (encNative == NULL) {
@@ -191,6 +190,11 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
         goto cleanup;
     }
 
+    if (!(algoChars = (*env)->GetStringUTFChars(env, cipherName, NULL))) {
+        throwOSSLException(env, 0, "MLKEY_createPublicKey: GetStringUTFChars failed");
+        goto cleanup;
+    }
+
     pkey = EVP_PKEY_new_raw_public_key_ex(NULL, algoChars, NULL, rawKey, rawLen);
     if (pkey == NULL) {
         throwOSSLException(env, 0, "MLKEY_createPublicKey: EVP_PKEY_new_raw_public_key_ex failed");
@@ -201,13 +205,16 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1cre
     pkey = NULL;
 
 cleanup:
-    (*env)->ReleaseStringUTFChars(env, cipherName, algoChars);
-    if (rawKey != NULL) {
-        free(rawKey);
-    }
     if (pkey != NULL) {
         EVP_PKEY_free(pkey);
     }
+    if (algoChars != NULL) {
+        (*env)->ReleaseStringUTFChars(env, cipherName, algoChars);
+    }
+    if (rawKey != NULL) {
+        free(rawKey);
+    }
+
     return mlkeyId;
 }
 
@@ -239,7 +246,7 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1get
     }
 
     /* First call to get the size */
-    if (1 != EVP_PKEY_get_raw_private_key(pkey, NULL, &rawLen) || rawLen == 0) {
+    if ((1 != EVP_PKEY_get_raw_private_key(pkey, NULL, &rawLen)) || (rawLen == 0)) {
         throwOSSLException(env, 0, "MLKEY_getPrivateKeyBytes: EVP_PKEY_get_raw_private_key (size) failed");
         return NULL;
     }
@@ -279,16 +286,18 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1get
     retKeyBytes = keyBytes;
 
 cleanup:
+    if ((keyBytes != NULL) && (retKeyBytes == NULL)) {
+        (*env)->DeleteLocalRef(env, keyBytes);
+    }
+    if (encoded != NULL) {
+        memset(encoded, 0, encLen);
+        free(encoded);
+    }
     if (rawKey != NULL) {
         memset(rawKey, 0, rawLen);
         free(rawKey);
     }
-    if (encoded != NULL) {
-        free(encoded);
-    }
-    if ((keyBytes != NULL) && (retKeyBytes == NULL)) {
-        (*env)->DeleteLocalRef(env, keyBytes);
-    }
+
     return retKeyBytes;
 }
 
@@ -320,7 +329,7 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1get
     }
 
     /* First call to get the size */
-    if (1 != EVP_PKEY_get_raw_public_key(pkey, NULL, &rawLen) || rawLen == 0) {
+    if ((1 != EVP_PKEY_get_raw_public_key(pkey, NULL, &rawLen)) || (rawLen == 0)) {
         throwOSSLException(env, 0, "MLKEY_getPublicKeyBytes: EVP_PKEY_get_raw_public_key (size) failed");
         return NULL;
     }
@@ -360,15 +369,16 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_MLKEY_1get
     retKeyBytes = keyBytes;
 
 cleanup:
-    if (rawKey != NULL) {
-        free(rawKey);
+    if ((keyBytes != NULL) && (retKeyBytes == NULL)) {
+        (*env)->DeleteLocalRef(env, keyBytes);
     }
     if (encoded != NULL) {
         free(encoded);
     }
-    if ((keyBytes != NULL) && (retKeyBytes == NULL)) {
-        (*env)->DeleteLocalRef(env, keyBytes);
+    if (rawKey != NULL) {
+        free(rawKey);
     }
+
     return retKeyBytes;
 }
 

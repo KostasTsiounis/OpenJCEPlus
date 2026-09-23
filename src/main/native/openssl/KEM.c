@@ -28,12 +28,12 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_KEM_1encap
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong pKeyId,
     jbyteArray wrappedKey, jbyteArray randomKey) {
 
-    EVP_PKEY     *pkey           = (EVP_PKEY *)((intptr_t)pKeyId);
-    EVP_PKEY_CTX *ctx            = NULL;
-    unsigned char *wrappedKeyLocal = NULL;
-    unsigned char *genkeylocal     = NULL;
-    size_t         wrappedkeylen   = 0;
-    size_t         genkeylen       = 0;
+    EVP_PKEY       *pkey             = (EVP_PKEY *)((intptr_t)pKeyId);
+    EVP_PKEY_CTX   *ctx              = NULL;
+    unsigned char  *wrappedKeyNative = NULL;
+    unsigned char  *genKeyNative     = NULL;
+    size_t         wrappedkeylen     = 0;
+    size_t         genkeylen         = 0;
 
     ctx = EVP_PKEY_CTX_new_from_pkey(NULL, pkey, NULL);
     if (ctx == NULL) {
@@ -46,37 +46,33 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_KEM_1encap
         goto cleanup;
     }
 
-    if (1 != EVP_PKEY_encapsulate(ctx, NULL, &wrappedkeylen, NULL, &genkeylen)) {
-        throwOSSLException(env, 0, "KEM_encapsulate: EVP_PKEY_encapsulate (size query) failed");
+    wrappedKeyNative = (unsigned char *)((*env)->GetPrimitiveArrayCritical(env, wrappedKey, &isCopy));
+    if (wrappedKeyNative != NULL) {
+        throwOSSLException(env, 0, "KEM_ensapsulate: GetPrimitiveArrayCritical (wrapped key) failed");
+        goto cleanup;
+    }
+    genKeyNative = (unsigned char *)((*env)->GetPrimitiveArrayCritical(env, randomKey, &isCopy));
+    if (genKeyNative != NULL) {
+        throwOSSLException(env, 0, "KEM_encapsulate: GetPrimitiveArrayCritical (random key) failed");
         goto cleanup;
     }
 
-    wrappedKeyLocal = (unsigned char *)malloc(wrappedkeylen);
-    genkeylocal     = (unsigned char *)malloc(genkeylen);
-    if (wrappedKeyLocal == NULL || genkeylocal == NULL) {
-        throwOSSLException(env, 0, "KEM_encapsulate: malloc failed");
-        goto cleanup;
-    }
-
-    if (1 != EVP_PKEY_encapsulate(ctx, wrappedKeyLocal, &wrappedkeylen, genkeylocal, &genkeylen)) {
+    if (1 != EVP_PKEY_encapsulate(ctx, wrappedKeyNative, &wrappedkeylen, genKeyNative, &genkeylen)) {
         throwOSSLException(env, 0, "KEM_encapsulate: EVP_PKEY_encapsulate failed");
-        goto cleanup;
-    }
-
-    {
-        jbyte *bytes = (*env)->GetByteArrayElements(env, wrappedKey, NULL);
-        memcpy(bytes, wrappedKeyLocal, wrappedkeylen);
-        (*env)->ReleaseByteArrayElements(env, wrappedKey, bytes, 0);
-
-        bytes = (*env)->GetByteArrayElements(env, randomKey, NULL);
-        memcpy(bytes, genkeylocal, genkeylen);
-        (*env)->ReleaseByteArrayElements(env, randomKey, bytes, 0);
     }
 
 cleanup:
-    if (wrappedKeyLocal != NULL) free(wrappedKeyLocal);
-    if (genkeylocal != NULL)     free(genkeylocal);
-    if (ctx != NULL)             EVP_PKEY_CTX_free(ctx);
+    if (genKeyNative != NULL) {
+        (*env)->ReleasePrimitiveArrayCritical(env, randomKey, genKeyNative, JNI_ABORT);
+        genKeyNative = NULL;
+    }
+    if (wrappedKeyNative != NULL) {
+        (*env)->ReleasePrimitiveArrayCritical(env, wrappedKey, wrappedKeyNative, JNI_ABORT);
+        wrappedKeyNative = NULL;
+    }
+    if (ctx != NULL) {
+        EVP_PKEY_CTX_free(ctx);
+    }
 }
 
 //============================================================================
@@ -90,16 +86,16 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_KEM_1decap
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong pKeyId,
     jbyteArray wrappedKey) {
 
-    EVP_PKEY     *pkey             = (EVP_PKEY *)((intptr_t)pKeyId);
-    EVP_PKEY_CTX *ctx              = NULL;
-    jboolean      isCopy           = 0;
-    unsigned char *wrappedKeyNative = NULL;
-    unsigned char *genkeylocal      = NULL;
-    unsigned char *genKeyNative     = NULL;
-    size_t         wrappedkeylen    = 0;
-    size_t         genkeylen        = 0;
-    jbyteArray     randomKey        = NULL;
-    jbyteArray     retRndKeyBytes   = NULL;
+    EVP_PKEY       *pkey             = (EVP_PKEY *)((intptr_t)pKeyId);
+    EVP_PKEY_CTX   *ctx              = NULL;
+    jboolean       isCopy            = 0;
+    unsigned char  *wrappedKeyNative = NULL;
+    unsigned char  *genkeylocal      = NULL;
+    unsigned char  *genKeyNative     = NULL;
+    size_t         wrappedkeylen     = 0;
+    size_t         genkeylen         = 0;
+    jbyteArray     randomKey         = NULL;
+    jbyteArray     retRndKeyBytes    = NULL;
 
     ctx = EVP_PKEY_CTX_new_from_pkey(NULL, pkey, NULL);
     if (ctx == NULL) {
@@ -121,23 +117,17 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_KEM_1decap
     wrappedkeylen = (size_t)((*env)->GetArrayLength(env, wrappedKey));
 
     if (1 != EVP_PKEY_decapsulate(ctx, NULL, &genkeylen, wrappedKeyNative, wrappedkeylen)) {
-        (*env)->ReleasePrimitiveArrayCritical(env, wrappedKey, wrappedKeyNative, JNI_ABORT);
-        wrappedKeyNative = NULL;
         throwOSSLException(env, 0, "KEM_decapsulate: EVP_PKEY_decapsulate (size query) failed");
         goto cleanup;
     }
 
     genkeylocal = (unsigned char *)malloc(genkeylen);
     if (genkeylocal == NULL) {
-        (*env)->ReleasePrimitiveArrayCritical(env, wrappedKey, wrappedKeyNative, JNI_ABORT);
-        wrappedKeyNative = NULL;
         throwOSSLException(env, 0, "KEM_decapsulate: malloc failed");
         goto cleanup;
     }
 
     if (1 != EVP_PKEY_decapsulate(ctx, genkeylocal, &genkeylen, wrappedKeyNative, wrappedkeylen)) {
-        (*env)->ReleasePrimitiveArrayCritical(env, wrappedKey, wrappedKeyNative, JNI_ABORT);
-        wrappedKeyNative = NULL;
         throwOSSLException(env, 0, "KEM_decapsulate: EVP_PKEY_decapsulate failed");
         goto cleanup;
     }
@@ -162,11 +152,19 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_KEM_1decap
     retRndKeyBytes = randomKey;
 
 cleanup:
-    if (wrappedKeyNative != NULL)
+    if (wrappedKeyNative != NULL) {
         (*env)->ReleasePrimitiveArrayCritical(env, wrappedKey, wrappedKeyNative, JNI_ABORT);
-    if (genkeylocal != NULL) free(genkeylocal);
-    if (ctx != NULL)         EVP_PKEY_CTX_free(ctx);
-    if (randomKey != NULL && retRndKeyBytes == NULL)
+        wrappedKeyNative = NULL;
+    }
+    if (genkeylocal != NULL) {
+        free(genkeylocal);
+    }
+    if (ctx != NULL) {
+        EVP_PKEY_CTX_free(ctx);
+    }
+    if (randomKey != NULL && retRndKeyBytes == NULL) {
         (*env)->DeleteLocalRef(env, randomKey);
+    }
+
     return retRndKeyBytes;
 }

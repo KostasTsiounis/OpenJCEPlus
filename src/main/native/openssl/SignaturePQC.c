@@ -29,18 +29,18 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_PQC_1SIGNA
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong pKeyId,
     jbyteArray data) {
 
-    EVP_PKEY         *pkey           = (EVP_PKEY *)((intptr_t)pKeyId);
-    EVP_PKEY_CTX     *sctx           = NULL;
-    EVP_SIGNATURE    *sig_alg        = NULL;
-    unsigned char    *dataNative     = NULL;
-    unsigned char    *sigBuf         = NULL;
-    unsigned char    *sigBytesNative = NULL;
-    jbyteArray        sigBytes       = NULL;
-    jboolean          isCopy         = 0;
-    size_t            dataLen        = 0;
-    size_t            sigLen         = 0;
-    jbyteArray        retSigBytes    = NULL;
-    const char       *algName        = NULL;
+    EVP_PKEY          *pkey           = (EVP_PKEY *)((intptr_t)pKeyId);
+    EVP_PKEY_CTX      *sctx           = NULL;
+    EVP_SIGNATURE     *sig_alg        = NULL;
+    unsigned char     *dataNative     = NULL;
+    unsigned char     *sigBuf         = NULL;
+    unsigned char     *sigBytesNative = NULL;
+    jbyteArray        sigBytes        = NULL;
+    jboolean          isCopy          = 0;
+    size_t            dataLen         = 0;
+    size_t            sigLen          = 0;
+    jbyteArray        retSigBytes     = NULL;
+    const char        *algName        = NULL;
 
     if (pkey == NULL || data == NULL) {
         throwOSSLException(env, 0, "PQC_SIGNATURE_sign: pkey or data is null");
@@ -81,23 +81,21 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_PQC_1SIGNA
 
     /* Determine signature length */
     if (1 != EVP_PKEY_sign(sctx, NULL, &sigLen, dataNative, dataLen)) {
-        (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
         throwOSSLException(env, 0, "PQC_SIGNATURE_sign: EVP_PKEY_sign (size query) failed");
         goto cleanup;
     }
 
     sigBuf = (unsigned char *)malloc(sigLen);
     if (sigBuf == NULL) {
-        (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
         throwOSSLException(env, 0, "PQC_SIGNATURE_sign: malloc failed");
         goto cleanup;
     }
 
     if (1 != EVP_PKEY_sign(sctx, sigBuf, &sigLen, dataNative, dataLen)) {
-        (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
         throwOSSLException(env, 0, "PQC_SIGNATURE_sign: EVP_PKEY_sign failed");
         goto cleanup;
     }
+
     (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
     dataNative = NULL;
 
@@ -118,10 +116,23 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_PQC_1SIGNA
     retSigBytes = sigBytes;
 
 cleanup:
-    if (sctx != NULL) EVP_PKEY_CTX_free(sctx);
-    if (sig_alg != NULL) EVP_SIGNATURE_free(sig_alg);
-    if (sigBuf != NULL) free(sigBuf);
-    if ((sigBytes != NULL) && (retSigBytes == NULL)) (*env)->DeleteLocalRef(env, sigBytes);
+    if (dataNative != NULL) {
+        (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
+        dataNative = NULL;
+    }
+    if ((sigBytes != NULL) && (retSigBytes == NULL)) {
+        (*env)->DeleteLocalRef(env, sigBytes);
+    }
+    if (sigBuf != NULL) {
+        free(sigBuf);
+    }
+    if (sctx != NULL) {
+        EVP_PKEY_CTX_free(sctx);
+    }
+    if (sig_alg != NULL) {
+        EVP_SIGNATURE_free(sig_alg);
+    }
+    
     return retSigBytes;
 }
 
@@ -136,17 +147,17 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_PQC_1SIGNA
     JNIEnv *env, jclass thisObj, jlong osslContextId, jlong pKeyId,
     jbyteArray sigBytes, jbyteArray data) {
 
-    EVP_PKEY         *pkey           = (EVP_PKEY *)((intptr_t)pKeyId);
-    EVP_PKEY_CTX     *sctx           = NULL;
-    EVP_SIGNATURE    *sig_alg        = NULL;
-    unsigned char    *sigBytesNative = NULL;
-    unsigned char    *dataNative     = NULL;
-    jboolean          isCopy         = 0;
-    size_t            sigLen         = 0;
-    size_t            dataLen        = 0;
-    int               rc             = 0;
-    jboolean          verified       = JNI_FALSE;
-    const char       *algName        = NULL;
+    EVP_PKEY          *pkey           = (EVP_PKEY *)((intptr_t)pKeyId);
+    EVP_PKEY_CTX      *sctx           = NULL;
+    EVP_SIGNATURE     *sig_alg        = NULL;
+    unsigned char     *sigBytesNative = NULL;
+    unsigned char     *dataNative     = NULL;
+    jboolean          isCopy          = 0;
+    size_t            sigLen          = 0;
+    size_t            dataLen         = 0;
+    int               rc              = 0;
+    jboolean          verified        = JNI_FALSE;
+    const char        *algName        = NULL;
 
     if (pkey == NULL || sigBytes == NULL || data == NULL) {
         throwOSSLException(env, 0, "PQC_SIGNATURE_verify: pkey, sigBytes, or data is null");
@@ -186,24 +197,32 @@ Java_com_ibm_crypto_plus_provider_openssl_NativeOpenSSLImplementation_PQC_1SIGNA
     dataLen    = (size_t)((*env)->GetArrayLength(env, data));
     dataNative = (unsigned char *)((*env)->GetPrimitiveArrayCritical(env, data, &isCopy));
     if (dataNative == NULL) {
-        (*env)->ReleasePrimitiveArrayCritical(env, sigBytes, sigBytesNative, JNI_ABORT);
         throwOSSLException(env, 0, "PQC_SIGNATURE_verify: GetPrimitiveArrayCritical (data) failed");
         goto cleanup;
     }
 
-    rc = EVP_PKEY_verify(sctx, sigBytesNative, sigLen, dataNative, dataLen);
-
-    (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
-    (*env)->ReleasePrimitiveArrayCritical(env, sigBytes, sigBytesNative, JNI_ABORT);
-
-    if (rc == 1) {
-        verified = JNI_TRUE;
-    } else {
+    if (1 != EVP_PKEY_verify(sctx, sigBytesNative, sigLen, dataNative, dataLen);) {
         throwOSSLException(env, 0, "PQC_SIGNATURE_verify: EVP_PKEY_verify failed");
+        goto cleanup;
     }
 
+    verified = JNI_TRUE;
+
 cleanup:
-    if (sctx != NULL) EVP_PKEY_CTX_free(sctx);
-    if (sig_alg != NULL) EVP_SIGNATURE_free(sig_alg);
+    if (sigBytesNative != NULL) {
+        (*env)->ReleasePrimitiveArrayCritical(env, sigBytes, sigBytesNative, JNI_ABORT);
+        sigBytesNative = NULL;
+    }
+    if (dataNative != NULL) {
+        (*env)->ReleasePrimitiveArrayCritical(env, data, dataNative, JNI_ABORT);
+        dataNative = NULL;
+    }
+    if (sctx != NULL) {
+        EVP_PKEY_CTX_free(sctx);
+    }
+    if (sig_alg != NULL) {
+        EVP_SIGNATURE_free(sig_alg);
+    }
+
     return verified;
 }
