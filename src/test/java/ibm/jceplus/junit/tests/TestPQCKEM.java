@@ -198,7 +198,11 @@ public class TestPQCKEM extends BaseTest {
 
         KEM kem = KEM.getInstance(Algorithm, getProviderName());
 
-        KeyPair pqcKeyPair = generateKeyPair("RSA");
+        // RSA key generation must use the JDK default provider; neither OpenSSL
+        // nor OCK registers a KeyPairGenerator for RSA.
+        KeyPairGenerator rsaGen = KeyPairGenerator.getInstance("RSA");
+        rsaGen.initialize(2048);
+        KeyPair pqcKeyPair = rsaGen.generateKeyPair();
 
         try {
             kem.newEncapsulator(pqcKeyPair.getPublic());

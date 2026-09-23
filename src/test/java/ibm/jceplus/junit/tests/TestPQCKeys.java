@@ -600,18 +600,15 @@ public class TestPQCKeys extends BaseTest {
         KeyFactory openjceplusKeyFactory = KeyFactory.getInstance(algorithm, getProviderName());
         byte[] rfcPrivateKeyEncoded = decodePEM(privateKeyPem);
 
-        if ("OpenJCEPlus-OpenSSL".equals(getProviderName())) {
-            // OpenSSL backend supports seed format - import must succeed
+        // Both backends reject seed-only private keys. The check is performed in
+        // PQCPrivateKey before any native call is made, so the error message is
+        // identical regardless of which backend is active.
+        try {
             openjceplusKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(rfcPrivateKeyEncoded));
-        } else {
-            // OCK backend only accepts expandedKey format - seed must be rejected
-            try {
-                openjceplusKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(rfcPrivateKeyEncoded));
-                fail("Expected InvalidKeySpecException for seed-only private key.");
-            } catch (InvalidKeySpecException e) {
-                assertEquals("OCK backend only accepts expandedKey-encoded private keys (tag 0x04)",
-                        e.getCause().getMessage());
-            }
+            fail("Expected InvalidKeySpecException for seed-only private key.");
+        } catch (InvalidKeySpecException e) {
+            assertEquals("Only expanded keys are supported by OpenJCEPlus",
+                    e.getCause().getMessage());
         }
     }
 
