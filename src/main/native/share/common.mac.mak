@@ -10,7 +10,7 @@
 TOPDIR=../../../..
 
 CFLAGS= -fPIC -DMAC -Werror -std=gnu99 -pedantic -Wall -fstack-protector -m64
-LDFLAGS= -shared -m64
+LDFLAGS= -shared -m64 -Wl,-rpath,@loader_path
 CC ?= clang
 
 ifeq (${PLATFORM},x86_64-mac)
