@@ -22,6 +22,8 @@ ifndef OPENSSL_LIB
 endif
 
 TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l ${OPENSSL_LIB}
+$(shell ln -sf ${OPENSSL_LIB_LOCATION}/libcrypto.3.dylib ${OPENSSL_LIB_LOCATION}/lib${OPENSSL_LIB}.dylib)
+$(info Contents of OPENSSL_LIB_LOCATION=${OPENSSL_LIB_LOCATION}: $(shell ls -la ${OPENSSL_LIB_LOCATION}/libcrypto*))
 
 OBJS = \
 	${HOSTOUT}/BuildDate.o \
