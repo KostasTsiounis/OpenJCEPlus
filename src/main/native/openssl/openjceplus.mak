@@ -43,8 +43,8 @@ endif
 TARGET = ${HOSTOUT}/libopenjceplus.so
 
 ifeq (${PLATFORM},ppc-aix64)
-TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l crypto-semeru
-$(shell ln -sf ${OPENSSL_LIB_LOCATION}/libcrypto64.so ${OPENSSL_LIB_LOCATION}/libcrypto-semeru.so)
+TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l ${OPENSSL_LIB}
+$(shell ln -sf ${OPENSSL_LIB_LOCATION}/libcrypto64.so.3 ${OPENSSL_LIB_LOCATION}/lib${OPENSSL_LIB}.so)
 $(info Contents of OPENSSL_LIB_LOCATION=${OPENSSL_LIB_LOCATION}: $(shell ls -la ${OPENSSL_LIB_LOCATION}/libcrypto*))
 else
 TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l ${OPENSSL_LIB}
