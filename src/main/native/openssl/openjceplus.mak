@@ -42,7 +42,11 @@ endif
 
 TARGET = ${HOSTOUT}/libopenjceplus.so
 ifeq (${PLATFORM},ppc-aix64)
+ifeq (${OPENSSL_LIB},crypto)
 	TARGET_LIBS := ${OPENSSL_LIB_LOCATION}/libcrypto64.so.${OPENSSL_LIB_VERSION}
+else
+	TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l ${OPENSSL_LIB}
+endif
 else
 	TARGET_LIBS := -L ${OPENSSL_LIB_LOCATION} -l ${OPENSSL_LIB}
 endif
