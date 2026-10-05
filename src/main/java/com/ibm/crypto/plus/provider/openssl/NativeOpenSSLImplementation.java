@@ -103,7 +103,7 @@ final class NativeOpenSSLImplementation extends NativeImplementation {
         if (osName.equals("Mac OS X")) {
             loadFile = new File(osslPath, "lib" + OPENSSL_CORE_LIBRARY_NAME + "-semeru.dylib");
         } else if (osName.startsWith("Windows") && osArch.equals("amd64")) {
-            loadFile = new File(osslPath, OPENSSL_CORE_LIBRARY_NAME + "-semeru.dll");
+            loadFile = new File(osslPath, "lib" + OPENSSL_CORE_LIBRARY_NAME + "-3-semeru.dll");
         } else {
             loadFile = new File(osslPath, "lib" + OPENSSL_CORE_LIBRARY_NAME + "-semeru.so");
         }
