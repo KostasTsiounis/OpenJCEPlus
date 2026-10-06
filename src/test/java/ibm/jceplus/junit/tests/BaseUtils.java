@@ -58,4 +58,73 @@ public class BaseUtils {
         return b;
     }
 
+    /**
+     * Extracts the algorithm family name (e.g. "ML-DSA" from "ML-DSA-44",
+     * "SLH-DSA" from "SLH-DSA-SHA2-128s", "ML_KEM" from "ML_KEM_512")
+     * by taking the substring up to the second separator ('-' or '_').
+     *
+     * @param paramSetName the algorithm or parameter set name
+     * @return the family name
+     */
+    public static String getFamilyName(String paramSetName) {
+        if (paramSetName == null) {
+            return null;
+        }
+        int firstDash = paramSetName.indexOf('-');
+        if (firstDash != -1) {
+            int secondDash = paramSetName.indexOf('-', firstDash + 1);
+            if (secondDash != -1) {
+                return paramSetName.substring(0, secondDash);
+            }
+        }
+        int firstUnderscore = paramSetName.indexOf('_');
+        if (firstUnderscore != -1) {
+            int secondUnderscore = paramSetName.indexOf('_', firstUnderscore + 1);
+            if (secondUnderscore != -1) {
+                return paramSetName.substring(0, secondUnderscore);
+            }
+        }
+        return paramSetName;
+    }
+
+    /**
+     * Checks if the algorithm or parameter set name belongs to the SLH-DSA family.
+     * Handles names like "SLH-DSA", "SLH_DSA_...", "slhdsasha2...", "OID.2.16.840.1.101.3.4.3.20", etc.
+     *
+     * @param alg the algorithm name, alias, or OID string
+     * @return true if the algorithm belongs to the SLH-DSA family
+     */
+    public static boolean isSLHDSA(String alg) {
+        if (alg == null) {
+            return false;
+        }
+        String upper = alg.toUpperCase();
+        if (upper.contains("SLH") || upper.contains("SLH-DSA") || upper.contains("SLH_DSA") || upper.contains("SLHDSA")) {
+            return true;
+        }
+        // Check SLH-DSA OIDs (2.16.840.1.101.3.4.3.20 to 2.16.840.1.101.3.4.3.31)
+        if (upper.contains("2.16.840.1.101.3.4.3.")) {
+            int idx = upper.indexOf("2.16.840.1.101.3.4.3.");
+            String suffix = upper.substring(idx + "2.16.840.1.101.3.4.3.".length());
+            try {
+                int oidNum = Integer.parseInt(suffix.split("[^0-9]")[0]);
+                if (oidNum >= 20 && oidNum <= 31) {
+                    return true;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the provider name corresponds to the OpenSSL backend.
+     *
+     * @param providerName the provider name to check
+     * @return true if the provider is OpenJCEPlus-OpenSSL
+     */
+    public static boolean isOpenSSLProvider(String providerName) {
+        return TestProvider.OpenJCEPlus_OpenSSL.getProviderName().equals(providerName);
+    }
+
 }

@@ -266,6 +266,9 @@ final class PQCPrivateKey extends PKCS8Key {
         if (paramSetName.startsWith("ML-KEM-")) {
             return "ML-KEM";
         }
+        if (paramSetName.startsWith("SLH-DSA-")) {
+            return "SLH-DSA";
+        }
         throw new IllegalArgumentException(
                 "Unrecognized PQC algorithm family for parameter set: " + paramSetName);
     }
@@ -332,6 +335,15 @@ final class PQCPrivateKey extends PKCS8Key {
             return 2400;
         } else if ("ML-KEM-1024".equals(algName)) {
             return 3168;
+        } else if ("SLH-DSA-SHA2-128s".equals(algName) || "SLH-DSA-SHA2-128f".equals(algName)
+                || "SLH-DSA-SHAKE-128s".equals(algName) || "SLH-DSA-SHAKE-128f".equals(algName)) {
+            return 64;
+        } else if ("SLH-DSA-SHA2-192s".equals(algName) || "SLH-DSA-SHA2-192f".equals(algName)
+                || "SLH-DSA-SHAKE-192s".equals(algName) || "SLH-DSA-SHAKE-192f".equals(algName)) {
+            return 96;
+        } else if ("SLH-DSA-SHA2-256s".equals(algName) || "SLH-DSA-SHA2-256f".equals(algName)
+                || "SLH-DSA-SHAKE-256s".equals(algName) || "SLH-DSA-SHAKE-256f".equals(algName)) {
+            return 128;
         } else {
             throw new ProviderException("Unexpected PQC algorithm: " + algName);
         }

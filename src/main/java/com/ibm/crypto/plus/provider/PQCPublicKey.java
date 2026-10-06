@@ -118,6 +118,9 @@ final class PQCPublicKey extends X509Key
         if (paramSetName.startsWith("ML-KEM-")) {
             return "ML-KEM";
         }
+        if (paramSetName.startsWith("SLH-DSA-")) {
+            return "SLH-DSA";
+        }
         throw new IllegalArgumentException(
                 "Unrecognized PQC algorithm family for parameter set: " + paramSetName);
     }
