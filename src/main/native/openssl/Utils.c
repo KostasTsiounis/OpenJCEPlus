@@ -235,32 +235,62 @@ unsigned char *encode_octet_string(const unsigned char *raw, size_t rawLen, size
     if (rawLen > 0xFFFF) {
         return NULL;
     }
-    *outLen = rawLen + 4;
+    size_t headerLen;
+    if (rawLen <= 0x7F) {
+        headerLen = 2;          /* tag + 1-byte short-form length */
+    } else if (rawLen <= 0xFF) {
+        headerLen = 3;          /* tag + 0x81 + 1 length byte */
+    } else {
+        headerLen = 4;          /* tag + 0x82 + 2 length bytes */
+    }
+    *outLen = rawLen + headerLen;
     unsigned char *buf = (unsigned char *)malloc(*outLen);
     if (buf == NULL) {
         return NULL;
     }
     buf[0] = 0x04;  /* OctetString tag */
-    buf[1] = 0x82;  /* long-form length, 2 bytes follow */
-    buf[2] = (unsigned char)((rawLen >> 8) & 0xFF);
-    buf[3] = (unsigned char)(rawLen & 0xFF);
-    memcpy(buf + 4, raw, rawLen);
+    if (headerLen == 2) {
+        buf[1] = (unsigned char)rawLen;
+    } else if (headerLen == 3) {
+        buf[1] = 0x81;
+        buf[2] = (unsigned char)rawLen;
+    } else {
+        buf[1] = 0x82;
+        buf[2] = (unsigned char)((rawLen >> 8) & 0xFF);
+        buf[3] = (unsigned char)(rawLen & 0xFF);
+    }
+    memcpy(buf + headerLen, raw, rawLen);
     return buf;
 }
 
 unsigned char *decode_octet_string(const unsigned char *enc, size_t encLen, size_t *rawLen) {
-    if (encLen < 4 || enc[0] != 0x04 || enc[1] != 0x82) {
+    if (encLen < 2 || enc[0] != 0x04) {
         return NULL;
     }
-    *rawLen = ((size_t)(enc[2]) << 8) | (size_t)(enc[3]);
-    if (*rawLen + 4 != encLen) {
+    size_t headerLen;
+    if ((enc[1] & 0x80) == 0) {
+        /* short-form: length fits in one byte */
+        *rawLen   = (size_t)(enc[1]);
+        headerLen = 2;
+    } else if (enc[1] == 0x81 && encLen >= 3) {
+        /* long-form, 1 subsequent length byte */
+        *rawLen   = (size_t)(enc[2]);
+        headerLen = 3;
+    } else if (enc[1] == 0x82 && encLen >= 4) {
+        /* long-form, 2 subsequent length bytes */
+        *rawLen   = ((size_t)(enc[2]) << 8) | (size_t)(enc[3]);
+        headerLen = 4;
+    } else {
+        return NULL;
+    }
+    if (*rawLen + headerLen != encLen) {
         return NULL;
     }
     unsigned char *buf = (unsigned char *)malloc(*rawLen);
     if (buf == NULL) {
         return NULL;
     }
-    memcpy(buf, enc + 4, *rawLen);
+    memcpy(buf, enc + headerLen, *rawLen);
     return buf;
 }
 
@@ -274,26 +304,58 @@ unsigned char *encode_bit_string(const unsigned char *raw, size_t rawLen, size_t
     if (payload > 0xFFFF) {
         return NULL;
     }
-    *outLen = payload + 4; /* tag + 0x82 + 2 length bytes + payload */
+    size_t headerLen;
+    if (payload <= 0x7F) {
+        headerLen = 2;          /* tag + 1-byte short-form length */
+    } else if (payload <= 0xFF) {
+        headerLen = 3;          /* tag + 0x81 + 1 length byte */
+    } else {
+        headerLen = 4;          /* tag + 0x82 + 2 length bytes */
+    }
+    *outLen = payload + headerLen;
     unsigned char *buf = (unsigned char *)malloc(*outLen);
     if (buf == NULL) {
         return NULL;
     }
     buf[0] = 0x03;  /* BitString tag */
-    buf[1] = 0x82;  /* long-form length, 2 bytes follow */
-    buf[2] = (unsigned char)((payload >> 8) & 0xFF);
-    buf[3] = (unsigned char)(payload & 0xFF);
-    buf[4] = 0x00;  /* unused bits = 0 */
-    memcpy(buf + 5, raw, rawLen);
+    if (headerLen == 2) {
+        buf[1] = (unsigned char)payload;
+    } else if (headerLen == 3) {
+        buf[1] = 0x81;
+        buf[2] = (unsigned char)payload;
+    } else {
+        buf[1] = 0x82;
+        buf[2] = (unsigned char)((payload >> 8) & 0xFF);
+        buf[3] = (unsigned char)(payload & 0xFF);
+    }
+    buf[headerLen] = 0x00;  /* unused bits = 0 */
+    memcpy(buf + headerLen + 1, raw, rawLen);
     return buf;
 }
 
 unsigned char *decode_bit_string(const unsigned char *enc, size_t encLen, size_t *rawLen) {
-    if (encLen < 5 || enc[0] != 0x03 || enc[1] != 0x82) {
+    if (encLen < 2 || enc[0] != 0x03) {
         return NULL;
     }
-    size_t payload = ((size_t)(enc[2]) << 8) | (size_t)(enc[3]);
-    if (payload < 1 || payload + 4 != encLen || enc[4] != 0x00) {
+    size_t payload;
+    size_t headerLen;
+    if ((enc[1] & 0x80) == 0) {
+        /* short-form: length fits in one byte */
+        payload   = (size_t)(enc[1]);
+        headerLen = 2;
+    } else if (enc[1] == 0x81 && encLen >= 3) {
+        /* long-form, 1 subsequent length byte */
+        payload   = (size_t)(enc[2]);
+        headerLen = 3;
+    } else if (enc[1] == 0x82 && encLen >= 4) {
+        /* long-form, 2 subsequent length bytes */
+        payload   = ((size_t)(enc[2]) << 8) | (size_t)(enc[3]);
+        headerLen = 4;
+    } else {
+        return NULL;
+    }
+    /* BitString payload = unused-bits byte (must be 0x00) + raw key bytes */
+    if (payload < 1 || payload + headerLen != encLen || enc[headerLen] != 0x00) {
         return NULL;
     }
     *rawLen = payload - 1;
@@ -301,7 +363,7 @@ unsigned char *decode_bit_string(const unsigned char *enc, size_t encLen, size_t
     if (buf == NULL) {
         return NULL;
     }
-    memcpy(buf, enc + 5, *rawLen);
+    memcpy(buf, enc + headerLen + 1, *rawLen);
     return buf;
 }
 
