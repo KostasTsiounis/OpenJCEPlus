@@ -92,7 +92,7 @@ final class PQCPrivateKey extends PKCS8Key {
             // Native always returns a DER OctetString from MLKEY_getPrivateKeyBytes.
             // new DerValue() throws IOException if bytes are not valid DER;
             // getOctetString() throws IOException if the tag is not 0x04.
-            // Both checks are free — no manual tag/length arithmetic needed.
+            // Both checks are free - no manual tag/length arithmetic needed.
             byte[] rawKey = new DerValue(pqcKey.getPrivateKeyBytes()).getOctetString();
 
             if (rawKey.length != getExpandedKeyLength(this.paramSetName)) {
@@ -130,7 +130,7 @@ final class PQCPrivateKey extends PKCS8Key {
 
         // privKeyMaterial is the raw privateKey OCTET STRING content extracted by
         // PKCS8Key.super(encoded) from the PKCS#8 OneAsymmetricKey wrapper.
-        // Per RFC 9881/9935, that content is itself a DER CHOICE — for an expanded
+        // Per RFC 9881/9935, that content is itself a DER CHOICE - for an expanded
         // key it is an inner OctetString.  Use DerValue to unwrap it properly
         // regardless of DER length form; getOctetString() rejects non-OctetString tags.
         byte[] rawKey;
