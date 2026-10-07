@@ -59,29 +59,49 @@ public class BaseUtils {
     }
 
     /**
-     * Extracts the algorithm family name (e.g. "ML-DSA" from "ML-DSA-44",
-     * "SLH-DSA" from "SLH-DSA-SHA2-128s", "ML_KEM" from "ML_KEM_512")
-     * by taking the substring up to the second separator ('-' or '_').
+     * Returns the canonical IANA family name for any PQC algorithm name or alias.
+     * All alias forms (underscore, compact, camelCase, lowercase, OID, etc.) are
+     * normalised to one of "ML-KEM", "ML-DSA", or "SLH-DSA".
      *
-     * @param paramSetName the algorithm or parameter set name
-     * @return the family name
+     * @param paramSetName the algorithm or parameter set name (any alias form)
+     * @return the canonical family name, or {@code paramSetName} unchanged when
+     *         it does not match any known PQC family
      */
     public static String getFamilyName(String paramSetName) {
         if (paramSetName == null) {
             return null;
         }
-        int firstDash = paramSetName.indexOf('-');
-        if (firstDash != -1) {
-            int secondDash = paramSetName.indexOf('-', firstDash + 1);
-            if (secondDash != -1) {
-                return paramSetName.substring(0, secondDash);
-            }
+        // Normalise to uppercase and strip all separators for compact comparison.
+        String upper = paramSetName.toUpperCase().replace("-", "").replace("_", "");
+        if (upper.startsWith("MLKEM")) {
+            return "ML-KEM";
         }
-        int firstUnderscore = paramSetName.indexOf('_');
-        if (firstUnderscore != -1) {
-            int secondUnderscore = paramSetName.indexOf('_', firstUnderscore + 1);
-            if (secondUnderscore != -1) {
-                return paramSetName.substring(0, secondUnderscore);
+        if (upper.startsWith("MLDSA")) {
+            return "ML-DSA";
+        }
+        if (upper.startsWith("SLHDSA")) {
+            return "SLH-DSA";
+        }
+        // OID strings: ML-KEM OIDs are 2.16.840.1.101.3.4.4.x,
+        // ML-DSA OIDs are 2.16.840.1.101.3.4.3.17-19,
+        // SLH-DSA OIDs are 2.16.840.1.101.3.4.3.20-31.
+        String bare = paramSetName;
+        if (bare.toUpperCase().startsWith("OID.")) {
+            bare = bare.substring(4);
+        }
+        if (bare.startsWith("2.16.840.1.101.3.4.4.")) {
+            return "ML-KEM";
+        }
+        if (bare.startsWith("2.16.840.1.101.3.4.3.")) {
+            try {
+                int num = Integer.parseInt(bare.substring("2.16.840.1.101.3.4.3.".length()));
+                if (num >= 17 && num <= 19) {
+                    return "ML-DSA";
+                }
+                if (num >= 20 && num <= 31) {
+                    return "SLH-DSA";
+                }
+            } catch (NumberFormatException ignored) {
             }
         }
         return paramSetName;
