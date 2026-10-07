@@ -141,7 +141,7 @@ public class TestPQCKeys extends BaseTest {
         // mixed-case: underscore lowercase
         "ml_kem_512", "ml_kem_768", "ml_kem_1024",
         "ml_dsa_44",  "ml_dsa_65",  "ml_dsa_87",
-        "slh_dsa_sha2_128s", "slh_dsa_shake-256f",
+        "slh_dsa_sha2_128s", "slh_dsa_shake_256f",
         // mixed-case: compact lowercase
         "mlkem512", "mlkem768", "mlkem1024",
         "mldsa44",  "mldsa65",  "mldsa87",
@@ -193,8 +193,8 @@ public class TestPQCKeys extends BaseTest {
         "ML_KEM_512", "ML_KEM_768", "ML_KEM_1024",
         "ML_DSA_44",  "ML_DSA_65",  "ML_DSA_87",
         "SLH_DSA_SHA2_128s", "SLH_DSA_SHA2_128f", "SLH_DSA_SHA2_192s", "SLH_DSA_SHA2_192f",
-        "SLH_DSA_SHA2_256s", "SLH_DSA_SHA2_256f", "SLH_DSA_SHAKE-128s", "SLH_DSA_SHAKE-128f",
-        "SLH_DSA_SHAKE-192s", "SLH_DSA_SHAKE-192f", "SLH_DSA_SHAKE-256s", "SLH_DSA_SHAKE-256f",
+        "SLH_DSA_SHA2_256s", "SLH_DSA_SHA2_256f", "SLH_DSA_SHAKE_128s", "SLH_DSA_SHAKE_128f",
+        "SLH_DSA_SHAKE_192s", "SLH_DSA_SHAKE_192f", "SLH_DSA_SHAKE_256s", "SLH_DSA_SHAKE_256f",
         // compact (no-separator) aliases
         "MLKEM512", "MLKEM768", "MLKEM1024",
         "MLDSA44",  "MLDSA65",  "MLDSA87",
@@ -212,7 +212,7 @@ public class TestPQCKeys extends BaseTest {
         // mixed-case: underscore lowercase
         "ml_kem_512", "ml_kem_768", "ml_kem_1024",
         "ml_dsa_44",  "ml_dsa_65",  "ml_dsa_87",
-        "slh_dsa_sha2_128s", "slh_dsa_shake-256f",
+        "slh_dsa_sha2_128s", "slh_dsa_shake_256f",
         // mixed-case: compact lowercase
         "mlkem512", "mlkem768", "mlkem1024",
         "mldsa44",  "mldsa65",  "mldsa87",
@@ -483,7 +483,7 @@ public class TestPQCKeys extends BaseTest {
         "SLHDSASHA2128s", "SLHDSASHAKE256f",
         "slh-dsa-sha2-128s", "slh-dsa-shake-256f",
         "Slh-Dsa-Sha2-128s", "Slh-Dsa-Shake-256f",
-        "slh_dsa_sha2_128s", "slh_dsa_shake-256f",
+        "slh_dsa_sha2_128s", "slh_dsa_shake_256f",
         "slhdsasha2128s", "slhdsashake256f",
         "SlhDsaSha2128s", "SlhDsaShake256f"
     })
@@ -928,10 +928,11 @@ public class TestPQCKeys extends BaseTest {
      * Verifies that the OID embedded in the DER-encoded public and private key
      * matches the NIST-assigned OID for every supported PQC algorithm.
      *
-     * <p>The X.509 SubjectPublicKeyInfo structure encodes the AlgorithmIdentifier
-     * as the first inner SEQUENCE, with the OID at a fixed offset of 4 bytes in.
-     * The PKCS#8 OneAsymmetricKey structure places the OID at offset 9.
-     * Both are checked here to ensure {@link com.ibm.crypto.plus.provider.PQCKnownOIDs}
+     * <p>The OID position is derived dynamically from the outer SEQUENCE length
+     * encoding: small keys (e.g. SLH-DSA, 32-byte public key) use a 2-byte
+     * short-form header, while large keys (ML-KEM, ML-DSA) use a 4-byte long-form
+     * header.  Both the X.509 SubjectPublicKeyInfo and PKCS#8 OneAsymmetricKey
+     * encodings are checked to ensure {@link com.ibm.crypto.plus.provider.PQCKnownOIDs}
      * and {@link com.ibm.crypto.plus.provider.PQCAlgorithmId} agree with the standard.
      *
      * <p>OID values are from NIST FIPS 203/204/205:
@@ -983,33 +984,34 @@ public class TestPQCKeys extends BaseTest {
         KeyPair kp = generateKeyPair(algorithm);
 
         // --- Public key (X.509 SubjectPublicKeyInfo) ---
-        // These keys are large so the outer SEQUENCE uses a 2-byte length:
-        //   30 82 xx xx  -- outer SEQUENCE (4-byte header)
-        //   30 0b        -- AlgorithmIdentifier SEQUENCE at byte offset 4
-        //   06 09        -- OID tag + length at byte offset 6
-        //   <9 bytes>    -- OID value starting at byte offset 8
+        // Structure: SEQUENCE { SEQUENCE { OID, ... }, BIT STRING }
+        // The outer SEQUENCE header is 2 bytes for short-form (small keys like SLH-DSA)
+        // or 4 bytes for long-form (large keys like ML-KEM/ML-DSA).  Skip it dynamically.
         byte[] x509 = kp.getPublic().getEncoded();
-        String x509hex = BaseUtils.bytesToHex(x509);
-        // hex chars: each byte = 2 chars; OID tag+len at hex offset 12 (bytes 6-7)
-        assertEquals("0609", x509hex.substring(12, 16),
+        // byte 0 = 0x30 (SEQUENCE tag); byte 1 = length byte
+        // if bit 7 of byte 1 is set it is long-form: the low 7 bits give the number of
+        // subsequent length bytes.  For our keys only 1 or 2 extra length bytes are used.
+        int x509HeaderLen = (x509[1] & 0x80) != 0 ? 2 + (x509[1] & 0x7f) : 2;
+        // after outer header: inner AlgId SEQUENCE (30 0b), then OID tag+len (06 09)
+        int x509OidTagOffset = x509HeaderLen + 2; // skip inner SEQUENCE tag + length byte
+        assertEquals("0609", BaseUtils.bytesToHex(new byte[]{x509[x509OidTagOffset], x509[x509OidTagOffset + 1]}),
                 "X.509 encoding for " + algorithm + " should contain OID tag 06, length 09");
-        String actualPublicOid = x509hex.substring(16, 34); // 9 bytes * 2 hex chars = 18 chars
+        String actualPublicOid = BaseUtils.bytesToHex(java.util.Arrays.copyOfRange(
+                x509, x509OidTagOffset + 2, x509OidTagOffset + 11)); // 9 OID bytes
         assertEquals(expectedOidHex, actualPublicOid,
                 "X.509 OID mismatch for " + algorithm);
 
         // --- Private key (PKCS#8 OneAsymmetricKey) ---
-        // These keys are large so both the outer SEQUENCE and the AlgId are long-form:
-        //   30 82 xx xx  -- outer SEQUENCE (4-byte header)
-        //   02 01 00     -- version INTEGER 0 at byte offset 4
-        //   30 0b        -- AlgorithmIdentifier SEQUENCE at byte offset 7
-        //   06 09        -- OID tag + length at byte offset 9
-        //   <9 bytes>    -- OID value starting at byte offset 11
+        // Structure: SEQUENCE { INTEGER (version=0), SEQUENCE { OID, ... }, OCTET STRING }
+        // Same variable-length outer SEQUENCE header, then 02 01 00 (3 bytes), then AlgId.
         byte[] pkcs8 = kp.getPrivate().getEncoded();
-        String pkcs8hex = BaseUtils.bytesToHex(pkcs8);
-        // hex offset 18 = byte offset 9 (OID tag+len)
-        assertEquals("0609", pkcs8hex.substring(18, 22),
+        int pkcs8HeaderLen = (pkcs8[1] & 0x80) != 0 ? 2 + (pkcs8[1] & 0x7f) : 2;
+        // after outer header: version INTEGER (02 01 00 = 3 bytes), inner AlgId SEQUENCE (30 0b)
+        int pkcs8OidTagOffset = pkcs8HeaderLen + 3 + 2; // skip version + inner SEQUENCE tag+len
+        assertEquals("0609", BaseUtils.bytesToHex(new byte[]{pkcs8[pkcs8OidTagOffset], pkcs8[pkcs8OidTagOffset + 1]}),
                 "PKCS#8 encoding for " + algorithm + " should contain OID tag 06, length 09");
-        String actualPrivateOid = pkcs8hex.substring(22, 40); // 9 bytes * 2 hex chars = 18 chars
+        String actualPrivateOid = BaseUtils.bytesToHex(java.util.Arrays.copyOfRange(
+                pkcs8, pkcs8OidTagOffset + 2, pkcs8OidTagOffset + 11)); // 9 OID bytes
         assertEquals(expectedOidHex, actualPrivateOid,
                 "PKCS#8 OID mismatch for " + algorithm);
 
