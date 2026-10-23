@@ -36,6 +36,8 @@ import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import sun.security.x509.AlgorithmId;
+import sun.security.x509.CertificateAlgorithmId;
 import sun.security.x509.CertificateSerialNumber;
 import sun.security.x509.CertificateValidity;
 import sun.security.x509.CertificateVersion;
@@ -135,16 +137,19 @@ public class TestPQCKeystore extends BaseTest {
 
             X509CertInfo info = new X509CertInfo();
             // Add all mandatory attributes
-            info.setVersion(new CertificateVersion(CertificateVersion.V3));
+            info.set(X509CertInfo.VERSION, new CertificateVersion(CertificateVersion.V3));
             prng = new SecureRandom();
 
             X500Name myname = new X500Name("EMAIL=sample@example.com");
-            info.setSerialNumber(CertificateSerialNumber.newRandom64bit(prng));
-            info.setSubject(myname);
-            info.setKey(new CertificateX509Key(kp.getPublic()));
-            info.setValidity(interval);
-            info.setIssuer(myname);
-            cert = X509CertImpl.newSigned(info, kp.getPrivate(), sigAlg);
+            info.set(X509CertInfo.SERIAL_NUMBER, CertificateSerialNumber.newRandom64bit(prng));
+            info.set(X509CertInfo.ALGORITHM_ID,
+                    new CertificateAlgorithmId(AlgorithmId.get(sigAlg)));
+            info.set(X509CertInfo.SUBJECT, myname);
+            info.set(X509CertInfo.KEY, new CertificateX509Key(kp.getPublic()));
+            info.set(X509CertInfo.VALIDITY, interval);
+            info.set(X509CertInfo.ISSUER, myname);
+            cert = new X509CertImpl(info);
+            cert.sign(kp.getPrivate(), sigAlg);
             return cert;
 
         } catch (IOException e) {
