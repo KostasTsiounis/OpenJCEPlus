@@ -20,6 +20,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -46,6 +47,7 @@ import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.X509CertInfo;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(Tags.OPENJCEPLUS_NAME)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -104,6 +106,18 @@ public class TestPQCKeystore extends BaseTest {
                 fail("Key was not gotten from keystore");
                 ksFile.delete();
             }
+
+            // Verify the retrieved keys are functional: sign and verify a message
+            byte[] message = "test message".getBytes();
+            Signature signer = Signature.getInstance(algname, getProviderName());
+            signer.initSign(tmp);
+            signer.update(message);
+            byte[] signature = signer.sign();
+
+            Signature verifier = Signature.getInstance(algname, getProviderName());
+            verifier.initVerify(tmpPub);
+            verifier.update(message);
+            assertTrue(verifier.verify(signature), "Signature verification failed with keys retrieved from keystore");
 
         } catch (Exception e) {
             e.printStackTrace();
